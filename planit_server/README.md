@@ -11,7 +11,8 @@ mix local.hex
 ```
 ### Install phoenix
 ```
-mix archive.install https://github.com/phoenixframework/phoenix/releases/download/v0.13.1/phoenix_new-0.13.1.ez
+mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
+
 ```
 
 ### Install deps
