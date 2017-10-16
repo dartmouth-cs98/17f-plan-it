@@ -22,6 +22,7 @@ defmodule PlanIt.Router do
   scope "/api/v1", PlanIt do
     pipe_through :api
     get "/users", UserController, :index
+    get "/addSam", UserController, :create_sample
   end
 
   # Other scopes may use custom stacks.
