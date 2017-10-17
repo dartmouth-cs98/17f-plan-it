@@ -1,0 +1,9 @@
+
+.onboarding {
+  height: 90vh;
+  background: url('../../img/road_trip.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+  border-bottom: 6px solid #B6D6E7;
+}
