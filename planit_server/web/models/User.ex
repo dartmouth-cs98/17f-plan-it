@@ -1,12 +1,12 @@
 defmodule PlanIt.User do
   use PlanIt.Web, :model
 
-  schema "users" do
+  schema "user" do
     field :fname, :string
     field :lname, :string
     field :email, :string
     field :username, :string
-    field :birthday, :integer
+    field :birthday, :datetime
 
     timestamps
   end
