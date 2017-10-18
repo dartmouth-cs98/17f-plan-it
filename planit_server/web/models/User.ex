@@ -6,8 +6,8 @@ defmodule PlanIt.User do
     field :lname, :string
     field :email, :string
     field :username, :string
-    field :birthday, :datetime
+    field :birthday, :utc_datetime
 
-    timestamps
+    timestamps()
   end
 end
