@@ -3,7 +3,6 @@ defmodule PlanIt.Card do
 
   schema "card" do
     belongs_to :trip, PlanIt.Trip
-    belongs_to :day, PlanIt.Day
     belongs_to :travel, PlanIt.Travel
 
     field :type, :string
