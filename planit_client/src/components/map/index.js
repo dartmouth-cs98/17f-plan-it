@@ -1,3 +1,6 @@
+// Based on React Google Maps node module by Tom Chen.
+// Docs found here: https://tomchentw.github.io/react-google-maps
+
 import React, { Component } from 'react'
 import { compose, withProps } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
