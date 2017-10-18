@@ -15,7 +15,7 @@ export default class Workspace extends Component {
 				<div className='planner'>
 					<Suggestions />
 					<Itinerary />
-					<Map />
+					<Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
 				</div>
 			</div>
 		)
