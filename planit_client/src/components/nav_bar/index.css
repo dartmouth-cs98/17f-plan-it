@@ -21,7 +21,18 @@
 
 .road_trip_background {
   background: url('../../img/road_trip.jpeg');
+  background-position: 0 50%;
+  background-size: cover;
   color: white;
+  color: white;
+}
+
+.road_trip_background a {
+  color: white;
+}
+
+.road_trip_background a:hover {
+  text-shadow: 0 0 10px grey;
 }
 
 .globe_background {
@@ -36,7 +47,7 @@
 }
 
 .globe_background a:hover {
-  color: #4F4F4F;
+  text-shadow: 0 0 10px grey;
 }
 
 .no_background a {
@@ -44,5 +55,5 @@
 }
 
 .no_background a:hover {
-  color: #4F4F4F;
+  text-shadow: 0 0 10px grey;
 }
