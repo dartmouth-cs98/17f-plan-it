@@ -1,13 +1,13 @@
 defmodule PlanIt.Day do
-  use PlanIt.Web, :model
+  use Ecto.Schema
 
   schema "day" do
     field :day_number, :integer
-    field :trip_id, references(:trip)
-    field :first_card_id, references(:card)
-    field :last_card_id, references(:card)
+    field :trip_id, has_one(:trip, PlanIt.Trip)
+    field :first_card_id, has_one(:card, PlanIt.Card)
+    field :last_card_id, has_one(:card, PlanIt.Card)
 
-    timestamps
+    timestamps()
   end
 end
 

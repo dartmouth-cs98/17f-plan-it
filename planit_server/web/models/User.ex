@@ -2,6 +2,8 @@ defmodule PlanIt.User do
   use PlanIt.Web, :model
 
   schema "user" do
+    belongs_to :trip, PlanIt.Trip
+
     field :fname, :string
     field :lname, :string
     field :email, :string
