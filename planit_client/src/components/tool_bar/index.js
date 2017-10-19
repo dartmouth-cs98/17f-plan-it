@@ -11,7 +11,6 @@ export default class Toolbar extends Component {
 							Avg Cost
 						</div>
 						<div class='tool-bar-text'>
-							// TODO: Money sign Component probably needed to calculate the number of dollar signs
 							$$$$
 						</div>
 					</div>
