@@ -1,12 +1,12 @@
 defmodule PlanIt.Card do
   use Ecto.Schema
 
-  @primary_key {:card_id, :id, autogenerate: true}
+  @primary_key {:id, :id, autogenerate: true}
   schema "card" do
 
     belongs_to :trip, PlanIt.Trip
-    many_to_many :day, PlanIt.Day
-    many_to_many :travel, PlanIt.Travel
+    belongs_to :day, PlanIt.Day
+    has_many :card_travel, PlanIt.CardTravel
 
     field :type, :string
     field :name, :string

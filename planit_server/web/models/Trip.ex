@@ -1,7 +1,7 @@
 defmodule PlanIt.Trip do
   use Ecto.Schema
 
-  @primary_key {:trip_id, :id, autogenerate: true}
+  @primary_key {:id, :id, autogenerate: true}
   schema "trip" do
     belongs_to :user, PlanIt.User
     has_many :day, PlanIt.Day

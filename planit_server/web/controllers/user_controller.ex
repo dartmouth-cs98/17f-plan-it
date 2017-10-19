@@ -12,7 +12,8 @@ defmodule PlanIt.UserController do
   end
 
   def create_sample(conn, _params) do
-    Repo.insert!(%User{fname: "Sam", lname: "Lee", email: "samlee@example.com", username: "slee", birthday: ~D[1996-12-31] })
+    #Repo.insert!(%User{fname: "Sam", lname: "Lee", email: "samlee@example.com", username: "slee", birthday: ~D[1996-12-31] })
+    Repo.insert!(%User{fname: "Sam", lname: "Lee", email: "samlee@example.com", username: "slee"})
 
     json conn, []
   end
