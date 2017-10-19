@@ -1,14 +1,15 @@
 defmodule PlanIt.User do
   use PlanIt.Web, :model
 
+  @primary_key {:user_id, :id, autogenerate: true}
   schema "user" do
-    belongs_to :trip, PlanIt.Trip
 
+    has_many :trip, PlanIt.Trip
     field :fname, :string
     field :lname, :string
     field :email, :string
     field :username, :string
-    field :birthday, :utc_datetime
+    field :birthday, :date
 
     timestamps()
   end

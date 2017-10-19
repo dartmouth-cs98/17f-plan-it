@@ -1,9 +1,12 @@
 defmodule PlanIt.Card do
   use Ecto.Schema
 
+  @primary_key {:card_id, :id, autogenerate: true}
   schema "card" do
+
     belongs_to :trip, PlanIt.Trip
-    belongs_to :travel, PlanIt.Travel
+    many_to_many :day, PlanIt.Day
+    many_to_many :travel, PlanIt.Travel
 
     field :type, :string
     field :name, :string
@@ -16,6 +19,3 @@ defmodule PlanIt.Card do
     timestamps()
   end
 end
-
-
-
