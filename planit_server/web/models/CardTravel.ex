@@ -8,6 +8,6 @@ defmodule PlanIt.CardTravel do
 
     field :card_is_destination, :boolean
 
-		timestamps()
-	end
+	timestamps()
+  end
 end

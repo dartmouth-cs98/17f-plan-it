@@ -4,7 +4,7 @@ defmodule PlanIt.Day do
   @primary_key {:id, :id, autogenerate: true}
   schema "day" do
     belongs_to :trip, PlanIt.Trip
-    has_many :card, PlanIt.Card
+    belongs_to :card, PlanIt.Card
 
     field :day_number, :integer
 

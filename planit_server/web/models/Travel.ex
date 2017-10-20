@@ -6,8 +6,8 @@ defmodule PlanIt.Travel do
     has_many :card_travel, PlanIt.CardTravel
 
     field :type, :string
-		field :duration, :time
+	field :duration, :time
 
-		timestamps()
-	end
+	timestamps()
+   end
 end

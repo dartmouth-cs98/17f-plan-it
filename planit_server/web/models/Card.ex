@@ -3,9 +3,8 @@ defmodule PlanIt.Card do
 
   @primary_key {:id, :id, autogenerate: true}
   schema "card" do
-
-    belongs_to :trip, PlanIt.Trip
-    belongs_to :day, PlanIt.Day
+    has_one :trip, PlanIt.Trip
+    has_one :day, PlanIt.Day
     has_many :card_travel, PlanIt.CardTravel
 
     field :type, :string

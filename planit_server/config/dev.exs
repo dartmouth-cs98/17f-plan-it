@@ -50,7 +50,7 @@ config :phoenix, :stacktrace_depth, 20
 config :plan_it, PlanIt.Repo,
   adapter: Ecto.Adapters.MySQL,
   username: "root",
-  password: "Olympia1865",
+  password: "t3mppw!!",
   database: "plan_it_dev",
   hostname: "localhost",
   pool_size: 10

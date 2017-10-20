@@ -2,6 +2,7 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
   use Ecto.Migration
 
   def change do
+
     create table(:card) do
       add :type, :string
       add :name, :string
@@ -18,7 +19,7 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :name, :string
       add :user_id, references(:user)
       add :first_card_id, references(:card)
-      add :last_card_id, references(:card)
+      #add :last_card_id, references(:card)
 
       timestamps()
     end
@@ -27,18 +28,23 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :day_number, :integer
       add :trip_id, references(:trip)
       add :first_card_id, references(:card)
-      add :last_card_id, references(:card)
+      #add :last_card_id, references(:card)
 
       timestamps()
     end
 
     create table(:travel) do
-      add :type, :string
       add :duration, :time
-      add :start_card_id, references(:card)
-      add :end_card_id, references(:card)
 
       timestamps()
     end
+
+    create table(:card_travel) do
+      add :card_is_destination, :boolean
+      add :card_id, references(:card)
+      add :travel_id, references(:travel)
+      timestamps()
+    end
+
   end
 end
