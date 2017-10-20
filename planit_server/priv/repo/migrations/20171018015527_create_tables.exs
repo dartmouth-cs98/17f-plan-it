@@ -17,8 +17,11 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
 
     create table(:trip) do
       add :name, :string
+      add :intensity, :integer
+      add :visibility, :boolean
+      add :upvotes, :integer
       add :user_id, references(:user)
-      add :first_card_id, references(:card)
+      add :card_id, references(:card)
       #add :last_card_id, references(:card)
 
       timestamps()
@@ -27,13 +30,14 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
     create table(:day) do
       add :day_number, :integer
       add :trip_id, references(:trip)
-      add :first_card_id, references(:card)
+      add :card_id, references(:card)
       #add :last_card_id, references(:card)
 
       timestamps()
     end
 
     create table(:travel) do
+      add :type, :string
       add :duration, :time
 
       timestamps()

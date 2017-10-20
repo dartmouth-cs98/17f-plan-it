@@ -3,11 +3,10 @@ defmodule PlanIt.Day do
 
   @primary_key {:id, :id, autogenerate: true}
   schema "day" do
-    belongs_to :trip, PlanIt.Trip
-    belongs_to :card, PlanIt.Card
-
     field :day_number, :integer
 
+	belongs_to :trip, PlanIt.Trip
+    belongs_to :card, PlanIt.Card
     timestamps()
   end
 end

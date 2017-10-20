@@ -7,9 +7,9 @@ defmodule PlanIt.Repo.Migrations.CreateUser do
       add :lname, :string
       add :email, :string
       add :username, :string
-      #add :birthday, :integer
+      add :birthday, :date
 
-      timestamps
+      timestamps()
     end
 
     create unique_index(:user, [:email, :username])

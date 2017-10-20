@@ -3,14 +3,13 @@ defmodule PlanIt.User do
 
   @primary_key {:id, :id, autogenerate: true}
   schema "user" do
-    has_many :trip, PlanIt.Trip
-
     field :fname, :string
     field :lname, :string
     field :email, :string
     field :username, :string
-    #field :birthday, :date
+    field :birthday, :date
 
+    has_many :trip, PlanIt.Trip
     timestamps()
   end
 end
