@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import './App.css'
 import Workspace from './components/workspace/index.js'
 import Onboarding from './components/onboarding/index.js'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 class App extends Component {
   render() {
