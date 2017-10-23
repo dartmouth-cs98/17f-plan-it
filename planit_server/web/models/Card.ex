@@ -3,6 +3,9 @@ defmodule PlanIt.Card do
 
   @primary_key {:id, :id, autogenerate: true}
   schema "card" do
+    belongs_to :trip, PlanIt.Trip
+    belongs_to :travel, PlanIt.Travel
+
     field :type, :string
     field :name, :string
     field :city, :string
@@ -10,10 +13,8 @@ defmodule PlanIt.Card do
     field :address, :string
     field :start_time, :utc_datetime
     field :end_time, :utc_datetime
+    field :day_number, :integer
 
-    has_one :trip, PlanIt.Trip
-    has_one :day, PlanIt.Day
-    has_many :card_travel, PlanIt.CardTravel
     timestamps()
   end
 end
