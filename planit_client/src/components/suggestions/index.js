@@ -28,6 +28,24 @@ export default class Suggestions extends Component {
 				<label className='suggestions-title'>
 					Attractions
 				</label>
+				<FlatButton 
+					className='suggestions-filter'
+					icon={
+						<i 
+							class='fa fa-filter'
+							style={{color: '#FFFFFF'}} 
+						/>
+					}
+				/>
+				<FlatButton 
+					className='suggestions-menu'
+					icon={
+						<i 
+							class='fa fa-bars'
+							style={{color: '#FFFFFF'}} 
+						/>
+					}
+				/> 
 			</div>
 		)
 	}
