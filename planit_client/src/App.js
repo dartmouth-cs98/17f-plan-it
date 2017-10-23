@@ -9,6 +9,7 @@ class App extends Component {
   render() {
     return (
       <div className='App'>
+        <MuiThemeProvider>
           <Router>
               <Switch>
                 <Route exact path='/' component={Onboarding} />
@@ -16,6 +17,7 @@ class App extends Component {
                 <Route render={() => (<div>post not found </div>)} />
               </Switch>
           </Router>
+        </MuiThemeProvider>
       </div>
     )
   }
