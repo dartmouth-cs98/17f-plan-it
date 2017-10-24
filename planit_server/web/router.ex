@@ -28,6 +28,7 @@ defmodule PlanIt.Router do
     get "/trips", TripController, :index
 
     get "/cards", CardController, :index
+    get "/cards", CardController, :index
 
   end
 
