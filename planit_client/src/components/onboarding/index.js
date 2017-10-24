@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import NavBar from '../nav_bar/index.js';
-import Slider from'react-slick';
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import NavBar from '../nav_bar/index.js'
+import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
-import { Map, List } from 'immutable';
-import './index.css';
+import { Map, List } from 'immutable'
+import Modal from 'react-modal'
+import './index.css'
 
 function NextArrow(props) {
   const { onClick } = props
@@ -35,7 +36,8 @@ class Onboarding extends Component {
 			trip_name: '',
 			cities: List([Map({ type: 'city', name: this.props.city_name, start_date: null, end_date: null})]),
 			hotels: List([Map({ type: 'hotel', name: '', start_date: null, end_date: null})]),
-			must_dos: List([Map({ type: 'must_do', name: '', start_date: null, end_date: null})])
+			must_dos: List([Map({ type: 'must_do', name: '', start_date: null, end_date: null})]),
+			modal_open: false
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -45,6 +47,16 @@ class Onboarding extends Component {
 		this.onOtherNameChange = this.onOtherNameChange.bind(this)
 		this.onStartDateChange = this.onStartDateChange.bind(this)
 		this.onEndDateChange = this.onEndDateChange.bind(this)
+		this.onModalOpen = this.onModalOpen.bind(this)
+		this.onModalClose = this.onModalClose.bind(this)
+	}
+
+	onModalOpen(event) {
+		this.setState( { modal_open: true } )
+	}
+
+	onModalClose(event) {
+		this.setState( { modal_open: false } )
 	}
 
 	onNameChange(event) {
@@ -193,7 +205,11 @@ class Onboarding extends Component {
 
 	renderStartTrip() {
 		if (this.state.cities.get(0).get('name') === '' || this.state.cities.get(0).get('start_date') === null) {
-			return ( <div className='button_container start_disabled'>Start Trip</div> )
+			return ( 
+				<div className='button_container start_disabled' onClick={this.onModalOpen}>
+					Start Trip
+				</div> 
+			)
 		}
 		else {
 			return (
@@ -268,12 +284,20 @@ class Onboarding extends Component {
 			<div>
 				<div className='onboarding'>
 					<NavBar background={'no_background'}/>
+					<Modal
+					    isOpen={this.state.modal_open}
+					    onRequestClose={this.onModalClose}
+					    className='card horizontal center no_outline'>
+						<div class="card-content">
+				        	<p>Input at least one city with a start date</p>
+				        </div>
+					</Modal>
 					<Slider {...settings} className='slider'>
 				        {this.name_slide()}
 				        {this.cities_slide()}
 				        {this.hotels_slide()}
 				        {this.mustdo_slide()}
-			      </Slider>
+			      	</Slider>
 				</div>
 			</div>
 		)
