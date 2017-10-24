@@ -6,25 +6,40 @@ Planit is a web application that allows users to create a fully fleshed-out itin
 
 ## Architecture
 
+We've separated our code into the frontend (client) code and backend (server) code.
+
 TODO:  descriptions of code organization and tools and libraries used
 
 ## Setup
 
-The client requires the following programs/applications to be installed:
-* Fill
-* This
-* Out
+The frontend requires the following programs/applications to be installed:
 
-The server requires the following programs/applications to be installed:
-* Node
-* MySQL
-* Ruby
-* Elixir
-* Phoenix
+* yarn - a dependency/package manager for Javascript
+	- https://yarnpkg.com/lang/en/docs/install/#mac-tab
+
+The backend requires the following programs/applications to be installed:
+
+* MySQL Community Server - an open-source relational database management system
+	- https://dev.mysql.com/downloads/mysql/
+* Phoenix - a web development framework that implements the server-side MVC (model-view-controller) pattern
+	- https://hexdocs.pm/phoenix/installation.html
+* Elixir - the language that Phoenix is written is; a Phoenix dependency
+	- https://elixir-lang.org/install.html
+* Node.js - an open-source server framework; a Phoenix dependency
+	- https://nodejs.org/en/download/
+* Ruby - a programming language; a Phoenix dependency
+	- https://www.ruby-lang.org/en/downloads/
 
 ## Deployment
 
-TODO: how to deploy the project
+How to deploy the frontend:
+* cd to planit_client
+* run the command yarn start
+
+How to deploy the backend:
+* cd to planit_server
+* run the command mix ecto.migrate
+* run the command mix phx.server
 
 ## Authors
 
