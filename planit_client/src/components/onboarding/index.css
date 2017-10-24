@@ -67,7 +67,8 @@
 }
 
 .scrollable {
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: auto;
 	height: 50vh;
 	display: flex;
 	flex-direction: column;
@@ -106,7 +107,13 @@
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
 }
 
-/*.add:hover {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
-}*/
+.center {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
 
+.no_outline:focus {
+	outline: none;
+}
