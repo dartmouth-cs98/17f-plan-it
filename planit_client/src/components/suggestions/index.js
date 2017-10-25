@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './index.css'
+require('./index.scss')
 
 export default class Suggestions extends Component {
 	render() {

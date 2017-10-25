@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './index.scss'
+require('./index.scss')
 
 export default class NavBar extends Component {
 	render() {
@@ -10,4 +10,3 @@ export default class NavBar extends Component {
 		)
 	}
 }
-
