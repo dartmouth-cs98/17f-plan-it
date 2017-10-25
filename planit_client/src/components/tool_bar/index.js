@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import './index.css'
+//import './index.css'
+require('./index.scss')
 
 export default class Toolbar extends Component {
 	render() {

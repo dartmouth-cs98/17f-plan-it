@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+<<<<<<< HEAD
+require('./index.scss')
+=======
 import './index.css'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
@@ -20,6 +23,7 @@ const SAMPLE_CARDS = [
 		description: 'Find your true heritage - trace your roots'
 	}
 ]
+>>>>>>> master
 
 export default class Suggestions extends Component {
 	renderHeader() {
@@ -59,6 +63,8 @@ export default class Suggestions extends Component {
 		)
 	}
 }
+<<<<<<< HEAD
+=======
 
 class CardList extends Component {
 	renderCards() {
@@ -111,3 +117,4 @@ class Suggestion extends Component {
   	)
 	}
 }
+>>>>>>> master

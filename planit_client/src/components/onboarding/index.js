@@ -5,7 +5,7 @@ import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
 import { Map, List } from 'immutable'
 import Modal from 'react-modal'
-import './index.css'
+require('./index.scss')
 
 function NextArrow(props) {
   const { onClick } = props
@@ -102,7 +102,7 @@ class Onboarding extends Component {
 				this.setState({ hotels: state_array })
 			}
 		}
-		
+
 	}
 
 	onEndDateChange(index, type, end_date) {
@@ -151,7 +151,7 @@ class Onboarding extends Component {
 			this.state.cities.map((city, index) => {
 				return (
 					<div key={index}>
-						<OnboardingInput 
+						<OnboardingInput
 							index={index}
 							placeholder={'City'}
 							information={city}
@@ -170,7 +170,7 @@ class Onboarding extends Component {
 			this.state.hotels.map((hotel, index) => {
 				return (
 					<div key={index}>
-						<OnboardingInput 
+						<OnboardingInput
 							index={index}
 							placeholder={'Hotel'}
 							information={hotel}
@@ -189,7 +189,7 @@ class Onboarding extends Component {
 			this.state.must_dos.map((must_do, index) => {
 				return (
 					<div key={index}>
-						<OnboardingInput 
+						<OnboardingInput
 							index={index}
 							placeholder={'Attraction'}
 							information={must_do}
@@ -205,10 +205,10 @@ class Onboarding extends Component {
 
 	renderStartTrip() {
 		if (this.state.cities.get(0).get('name') === '' || this.state.cities.get(0).get('start_date') === null) {
-			return ( 
+			return (
 				<div className='button_container start_disabled' onClick={this.onModalOpen}>
 					Start Trip
-				</div> 
+				</div>
 			)
 		}
 		else {
@@ -223,7 +223,7 @@ class Onboarding extends Component {
 	name_slide() {
 		return (
 			<div>
-				<OnboardingInput placeholder={'Name your trip'} 
+				<OnboardingInput placeholder={'Name your trip'}
 					onNameChange={this.onNameChange}
 					name={this.state.trip_name}/>
 			</div>
@@ -245,7 +245,7 @@ class Onboarding extends Component {
 
 	hotels_slide() {
 		return (
-			<div className='slide'> 
+			<div className='slide'>
 				<div className='title'>Where are you staying?</div>
 				<div className='scrollable'>
 					{this.renderHotels()}
