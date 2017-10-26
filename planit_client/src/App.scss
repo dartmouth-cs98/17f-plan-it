@@ -1,0 +1,17 @@
+.body {
+  font-family: 'Roboto';
+}
+
+a {
+  text-decoration: none;
+}
+
+input[type=text] {
+	color: #565a5c;
+}
+
+input::placeholder {
+	color: #BDBDBD;
+	font-weight: 200;
+}
+

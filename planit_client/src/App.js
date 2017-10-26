@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import './App.css'
 import Workspace from './components/workspace/index.js'
 import Onboarding from './components/onboarding/index.js'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+require('./App.scss')
 
 class App extends Component {
   render() {
     return (
       <div className='App'>
+        <MuiThemeProvider>
           <Router>
               <Switch>
                 <Route exact path='/' component={Onboarding} />
@@ -16,6 +17,7 @@ class App extends Component {
                 <Route render={() => (<div>post not found </div>)} />
               </Switch>
           </Router>
+        </MuiThemeProvider>
       </div>
     )
   }
