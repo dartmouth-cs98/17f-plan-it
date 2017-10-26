@@ -1,21 +1,22 @@
 import React, { Component } from 'react'
-import './index.css'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+require('./index.scss')
+
 
 const SAMPLE_CARDS = [
 	{
-		name: 'Bangkok Museum of Fine Arts', 
+		name: 'Bangkok Museum of Fine Arts',
 		address: '13290 Lao Street, Bangkok, Thailand 00191',
 		description: 'Exactly what it sounds like'
 	},
 	{
-		name: 'Thai Dye Apparel', 
+		name: 'Thai Dye Apparel',
 		address: '1111 Lao Street, Bangkok, Thailand 00191',
 		description: 'Yeah'
 	},
 	{
-		name: 'Thai - mline Family Genealogy Clinic', 
+		name: 'Thai - mline Family Genealogy Clinic',
 		address: '13290 Ma Street, Bangkok, Thailand 1102',
 		description: 'Find your true heritage - trace your roots'
 	}
@@ -28,24 +29,24 @@ export default class Suggestions extends Component {
 				<label className='suggestions-title'>
 					Attractions
 				</label>
-				<FlatButton 
+				<FlatButton
 					className='suggestions-filter'
 					icon={
-						<i 
+						<i
 							class='fa fa-filter'
-							style={{color: '#FFFFFF'}} 
+							style={{color: '#FFFFFF'}}
 						/>
 					}
 				/>
-				<FlatButton 
+				<FlatButton
 					className='suggestions-menu'
 					icon={
-						<i 
+						<i
 							class='fa fa-bars'
-							style={{color: '#FFFFFF'}} 
+							style={{color: '#FFFFFF'}}
 						/>
 					}
-				/> 
+				/>
 			</div>
 		)
 	}
@@ -67,7 +68,7 @@ class CardList extends Component {
 
 		for (const card in this.props.cards) {
 			suggestions.push(
-				<Suggestion 
+				<Suggestion
 					key={id}
 					name={this.props.cards[card].name}
 					address={this.props.cards[card].address}

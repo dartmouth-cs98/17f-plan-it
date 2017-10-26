@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import './index.css'
+require('./index.scss')
 
 class NavBar extends Component {
 	constructor(props) {
@@ -27,4 +27,3 @@ class NavBar extends Component {
 }
 
 export default withRouter(NavBar)
-
