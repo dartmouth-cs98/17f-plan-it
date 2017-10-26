@@ -1,6 +1,7 @@
 defmodule PlanIt.TripController do
   alias PlanIt.Repo
   alias PlanIt.Card
+  alias PlanIt.Trip
   import Ecto.Query
 
   use PlanIt.Web, :controller
@@ -42,5 +43,19 @@ defmodule PlanIt.TripController do
   def index(conn, _params) do
     error = "this is bad"
     json conn, error
+  end
+
+
+  def create(conn, params) do
+      name = Map.get(params, "name")
+      user_id = Map.get(params, "user_id")
+
+      Repo.insert(%Trip{
+        name: name,
+        user_id: user_id
+      })
+
+      json conn, []
+
   end
 end

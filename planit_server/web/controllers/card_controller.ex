@@ -4,6 +4,7 @@ defmodule PlanIt.CardController do
   alias PlanIt.Travel
 
   import Ecto.Query
+  import Ecto.Changeset
 
   use PlanIt.Web, :controller
 
@@ -45,5 +46,32 @@ defmodule PlanIt.CardController do
     json conn, error
   end
 
+  def create(conn, %{"_json" => cards } = params) do
+    ecto_cards = Enum.map(cards, fn(c) ->
+      %{
+      type: Map.get(c, "type"),
+      name: Map.get(c, "name"),
+      city: Map.get(c, "city"),
+      country: Map.get(c, "country"),
+      address: Map.get(c, "address"),
+      lat: Map.get(c, "lat"),
+      long: Map.get(c, "long"),
+      start_time: Map.get(c, "start-time") |> Ecto.DateTime.cast!,
+      end_time: Map.get(c, "end-time") |> Ecto.DateTime.cast!,
+      day_number: Map.get(c, "day-number"),
+      travel_id: Map.get(c, "travel-id"),
+      trip_id: Map.get(c, "trip-id"),
+      inserted_at: Ecto.DateTime.utc,
+      updated_at: Ecto.DateTime.utc
+      }
+      end)
+
+    IO.inspect(ecto_cards)
+
+
+    Repo.insert_all(Card, ecto_cards)
+
+    json conn, []
+  end
 
 end

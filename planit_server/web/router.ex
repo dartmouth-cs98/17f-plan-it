@@ -21,19 +21,15 @@ defmodule PlanIt.Router do
 
   scope "/api/v1", PlanIt do
     pipe_through :api
-    get "/users", UserController, :index
-    get "/user", UserController, :single_user
+
+    resources "/users", UserController, only: [:index, :show, :create, :update]
     get "/createsample", UserController, :create_sample
 
     get "/trips", TripController, :index
+    resources "/trips", TripController, only: [:show, :create, :update]
 
     get "/cards", CardController, :index
-    get "/cards", CardController, :index
+    resources "/cards", CardController, only: [:create]
 
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", PlanIt do
-  #   pipe_through :api
-  # end
 end

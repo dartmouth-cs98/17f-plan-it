@@ -7,13 +7,15 @@ defmodule PlanIt.UserController do
 
   use PlanIt.Web, :controller
 
+  import Ecto.Changeset
+
   def index(conn, _params) do
     users = PlanIt.User |> Repo.all
 
     json conn, users
   end
 
-  def single_user(conn, %{"user_id" => user_id} = params) do
+  def show(conn, %{"id" => user_id} = params) do
     if user_id == nil do
       json conn, "this is bad"
     end
@@ -24,6 +26,30 @@ defmodule PlanIt.UserController do
     ) |> Repo.one
 
     json conn, user
+  end
+
+  def create(conn, params) do
+    fname = Map.get(params, "fname")
+    lname = Map.get(params, "lname")
+    email = Map.get(params, "email")
+    username = Map.get(params, "username")
+    birthday = Map.get(params, "birthday") |> Ecto.Date.cast!
+
+    Repo.insert(%User{
+      fname: fname,
+      lname: lname,
+      email: email,
+      username: username,
+      birthday: birthday
+    })
+
+    json conn, []
+  end
+
+  def update(conn, params) do
+    IO.inspect(params)
+
+    json conn, []
   end
 
   def create_sample(conn, _params) do
