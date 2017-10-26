@@ -63,21 +63,31 @@ export default class Suggestions extends Component {
 
 class CardList extends Component {
 	renderCards() {
-		let suggestions = []
+		// let suggestions = []
 		let id = 0
 
-		for (const card in this.props.cards) {
-			suggestions.push(
+		const suggestions = this.props.cards.map((card) => {
+			return (
 				<Suggestion
 					key={id}
-					name={this.props.cards[card].name}
-					address={this.props.cards[card].address}
-					description={this.props.cards[card].description}
+					name={card.name}
+					address={card.address}
+					description={card.description}
 				/>
 			)
+		})
+		// for (const card in this.props.cards) {
+		// 	suggestions.push(
+		// 		<Suggestion
+		// 			key={id}
+		// 			name={this.props.cards[card].name}
+		// 			address={this.props.cards[card].address}
+		// 			description={this.props.cards[card].description}
+		// 		/>
+		// 	)
 
-			id++
-		}
+		// 	id++
+		// }
 
 		return suggestions
 	}
