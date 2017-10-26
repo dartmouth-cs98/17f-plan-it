@@ -10,10 +10,8 @@ create:
 	mix ecto.create
 	mix ecto.migrate
 
-
 migrate:
 	mix ecto.migrate
 
 start:
 	mix phx.server
-

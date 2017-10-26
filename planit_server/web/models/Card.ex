@@ -11,6 +11,8 @@ defmodule PlanIt.Card do
     field :city, :string
     field :country, :string
     field :address, :string
+    field :lat, :float
+    field :long, :float
     field :start_time, :utc_datetime
     field :end_time, :utc_datetime
     field :day_number, :integer
