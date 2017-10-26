@@ -30,9 +30,6 @@ CREATE TABLE person (
 CREATE TABLE trip (
 	trip_id			INT				AUTO_INCREMENT,
     trip_name		VARCHAR(50)		NOT NULL,
-    trip_intensity	VARCHAR(50)		NOT NULL,
-    trip_visibility	BOOLEAN 		NOT NULL,
-    trip_upvotes	INT				NOT NULL,
     PRIMARY KEY (trip_id),
     FOREIGN KEY (person_id) 	 REFERENCES person(person_id)
     );
@@ -44,6 +41,8 @@ CREATE TABLE card (
     card_city		VARCHAR(255) NOT NULL,
 	card_country	VARCHAR(255) NOT NULL,
     card_address	VARCHAR(255) NOT NULL,
+    card_lat		FLOAT		 NOT NULL,
+    card_long		FLOAT		 NOT NULL,
 	card_start_time	DATETIME	 NOT NULL,
     card_end_time	DATETIME	 NOT NULL,
 	card_day_number INT			 NOT NULL,
@@ -60,17 +59,6 @@ CREATE TABLE travel (
 	FOREIGN KEY (card_id) REFERENCES card(card_id)
     );
     
-CREATE TABLE city (
-	city_id			INT				AUTO_INCREMENT,
-    city_name		VARCHAR(255)	NOT NULL,
-    city_country 	VARCHAR(255)	NOT NULL,
-    city_latitude	FLOAT			NOT NULL,
-    city_longitude	FLOAT			NOT NULL,
-    city_start_date	DATETIME		NOT NULL,
-    city_end_date	DATETIME		NOT NULL,
-    PRIMARY KEY (city_id),
-    FOREIGN KEY (trip_id) REFERENCES trip(trip_id)
-	);
 
 /* Future additions
 CREATE TABLE edit_permission (
