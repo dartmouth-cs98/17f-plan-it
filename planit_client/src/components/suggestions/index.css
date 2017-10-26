@@ -23,10 +23,12 @@
 
 .suggestions-menu {
 	float: right;
+	min-width: 40px !important;
 }
 
 .suggestions-filter {
 	float: right;
+	min-width: 40px !important;
 }
 
 .card-wrapper {

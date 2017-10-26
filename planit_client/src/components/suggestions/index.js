@@ -65,8 +65,6 @@ class CardList extends Component {
 		let suggestions = []
 		let id = 0
 
-		console.log(this.props.cards)
-
 		for (const card in this.props.cards) {
 			suggestions.push(
 				<Suggestion 
