@@ -1,6 +1,25 @@
-#itinerary-container {
+#itinerary-box {
+	min-width: 350px;
 	min-height: 500px;
-	width: 35%;
+	margin-right: 5px;
 	display: inline-block;
 	background-color: #F2F2F2;
+	overflow-y: scroll;
+
+	.itinerary-header {
+		height: 35px;
+		background-color: #66A9CD;
+		line-height: 35px;
+
+		.itinerary-title {
+			color: #FFFFFF;
+			margin-left: 10px;
+			font-size: 14px;
+		}
+
+		.itinerary-menu {
+			float: right;
+			min-width: 40px !important;
+		}
+	}
 }

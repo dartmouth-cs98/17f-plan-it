@@ -1,34 +1,32 @@
 
 #suggestions-box {
 	min-height: 500px;
+	min-width: 350px;
 	margin-right: 5px;
-	width: 31%;
-	float: left;
 	display: inline-block;
 	background-color: #F2F2F2;
-}
 
-.suggestions-header {
-	height: 35px;
-	justify-content: space-between;
-	background-color: #66A9CD;
-	line-height: 35px;
-}
+	.suggestions-header {
+		height: 35px;
+		background-color: #66A9CD;
+		line-height: 35px;
 
-.suggestions-title {
-	color: #FFFFFF;
-	margin-left: 10px;
-	font-size: 14px;
-}
+		.suggestions-title {
+			color: #FFFFFF;
+			margin-left: 10px;
+			font-size: 14px;
+		}
 
-.suggestions-menu {
-	float: right;
-	min-width: 40px !important;
-}
+		.suggestions-menu {
+			float: right;
+			min-width: 40px !important;
+		}
 
-.suggestions-filter {
-	float: right;
-	min-width: 40px !important;
+		.suggestions-filter {
+			float: right;
+			min-width: 40px !important;
+		}
+	}
 }
 
 .card-wrapper {

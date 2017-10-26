@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
-require('./index.scss')
+import './index.scss'
 
 
 const SAMPLE_CARDS = [
@@ -63,9 +63,7 @@ export default class Suggestions extends Component {
 
 class CardList extends Component {
 	renderCards() {
-		// let suggestions = []
 		let id = 0
-
 		const suggestions = this.props.cards.map((card) => {
 			return (
 				<Suggestion
@@ -76,18 +74,6 @@ class CardList extends Component {
 				/>
 			)
 		})
-		// for (const card in this.props.cards) {
-		// 	suggestions.push(
-		// 		<Suggestion
-		// 			key={id}
-		// 			name={this.props.cards[card].name}
-		// 			address={this.props.cards[card].address}
-		// 			description={this.props.cards[card].description}
-		// 		/>
-		// 	)
-
-		// 	id++
-		// }
 
 		return suggestions
 	}
