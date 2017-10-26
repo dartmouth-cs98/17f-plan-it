@@ -1,20 +1,44 @@
 import React, { Component } from 'react'
+import $ from 'jquery'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import './index.scss'
 
 export default class Itinerary extends Component {
+	constructor(props) {
+		super(props) 
+
+		this.state = {
+			day: 1, 
+			data: [
+				{
+					date: 'November 14'
+				}
+			]
+		}
+	}
+
 	renderHeader() {
 		return (
 			<div className='itinerary-header'>
-				<label className='itinerary-title'>
-					Itinerary
-				</label>
 				<FlatButton
-					className='itinerary-menu'
+					className='left-button'
 					icon={
 						<i
-							class='fa fa-bars'
+							class='fa fa-caret-left'
+							style={{color: '#FFFFFF'}}
+						/>
+					}
+				/>
+				<FlatButton
+					className='itinerary-label'
+					label={`Day ${this.state.day}: ${this.state.data[this.state.day - 1].date}`}
+				/>
+				<FlatButton
+					className='right-button'
+					icon={
+						<i
+							class='fa fa-caret-right'
 							style={{color: '#FFFFFF'}}
 						/>
 					}
