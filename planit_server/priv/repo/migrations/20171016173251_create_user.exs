@@ -12,6 +12,6 @@ defmodule PlanIt.Repo.Migrations.CreateUser do
       timestamps()
     end
 
-    create unique_index(:user, [:email, :username])
+    create unique_index(:user, [:email])
   end
 end
