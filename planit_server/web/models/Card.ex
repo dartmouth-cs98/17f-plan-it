@@ -1,6 +1,7 @@
 defmodule PlanIt.Card do
   use Ecto.Schema
 
+  import Ecto.Changeset
   @primary_key {:id, :id, autogenerate: true}
   schema "card" do
     belongs_to :trip, PlanIt.Trip
@@ -18,5 +19,12 @@ defmodule PlanIt.Card do
     field :day_number, :integer
 
     timestamps()
+  end
+
+  def changeset(card, params) do
+    #validate format of lat and long
+    card
+    |> cast(params, [:type, :name, :city, :country, :address, :lat, :long, :start_time, :end_time, :day_number])
+    |> validate_required([:name, :country, :day_number])
   end
 end

@@ -56,6 +56,18 @@ defmodule PlanIt.TripController do
       })
 
       json conn, []
+  end
 
+  def update(conn, %{"id" => trip_id} = params) do
+    trip = Repo.get(Trip, trip_id)
+    changeset = Trip.changeset(trip, params)
+
+    {message, changeset} = Repo.update(changeset)
+
+    if message == :ok do
+      json conn, "ok"
+    else
+      json conn, "this is bad"
+    end
   end
 end

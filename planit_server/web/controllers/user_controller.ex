@@ -16,10 +16,6 @@ defmodule PlanIt.UserController do
   end
 
   def show(conn, %{"id" => user_id} = params) do
-    if user_id == nil do
-      json conn, "this is bad"
-    end
-
     user = (from u in User,
       where: u.id == ^user_id,
       select: u
@@ -29,27 +25,31 @@ defmodule PlanIt.UserController do
   end
 
   def create(conn, params) do
-    fname = Map.get(params, "fname")
-    lname = Map.get(params, "lname")
-    email = Map.get(params, "email")
-    username = Map.get(params, "username")
-    birthday = Map.get(params, "birthday") |> Ecto.Date.cast!
+    changeset = User.changeset(%User{}, params)
+    {message, changeset} = Repo.insert(changeset)
+    IO.inspect(message)
+    IO.inspect(changeset.errors)
 
-    Repo.insert(%User{
-      fname: fname,
-      lname: lname,
-      email: email,
-      username: username,
-      birthday: birthday
-    })
-
-    json conn, []
+    if message == :ok do
+      json conn, "ok"
+    else
+      put_status(conn, 400)
+      return_string = "error: #{inspect changeset.errors}"
+      json conn, return_string
+    end
   end
 
-  def update(conn, params) do
-    IO.inspect(params)
+  def update(conn, %{"id" => user_id} = params) do
+    user = Repo.get(User, user_id)
+    changeset = User.changeset(user, params)
 
-    json conn, []
+    {message, changeset} = Repo.update(changeset)
+
+    if message == :ok do
+      json conn, "ok"
+    else
+      json conn, "this is bad"
+    end
   end
 
   def create_sample(conn, _params) do

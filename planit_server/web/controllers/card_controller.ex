@@ -25,7 +25,6 @@ defmodule PlanIt.CardController do
   end
 
   def index(conn,%{"trip_id" => trip_id} = params) do
-
     if trip_id == nil do
       json conn, "this is bad"
     end
@@ -68,10 +67,21 @@ defmodule PlanIt.CardController do
 
     IO.inspect(ecto_cards)
 
-
     Repo.insert_all(Card, ecto_cards)
 
     json conn, []
   end
 
+  def update(conn, %{"id" => card_id} = params) do
+    card = Repo.get(Card, card_id)
+    changeset = Card.changeset(card, params)
+
+    {message, changeset} = Repo.update(changeset)
+
+    if message == :ok do
+      json conn, "ok"
+    else
+      json conn, "this is bad"
+    end
+  end
 end
