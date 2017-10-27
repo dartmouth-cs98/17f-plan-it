@@ -117,3 +117,45 @@
 .no_outline:focus {
 	outline: none;
 }
+
+.landing_page {
+	height: 100vh;
+	background: url('../../img/globe.jpeg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 0;
+}
+
+.buttons {
+	display: flex;
+	justify-content: center;
+}
+
+.button_box {
+	border-radius: 75px;
+	background-color: rgba(182,214,231, .9);
+	border: 4px solid #B6D6E7; 
+	color: white;
+	width: 130px;
+	text-align: center;
+	cursor: pointer;
+	margin-left: 10px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	height: 100%;
+}
+
+.button_box:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+
+.centered {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.landing_input {
+	width: 60vw !important;
+}
