@@ -9,6 +9,7 @@ require('./index.scss')
 
 export default class Workspace extends Component {
 	render() {
+
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>

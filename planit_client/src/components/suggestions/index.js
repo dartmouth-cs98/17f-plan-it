@@ -98,6 +98,9 @@ class Suggestion extends Component {
 			      actAsExpander={true}
 			      showExpandableButton={true}
 			    />
+			    <CardActions>
+			    	<FlatButton label='Add' />
+		    	</CardActions>
 			    <CardText expandable={true}>
 			      {this.props.description}
 			    </CardText>
