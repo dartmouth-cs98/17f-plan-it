@@ -38,7 +38,8 @@ export default class Itinerary extends Component {
 			day: 1, 
 			data: [
 				{
-					date: 'November 14'
+					date: 'November 14', 
+					cards: ITINERARY
 				}
 			]
 		}
@@ -74,26 +75,63 @@ export default class Itinerary extends Component {
 	}
 
 	renderList() {
-		return (
-			<div className='card-list'>
+		console.log(this.state)
+		const cards = this.state.data[this.state.day - 1].cards.map((card) => {
+			if (card.type === 'Attraction') {
+				return (
+					<Item
+						name={card.name}
+						description={card.description}
+					/>
+				)
+			} else {
+				return (
+					<Travel />
+				)
+			}
+		})
 
-			</div>
-		)
+		return cards
 	}
 
 	render() {
 		return (
 			<div id='itinerary-box'>
 				{this.renderHeader()}
+				{this.renderList()}
 			</div>
 		)
 	}
 }
 
 class Item extends Component {
-
+	render() {
+		return (
+			<div className='card-wrapper'>
+				<Card>
+			    <CardHeader
+			      title={this.props.name}
+			      actAsExpander={true}
+			      showExpandableButton={true}
+			    />
+			    <CardActions>
+			    	<FlatButton label='Remove' />
+		    	</CardActions>
+			    <CardText expandable={true}>
+			      {this.props.description}
+			    </CardText>
+			  </Card>
+		  </div>
+  	)
+	}
 }
 
 class Travel extends Component {
-
+	render() {
+		return (
+			<div className='travel-bar'>
+				Travel
+			</div>
+		)
+	}
 }

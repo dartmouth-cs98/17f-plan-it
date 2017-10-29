@@ -9,6 +9,7 @@ require('./index.scss')
 
 export default class Workspace extends Component {
 	render() {
+					// <Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
 
 		return (
 			<div id='workspace'>
@@ -17,7 +18,6 @@ export default class Workspace extends Component {
 				<div className='planner'>
 					<Suggestions />
 					<Itinerary />
-					<Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
 				</div>
 			</div>
 		)
