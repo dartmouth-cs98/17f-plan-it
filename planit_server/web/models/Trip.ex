@@ -15,6 +15,6 @@ defmodule PlanIt.Trip do
   end
 
   def changeset(trip, params) do
-    trip |> cast(params, [:name])
+    trip |> cast(params, [:name, :user_id])
   end
 end

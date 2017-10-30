@@ -22,8 +22,7 @@ defmodule PlanIt.TripController do
 
   def index(conn, _params) do
     error = "no resource available"
-    conn = put_status(conn, 400)
-    json conn, error
+    json put_status(conn, 400), error
   end
 
   # GET - get a trip by id
@@ -44,15 +43,17 @@ defmodule PlanIt.TripController do
 
   # POST - insert a new trip
   def create(conn, params) do
-      name = Map.get(params, "name")
-      user_id = Map.get(params, "user_id")
+      IO.inspect(params)
 
-      Repo.insert(%Trip{
-        name: name,
-        user_id: user_id
-      })
+      {message, changeset} = Trip.changeset(%Trip{}, params)
+      |> Repo.insert
 
-      json conn, []
+      if message == :error  do
+        error = "error: #{inspect changeset.errors}"
+        json put_status(conn, 400), error
+      end
+
+      json conn, "ok"
   end
 
   # PUT - update an existing trip

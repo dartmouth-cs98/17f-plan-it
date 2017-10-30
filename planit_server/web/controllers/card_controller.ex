@@ -49,28 +49,20 @@ defmodule PlanIt.CardController do
 
   # POST - insert new cards
   def create(conn, %{"_json" => cards } = params) do
-    ecto_cards = Enum.map(cards, fn(c) ->
-      %{
-      type: Map.get(c, "type"),
-      name: Map.get(c, "name"),
-      city: Map.get(c, "city"),
-      country: Map.get(c, "country"),
-      address: Map.get(c, "address"),
-      lat: Map.get(c, "lat"),
-      long: Map.get(c, "long"),
-      start_time: Map.get(c, "start-time") |> Ecto.DateTime.cast!,
-      end_time: Map.get(c, "end-time") |> Ecto.DateTime.cast!,
-      day_number: Map.get(c, "day-number"),
-      travel_id: Map.get(c, "travel-id"),
-      trip_id: Map.get(c, "trip-id"),
-      inserted_at: Ecto.DateTime.utc,
-      updated_at: Ecto.DateTime.utc
-      }
-      end)
+    changesets = Enum.map(cards, fn(c) ->
+      Card.changeset(%Card{}, c)
+    end)
 
-    Repo.insert_all(Card, ecto_cards)
+    IO.inspect(changesets)
 
-    json conn, []
+    Enum.each(changesets, fn(c) ->
+      case Repo.insert(c) do
+        {:ok, changeset } -> nil
+        {:error, changeset} -> json put_status(conn, 400), "error: #{inspect changeset.errors}"
+      end
+    end)
+
+    json conn, "ok"
   end
 
   # PUT - update an existing card

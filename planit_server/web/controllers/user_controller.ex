@@ -12,7 +12,6 @@ defmodule PlanIt.UserController do
   # GET - get all users in the database
   def index(conn, _params) do
     users = PlanIt.User |> Repo.all
-
     json conn, users
   end
 

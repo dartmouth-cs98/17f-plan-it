@@ -25,6 +25,7 @@ defmodule PlanIt.Card do
     #validate format of lat and long
     card
     |> cast(params, [:type, :name, :city, :country, :address, :lat, :long, :start_time, :end_time, :day_number])
+    |> cast(params, [:travel_id, :trip_id])
     |> validate_required([:name, :country, :day_number])
   end
 end
