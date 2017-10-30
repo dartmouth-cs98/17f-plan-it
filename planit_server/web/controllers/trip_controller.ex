@@ -9,7 +9,7 @@ defmodule PlanIt.TripController do
   # GET - get all trips created by a user
   def index(conn, %{"user_id" => user_id } = params) do
     if user_id == nil do
-      json conn, "this is bad"
+      json put_status(conn, 400), "no user_id provided"
     end
 
     trips = (from t in PlanIt.Trip,
@@ -20,12 +20,14 @@ defmodule PlanIt.TripController do
     json conn, trips
   end
 
-  # GET - get a trip by id
-  def index(conn, %{"trip_id" => trip_id } = params) do
-    if trip_id == nil do
-      json conn, "this is bad"
-    end
+  def index(conn, _params) do
+    error = "no resource available"
+    conn = put_status(conn, 400)
+    json conn, error
+  end
 
+  # GET - get a trip by id
+  def show(conn, %{"id" => trip_id } = params) do
     card_query = from c in Card,
       order_by: c.start_time,
       preload: [:travel]
@@ -38,11 +40,6 @@ defmodule PlanIt.TripController do
       |> Repo.all
 
       json conn, trips
-  end
-
-  def index(conn, _params) do
-    error = "this is bad"
-    json conn, error
   end
 
   # POST - insert a new trip
@@ -68,7 +65,8 @@ defmodule PlanIt.TripController do
     if message == :ok do
       json conn, "ok"
     else
-      json conn, "this is bad"
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
     end
   end
 end

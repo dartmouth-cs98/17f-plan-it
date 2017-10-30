@@ -30,16 +30,13 @@ defmodule PlanIt.UserController do
   def create(conn, params) do
     changeset = User.changeset(%User{}, params)
     {message, changeset} = Repo.insert(changeset)
-    IO.inspect(message)
-    IO.inspect(changeset.errors)
 
-    if message == :ok do
-      json conn, "ok"
-    else
-      put_status(conn, 400)
-      return_string = "error: #{inspect changeset.errors}"
-      json conn, return_string
+    if message == :error do
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
     end
+
+    json conn, "ok"
   end
 
   # PUT - update an existing user
@@ -49,16 +46,15 @@ defmodule PlanIt.UserController do
 
     {message, changeset} = Repo.update(changeset)
 
-    if message == :ok do
-      json conn, "ok"
-    else
-      put_status(conn, 400)
-      return_string = "error: #{inspect changeset.errors}"
-      json conn, return_string
+    if message == :error do
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
     end
+
+    json conn, "ok"
   end
 
-  # GET - inserts sample data (shouldn't this be a POST?)
+  # GET - inserts sample data
   def create_sample(conn, _params) do
     Repo.insert!(%User{
       fname: "Sam",

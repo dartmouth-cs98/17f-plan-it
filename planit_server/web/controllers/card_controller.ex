@@ -11,7 +11,7 @@ defmodule PlanIt.CardController do
   # GET - get all cards on a specific day of a specific trip
   def index(conn, %{"trip_id" => trip_id, "day" => day_num}) do
     if trip_id == nil or day_num == nil do
-      json conn, "this is bad"
+      json put_status(conn, 400), "bad parameters"
     end
 
     cards = (from c in Card,
@@ -28,7 +28,7 @@ defmodule PlanIt.CardController do
   # GET - get all cards on a specific trip
   def index(conn,%{"trip_id" => trip_id} = params) do
     if trip_id == nil do
-      json conn, "this is bad"
+      json put_status(conn, 400), "bad parameters"
     end
 
     cards = (from c in Card,
@@ -43,8 +43,8 @@ defmodule PlanIt.CardController do
   end
 
   def index(conn, _params) do
-    error = "this is bad"
-    json conn, error
+    error = "no resource available"
+    json put_status(conn, 400), error
   end
 
   # POST - insert new cards
@@ -68,8 +68,6 @@ defmodule PlanIt.CardController do
       }
       end)
 
-    IO.inspect(ecto_cards)
-
     Repo.insert_all(Card, ecto_cards)
 
     json conn, []
@@ -82,10 +80,11 @@ defmodule PlanIt.CardController do
 
     {message, changeset} = Repo.update(changeset)
 
-    if message == :ok do
-      json conn, "ok"
-    else
-      json conn, "this is bad"
+    if message == :error do
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
     end
+
+    json conn, "ok"
   end
 end
