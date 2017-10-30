@@ -6,6 +6,7 @@ defmodule PlanIt.TripController do
 
   use PlanIt.Web, :controller
 
+  # GET - get all trips created by a user
   def index(conn, %{"user_id" => user_id } = params) do
     if user_id == nil do
       json conn, "this is bad"
@@ -19,8 +20,7 @@ defmodule PlanIt.TripController do
     json conn, trips
   end
 
-
-
+  # GET - get a trip by id
   def index(conn, %{"trip_id" => trip_id } = params) do
     if trip_id == nil do
       json conn, "this is bad"
@@ -45,7 +45,7 @@ defmodule PlanIt.TripController do
     json conn, error
   end
 
-
+  # POST - insert a new trip
   def create(conn, params) do
       name = Map.get(params, "name")
       user_id = Map.get(params, "user_id")
@@ -58,6 +58,7 @@ defmodule PlanIt.TripController do
       json conn, []
   end
 
+  # PUT - update an existing trip
   def update(conn, %{"id" => trip_id} = params) do
     trip = Repo.get(Trip, trip_id)
     changeset = Trip.changeset(trip, params)

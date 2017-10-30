@@ -9,12 +9,14 @@ defmodule PlanIt.UserController do
 
   import Ecto.Changeset
 
+  # GET - get all users in the database
   def index(conn, _params) do
     users = PlanIt.User |> Repo.all
 
     json conn, users
   end
 
+  # GET - get a user by id
   def show(conn, %{"id" => user_id} = params) do
     user = (from u in User,
       where: u.id == ^user_id,
@@ -24,6 +26,7 @@ defmodule PlanIt.UserController do
     json conn, user
   end
 
+  # POST - insert a new user
   def create(conn, params) do
     changeset = User.changeset(%User{}, params)
     {message, changeset} = Repo.insert(changeset)
@@ -39,6 +42,7 @@ defmodule PlanIt.UserController do
     end
   end
 
+  # PUT - update an existing user
   def update(conn, %{"id" => user_id} = params) do
     user = Repo.get(User, user_id)
     changeset = User.changeset(user, params)
@@ -48,10 +52,13 @@ defmodule PlanIt.UserController do
     if message == :ok do
       json conn, "ok"
     else
-      json conn, "this is bad"
+      put_status(conn, 400)
+      return_string = "error: #{inspect changeset.errors}"
+      json conn, return_string
     end
   end
 
+  # GET - inserts sample data (shouldn't this be a POST?)
   def create_sample(conn, _params) do
     Repo.insert!(%User{
       fname: "Sam",
@@ -70,6 +77,8 @@ defmodule PlanIt.UserController do
       city: "Hanover",
       country: "USA",
       address: "Corner of the Green",
+      lat: 17.00088,
+      long: 149.0055,
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
@@ -83,6 +92,8 @@ defmodule PlanIt.UserController do
       city: "Hanover",
       country: "USA",
       address: "In front of East Wheelock",
+      lat: 107.0268,
+      long: 29.815,
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,

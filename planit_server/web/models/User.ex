@@ -21,5 +21,6 @@ defmodule PlanIt.User do
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
+    |> unique_constraint(:username)
   end
 end

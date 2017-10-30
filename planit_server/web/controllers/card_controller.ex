@@ -8,6 +8,7 @@ defmodule PlanIt.CardController do
 
   use PlanIt.Web, :controller
 
+  # GET - get all cards on a specific day of a specific trip
   def index(conn, %{"trip_id" => trip_id, "day" => day_num}) do
     if trip_id == nil or day_num == nil do
       json conn, "this is bad"
@@ -24,6 +25,7 @@ defmodule PlanIt.CardController do
     json conn, cards
   end
 
+  # GET - get all cards on a specific trip
   def index(conn,%{"trip_id" => trip_id} = params) do
     if trip_id == nil do
       json conn, "this is bad"
@@ -45,6 +47,7 @@ defmodule PlanIt.CardController do
     json conn, error
   end
 
+  # POST - insert new cards
   def create(conn, %{"_json" => cards } = params) do
     ecto_cards = Enum.map(cards, fn(c) ->
       %{
@@ -72,6 +75,7 @@ defmodule PlanIt.CardController do
     json conn, []
   end
 
+  # PUT - update an existing card
   def update(conn, %{"id" => card_id} = params) do
     card = Repo.get(Card, card_id)
     changeset = Card.changeset(card, params)
