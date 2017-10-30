@@ -11,8 +11,8 @@ const ITINERARY = [
 		type: 'Attraction',
 		name: 'Thai Taiwanese Embassy',
 		description: 'Two become one',
-		start_datetime: '2017-10-28T10:30:15+00:00',
-		end_datetime: '2017-10-28T11:30:15+00:00',
+		start_datetime: 'October 28, 2017 9:45:00',
+		end_datetime: 'October 28, 2017 10:30:00',
 		next: 193048
 	},
 	{
@@ -25,8 +25,8 @@ const ITINERARY = [
 		type: 'Attraction',
 		name: 'Thai the Knot',
 		description: 'The perfect venue for weddings of all different kinds',
-		start_datetime: '2017-10-28T11:45+00:00',
-		end_datetime: '2017-10-28T12:45+00:00'
+		start_datetime: 'November 14, 2017 10:45:00',
+		end_datetime: 'November 14, 2017 11:45:00'
 	}
 ]
 
@@ -40,16 +40,32 @@ export default class Itinerary extends Component {
 				{
 					date: 'November 14', 
 					cards: ITINERARY
+				},
+				{
+					date: 'November 15', 
+					cards: ITINERARY
 				}
 			]
 		}
+
+		this.dayForward = this.dayForward.bind(this)
+		this.dayBackward = this.dayBackward.bind(this)
 	}
 
-	renderHeader() {
-		return (
-			<div className='itinerary-header'>
+	dayForward() {
+		this.setState({ day: Math.min(this.state.day + 1, this.state.data.length) })
+	}
+
+	dayBackward() {
+		this.setState({ day: Math.max(this.state.day - 1, 1) })
+	}
+
+	renderBackButton() {
+		if (this.state.day > 1) {
+			return (
 				<FlatButton
 					className='left-button'
+					onClick={this.dayBackward}
 					icon={
 						<i
 							class='fa fa-caret-left'
@@ -57,12 +73,18 @@ export default class Itinerary extends Component {
 						/>
 					}
 				/>
-				<FlatButton
-					className='itinerary-label'
-					label={`Day ${this.state.day}: ${this.state.data[this.state.day - 1].date}`}
-				/>
+			)
+		}
+	}
+
+	renderForwardButton() {
+		console.log(this.state.data.length, this.state.day)
+
+		if (this.state.day < this.state.data.length) {
+			return (
 				<FlatButton
 					className='right-button'
+					onClick={this.dayForward}
 					icon={
 						<i
 							class='fa fa-caret-right'
@@ -70,23 +92,50 @@ export default class Itinerary extends Component {
 						/>
 					}
 				/>
+			)
+		}
+	}
+
+	renderHeader() {
+		return (
+			<div className='itinerary-header'>
+				{this.renderBackButton()}
+				<FlatButton
+					className='itinerary-label'
+					label={`Day ${this.state.day}: ${this.state.data[this.state.day - 1].date}`}
+				/>
+				{this.renderForwardButton()}
 			</div>
 		)
 	}
 
 	renderList() {
-		console.log(this.state)
+		// scale to convert time units to positioning on itinerary
+		const timeScale = scaleLinear()
+			.domain([0, 1440])
+			.range([0, 750])
+
 		const cards = this.state.data[this.state.day - 1].cards.map((card) => {
 			if (card.type === 'Attraction') {
+				const start = new Date(card.start_datetime)
+				const end = new Date(card.end_datetime)
+
+				const time = Math.abs(end - start) / 60000
+				const height = timeScale(time)
+
 				return (
 					<Item
+						key={card.id}
 						name={card.name}
 						description={card.description}
+						style={{height: `${height}px`}}
 					/>
 				)
 			} else {
 				return (
-					<Travel />
+					<Travel
+						key={card.id}
+					/>
 				)
 			}
 		})

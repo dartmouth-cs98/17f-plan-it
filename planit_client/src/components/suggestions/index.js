@@ -6,16 +6,19 @@ import './index.scss'
 
 const SAMPLE_CARDS = [
 	{
+		id: 0,
 		name: 'Bangkok Museum of Fine Arts',
 		address: '13290 Lao Street, Bangkok, Thailand 00191',
 		description: 'Exactly what it sounds like'
 	},
 	{
+		id: 1,
 		name: 'Thai Dye Apparel',
 		address: '1111 Lao Street, Bangkok, Thailand 00191',
 		description: 'Yeah'
 	},
 	{
+		id: 2,
 		name: 'Thai - mline Family Genealogy Clinic',
 		address: '13290 Ma Street, Bangkok, Thailand 1102',
 		description: 'Find your true heritage - trace your roots'
@@ -63,11 +66,10 @@ export default class Suggestions extends Component {
 
 class CardList extends Component {
 	renderCards() {
-		let id = 0
 		const suggestions = this.props.cards.map((card) => {
 			return (
 				<Suggestion
-					key={id}
+					key={card.id}
 					name={card.name}
 					address={card.address}
 					description={card.description}
