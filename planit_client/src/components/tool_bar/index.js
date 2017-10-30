@@ -7,19 +7,19 @@ export default class Toolbar extends Component {
 		return (
 			<div id='tool-bar'>
 				<div id='tool-bar-left'>
-					<div id='tool-bar-cost-box' class='tool-bar-left-flex-item'>
-						<div class='tool-bar-header-text'>
+					<div id='tool-bar-cost-box' className='tool-bar-left-flex-item'>
+						<div className='tool-bar-header-text'>
 							Avg Cost
 						</div>
-						<div class='tool-bar-text'>
+						<div className='tool-bar-text'>
 							$$$$
 						</div>
 					</div>
-					<div id='tool-bar-travel-time-box' class='tool-bar-left-flex-item'>
-						<div class='tool-bar-header-text'>
+					<div id='tool-bar-travel-time-box' className='tool-bar-left-flex-item'>
+						<div className='tool-bar-header-text'>
 							Travel Time
 						</div>
-						<div class='tool-bar-text'>
+						<div className='tool-bar-text'>
 							5 Hours
 						</div>
 					</div>
@@ -30,10 +30,10 @@ export default class Toolbar extends Component {
 					</div>
 				</div>
 				<div id='tool-bar-right'>
-					<a href="#" id='toolbar-share-button' class='tool-bar-header-text tool-bar-right-flex-item'>
+					<a href="#" id='toolbar-share-button' className='tool-bar-header-text tool-bar-right-flex-item'>
 						Share
 					</a>
-					<a href="#" id='toolbar-export-button' class='tool-bar-header-text tool-bar-right-flex-item'>
+					<a href="#" id='toolbar-export-button' className='tool-bar-header-text tool-bar-right-flex-item'>
 						Export
 					</a>
 				</div>
