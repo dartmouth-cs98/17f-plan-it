@@ -3,7 +3,6 @@ defmodule PlanIt.UserController do
   alias PlanIt.User
   alias PlanIt.Card
   alias PlanIt.Trip
-  alias PlanIt.Travel
 
   use PlanIt.Web, :controller
 
@@ -62,7 +61,6 @@ defmodule PlanIt.UserController do
       username: "slee",
       birthday: ~D[1996-12-31]})
 
-    Repo.insert!(%Travel{type: "walking", duration: ~T[10:10:00]})
 
     Repo.insert!(%Trip{name: "test trip", user_id: 1})
 
@@ -77,7 +75,6 @@ defmodule PlanIt.UserController do
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
-      travel_id: 1,
       trip_id: 1
     })
 
