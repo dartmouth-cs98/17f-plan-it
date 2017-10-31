@@ -6,19 +6,19 @@ import './index.scss'
 
 const SAMPLE_CARDS = [
 	{
-		id: 0,
+		id: 29210,
 		name: 'Bangkok Museum of Fine Arts',
 		address: '13290 Lao Street, Bangkok, Thailand 00191',
 		description: 'Exactly what it sounds like'
 	},
 	{
-		id: 1,
+		id: 119390,
 		name: 'Thai Dye Apparel',
 		address: '1111 Lao Street, Bangkok, Thailand 00191',
 		description: 'Yeah'
 	},
 	{
-		id: 2,
+		id: 22920,
 		name: 'Thai - mline Family Genealogy Clinic',
 		address: '13290 Ma Street, Bangkok, Thailand 1102',
 		description: 'Find your true heritage - trace your roots'
@@ -58,7 +58,10 @@ export default class Suggestions extends Component {
 		return (
 			<div id='suggestions-box'>
 				{this.renderHeader()}
-				<CardList cards={SAMPLE_CARDS} />
+				<CardList 
+					cards={SAMPLE_CARDS}
+					addCard={this.props.addCard}
+				/>
 			</div>
 		)
 	}
@@ -73,6 +76,13 @@ class CardList extends Component {
 					name={card.name}
 					address={card.address}
 					description={card.description}
+					addCard={() => {
+						this.props.addCard({
+							id: card.id,
+							name: card.name,
+							description: card.description
+						})
+					}}
 				/>
 			)
 		})
@@ -97,15 +107,18 @@ class Suggestion extends Component {
 			    <CardHeader
 			      title={this.props.name}
 			      subtitle={this.props.address}
-			      actAsExpander={true}
-			      showExpandableButton={true}
+			      actAsExpander={false}
+			      showExpandableButton={false}
 			    />
-			    <CardActions>
-			    	<FlatButton label='Add' />
-		    	</CardActions>
-			    <CardText expandable={true}>
+			    <CardText expandable={false}>
 			      {this.props.description}
 			    </CardText>
+			    <CardActions>
+			    	<FlatButton 
+			    		label='Add'
+			    		onClick={this.props.addCard}
+		    		/>
+		    	</CardActions>
 			  </Card>
 		  </div>
   	)

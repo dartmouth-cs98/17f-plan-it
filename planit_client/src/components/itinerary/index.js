@@ -72,6 +72,9 @@ export default class Itinerary extends Component {
 						key={card.id}
 						name={card.name}
 						description={card.description}
+						select={() => {
+							this.props.selectCard(card)
+						}}
 						remove={() => {
 							this.props.removeCard(card.id)
 						}}
@@ -107,21 +110,22 @@ class Item extends Component {
 				<Card>
 			    <CardHeader
 			      title={this.props.name}
-			      actAsExpander={true}
-			      showExpandableButton={true}
+			      actAsExpander={false}
+			      showExpandableButton={false}
 			    />
+			    <CardText expandable={false}>
+			      {this.props.description}
+			    </CardText>
 			    <CardActions>
 			    	<FlatButton 
 			    		label='Remove'
 			    		onClick={this.props.remove}
 		    		/>
 		    		<FlatButton
-		    			label='Add After'
+		    			label='Select'
+		    			onClick={this.props.select}
 	    			/>
 		    	</CardActions>
-			    <CardText expandable={true}>
-			      {this.props.description}
-			    </CardText>
 			  </Card>
 		  </div>
   	)
