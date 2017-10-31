@@ -10,6 +10,7 @@ require('./index.scss')
 const ITINERARY = [
 	{
 		date: 'November 14',
+		startCard: 851093,
 		cards: [
 			{
 				id: 851093,
@@ -37,6 +38,7 @@ const ITINERARY = [
 	},
 	{
 		date: 'November 15',
+		startCard: 851093,
 		cards: [
 			{
 				id: 851093,
@@ -82,7 +84,9 @@ export default class Workspace extends Component {
 	}
 
 	addCard(card) {
-		if (!_.isNull(this.state.selected)) {
+		if (!_.isNull(this.state.selected) && _.isUndefined(_.find(this.state.itinerary.cards, (item) => {
+			return card.id === item.id
+		}))) {
 			const prevTravel = _.find(this.state.itinerary.cards, (card) => {
 				return card.id === this.state.selected.next
 			}) || {
@@ -112,7 +116,7 @@ export default class Workspace extends Component {
 					next: prevTravel.next
 				})
 
-				newCard = _.assign(newCard, { next: card.id + 1 })
+				_.assign(newCard, { next: card.id + 1 })
 			}
 
 			toAdd.push(_.assign(this.state.selected, { next: prevTravel.id }))
@@ -128,7 +132,8 @@ export default class Workspace extends Component {
 			this.setState({
 				itinerary: _.assign(this.state.itinerary, {
 					cards: newCards
-				})
+				}), 
+				selected: null
 			})
 		}
 	}

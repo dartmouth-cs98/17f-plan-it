@@ -62,7 +62,9 @@ export default class Itinerary extends Component {
 
 		// reorder cards based on id pointers
 
-		const currentCard = this.props.itinerary.cards[0]
+		const currentCard = _.find(this.props.itinerary.cards, (card) => {
+			return card.id === this.props.itinerary.startCard
+		})
 		let orderedCards = [currentCard]
 
 		while(true) {
