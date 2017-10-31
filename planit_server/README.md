@@ -55,6 +55,7 @@ payload = {
 }
 ```
 Email and username are unique. 400 returned if username/email is taken. 
+Returns user id if create is successful
 
 #### Update a user's information (PUT)
 Only put fields that you wish to be updated
@@ -88,7 +89,7 @@ payload = {
   user_id: 2
 }
 ```
-Will return 400 if user\_id doesn't exist. Else 200
+Returns trip id if successful. Else error with http 400
 
 
 #### Update a trip (PUT)
@@ -104,14 +105,86 @@ Only editable field is name
 
 
 
+## Cards
+#### Get cards by trip id  (GET)
+```
+/api/v1/cards?trip_id=:id
+```
+Returns a list of card objects
+
+#### Get cards by trip id and day number (GET)
+```
+/api/v1/cards?trip_id=:trip_id&day=:day_number
+```
+Returns a list of card objects
+
+#### Create a list of new cards (POST)
+```
+/api/v1/cards
+
+package = [ 
+{ type:"hotel",
+  name:"Hanover Inn",
+  city:"hanover",
+  country:"USA",
+  address:"3 Wheelock street",
+  lat:123123.12,
+  long:121231.12312,
+  start_time:"2017-12-12 20:01:01",
+  end_time:"2017-12-13 20:01:01",
+  day_number:1,
+  trip_id:1,
+  travel_duration:"10:10:10",
+  travel_type:"bike"
+  },
+{ type:"hotel",
+  name:"Hanover Inn",
+  city:"hanover",
+  country:"USA",
+  address:"3 Wheelock street",
+  lat:123123.12,
+  long:121231.12312,
+  start_time:"2017-12-12 20:01:01",
+  end_time:"2017-12-13 20:01:01",
+  day_number:1,
+  trip_id:1,
+  travel_duration:"10:10:10",
+  travel_type:"bike"
+  }
+]
+```
+Returns 400 if insert into databse fails. Make sure your foreign keys are correct.
+
+
+#### Delete a card (DELETE)
+```
+/api/v1/cards/:id
+```
+
+Returns 200 ok if successful. Else 400 failed to delete
+
+#### Update a card (PUT)
+```
+/api/v1/cards/:id
+
+payload =  
+{ 
+  start_time:"2017-12-12 20:01:01",
+  end_time:"2017-12-13 20:01:01",
+  travel_duration:"10:10:10",
+}
+```
+
+Returns 200 ok if inseration is good. Else 400 error
+
 
 
 # TESTING 
 ## Example curls 
 ## Creating cards
 curl -X POST -d '[
-{"type":"hotel","name":"Hanover Inn","city":"hanover","country":"USA","address":"3 Wheelock street","lat":123123.12,"long":121231.12312,"start_time":"2017-12-12 20:01:01","end_time":"2017-12-13 20:01:01","day_number":1,"trip_id":1},
-{"type":"attraction","name":"Baker Berry","city":"hanover","country":"USA","address":"1 Tuck street","lat":1231.12,"long":123.12,"start_time":"2017-12-14 20:01:01","end_time":"2017-12-15 20:01:01","day_number":2,"trip_id":1}]' -H "Content-Type: application/json" http://localhost:4000/api/v1/cards
+{"type":"hotel","name":"Hanover Inn","city":"hanover","country":"USA","address":"3 Wheelock street","lat":123123.12,"long":121231.12312,"start_time":"2017-12-12 20:01:01","end_time":"2017-12-13 20:01:01","day_number":1,"trip_id":1,"travel_duration":"10:10:10","travel_type":"bike"},
+{"type":"attraction","name":"Baker Berry","city":"hanover","country":"USA","address":"1 Tuck street","lat":1231.12,"long":123.12,"start_time":"2017-12-14 20:01:01","end_time":"2017-12-15 20:01:01","day_number":2,"trip_id":1,"travel_duration":"10:10:10","travel_type":"bike"}]' -H "Content-Type: application/json" http://localhost:4000/api/v1/cards
 
 ## Updating/Creating users
 curl -X PUT -d '{"fname":"john","email":"davidwalsh@example.com"}' -H "Content-Type: application/json" http://localhost:4000/api/v1/users/1

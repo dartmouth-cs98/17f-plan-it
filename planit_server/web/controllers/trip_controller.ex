@@ -43,7 +43,6 @@ defmodule PlanIt.TripController do
 
   # POST - insert a new trip
   def create(conn, params) do
-      IO.inspect(params)
 
       {message, changeset} = Trip.changeset(%Trip{}, params)
       |> Repo.insert
@@ -53,7 +52,7 @@ defmodule PlanIt.TripController do
         json put_status(conn, 400), error
       end
 
-      json conn, "ok"
+      json conn, changeset.id
   end
 
   # PUT - update an existing trip

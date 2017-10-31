@@ -13,15 +13,12 @@ defmodule PlanIt.CardController do
       json put_status(conn, 400), "bad parameters"
     end
 
-    #    cards = (from c in Card,
-    #      left_join: t in Travel, on: c.travel_id == t.id,
-    #      where: c.trip_id == ^trip_id and c.day_number == ^day_num,
-    #      select: c,
-    #      order_by: [asc: :start_time],
-    #      preload: [:travel]
-    #     ) |> Repo.all
+    cards = (from c in Card,
+          where: c.trip_id == ^trip_id and c.day_number == ^day_num,
+          select: c,
+          order_by: [asc: :start_time]
+    ) |> Repo.all
 
-        cards = []
     json conn, cards
   end
 
@@ -31,14 +28,11 @@ defmodule PlanIt.CardController do
       json put_status(conn, 400), "bad parameters"
     end
 
-    #   cards = (from c in Card,
-    #     left_join: t in Travel, on: c.travel_id == t.id,
-    #     where: c.trip_id == ^trip_id,
-    #     select: c,
-    #     order_by: [asc: :start_time],
-    #     preload: [:travel]
-    #    ) |> Repo.all
-    cards = []
+    cards = (from c in Card,
+          where: c.trip_id == ^trip_id,
+          select: c,
+          order_by: [asc: :start_time]
+    ) |> Repo.all
 
     json conn, cards
   end
@@ -50,18 +44,33 @@ defmodule PlanIt.CardController do
 
   # POST - insert new cards
   def create(conn, %{"_json" => cards } = params) do
-    changesets = Enum.map(cards, fn(c) ->
-      Card.changeset(%Card{}, c)
+    ecto_cards = Enum.map(cards, fn(c) ->
+      %{
+      type: Map.get(c, "type"),
+      name: Map.get(c, "name"),
+      city: Map.get(c, "city"),
+      country: Map.get(c, "country"),
+      address: Map.get(c, "address"),
+      lat: Map.get(c, "lat"),
+      long: Map.get(c, "long"),
+      start_time: Map.get(c, "start_time") |> Ecto.DateTime.cast!,
+      end_time: Map.get(c, "end_time") |> Ecto.DateTime.cast!,
+      day_number: Map.get(c, "day_number"),
+      trip_id: Map.get(c, "trip_id"),
+
+      travel_type: Map.get(c, "travel_type"),
+      travel_duration: Map.get(c, "travel_duration")|> Ecto.Time.cast!,
+
+      inserted_at: Ecto.DateTime.utc,
+      updated_at: Ecto.DateTime.utc
+      }
     end)
 
-    IO.inspect(changesets)
-
-    Enum.each(changesets, fn(c) ->
-      case Repo.insert(c) do
-        {:ok, changeset } -> nil
-        {:error, changeset} -> json put_status(conn, 400), "error: #{inspect changeset.errors}"
-      end
-    end)
+    try do
+       Repo.insert_all(Card, ecto_cards)
+    catch
+      _, _ -> json put_status(conn, 400), "BAD"
+    end
 
     json conn, "ok"
   end
@@ -79,5 +88,14 @@ defmodule PlanIt.CardController do
     end
 
     json conn, "ok"
+  end
+
+  #DELETE
+  def delete(conn, %{"id" => card_id} = params) do
+    card = Repo.get!(Card, card_id)
+    case Repo.delete card do
+      {:ok, struct} -> json conn, "ok"
+      {:error, changeset} -> json put_status(conn, 400), "failed to delete"
+    end
   end
 end

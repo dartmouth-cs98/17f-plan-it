@@ -29,7 +29,7 @@ defmodule PlanIt.Router do
     resources "/trips", TripController, only: [:show, :create, :update]
 
     get "/cards", CardController, :index
-    resources "/cards", CardController, only: [:create, :update]
+    resources "/cards", CardController, only: [:create, :update, :delete]
 
   end
 end

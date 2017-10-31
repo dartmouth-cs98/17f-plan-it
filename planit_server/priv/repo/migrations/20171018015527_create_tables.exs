@@ -36,7 +36,7 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :day_number, :integer
 
       add :travel_type, :string
-      add :travel_duration, :utc_datetime
+      add :travel_duration, :time
 
       add :trip_id, references(:trip)
 
