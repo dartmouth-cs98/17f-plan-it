@@ -297,7 +297,7 @@ class Onboarding extends Component {
     		return (
 				<div>
 					<div className='landing_page'>
-						<NavBar background={'no_background'}/>
+						<NavBar background={'no_background'} page={'ONBOARDING'}/>
 						<div className='buttons centered'>
 							<input type='text' placeholder='Where does your adventure begin?' 
 								onChange={this.onCityChange}
@@ -311,7 +311,7 @@ class Onboarding extends Component {
 			return (
 				<div>
 					<div className='onboarding'>
-						<NavBar background={'no_background'}/>
+						<NavBar background={'no_background'} page={'ONBOARDING'}/>
 						<Modal
 						    isOpen={this.state.modal_open}
 						    onRequestClose={this.onModalClose}

@@ -47,6 +47,8 @@ class OnboardingInput extends Component {
 						onDateChange={(end_date) => this.props.onEndDateChange(index, this.props.information.get('type'), end_date)}
 						focused={this.state.end_focused}
 						onFocusChange={({ focused }) => this.setState({ end_focused: focused })}
+						withPortal={true}
+						hideKeyboardShortcutsPanel={true}
 						className='date_input'
 					/>
 				</div>
