@@ -1,6 +1,6 @@
 planit_server/_build
 planit_server/deps
-planit_server/node_modules
+planit_server/node_modules/*
 
 planit_server/config/dev.exs
 

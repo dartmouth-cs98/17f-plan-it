@@ -1,13 +1,15 @@
 defmodule PlanIt.TripController do
   alias PlanIt.Repo
   alias PlanIt.Card
+  alias PlanIt.Trip
   import Ecto.Query
 
   use PlanIt.Web, :controller
 
+  # GET - get all trips created by a user
   def index(conn, %{"user_id" => user_id } = params) do
     if user_id == nil do
-      json conn, "this is bad"
+      json put_status(conn, 400), "no user_id provided"
     end
 
     trips = (from t in PlanIt.Trip,
@@ -18,13 +20,13 @@ defmodule PlanIt.TripController do
     json conn, trips
   end
 
+  def index(conn, _params) do
+    error = "no resource available"
+    json put_status(conn, 400), error
+  end
 
-
-  def index(conn, %{"trip_id" => trip_id } = params) do
-    if trip_id == nil do
-      json conn, "this is bad"
-    end
-
+  # GET - get a trip by id
+  def show(conn, %{"id" => trip_id } = params) do
     card_query = from c in Card,
       order_by: c.start_time,
       preload: [:travel]
@@ -39,8 +41,33 @@ defmodule PlanIt.TripController do
       json conn, trips
   end
 
-  def index(conn, _params) do
-    error = "this is bad"
-    json conn, error
+  # POST - insert a new trip
+  def create(conn, params) do
+      IO.inspect(params)
+
+      {message, changeset} = Trip.changeset(%Trip{}, params)
+      |> Repo.insert
+
+      if message == :error  do
+        error = "error: #{inspect changeset.errors}"
+        json put_status(conn, 400), error
+      end
+
+      json conn, "ok"
+  end
+
+  # PUT - update an existing trip
+  def update(conn, %{"id" => trip_id} = params) do
+    trip = Repo.get(Trip, trip_id)
+    changeset = Trip.changeset(trip, params)
+
+    {message, changeset} = Repo.update(changeset)
+
+    if message == :ok do
+      json conn, "ok"
+    else
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
+    end
   end
 end

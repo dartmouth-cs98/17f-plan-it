@@ -3,6 +3,19 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
 
   def change do
 
+    create table(:user) do
+      add :fname, :string
+      add :lname, :string
+      add :email, :string
+      add :username, :string
+      add :birthday, :date
+
+      timestamps()
+    end
+
+    create unique_index(:user, [:email])
+    create unique_index(:user, [:username])
+
     create table(:travel) do
 
       timestamps()
@@ -21,6 +34,8 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :city, :string
       add :country, :string
       add :address, :string
+      add :lat, :float
+      add :long, :float
       add :start_time, :utc_datetime
       add :end_time, :utc_datetime
       add :day_number, :integer
