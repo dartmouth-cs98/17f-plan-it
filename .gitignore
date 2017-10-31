@@ -1,25 +1,27 @@
 planit_server/_build
 planit_server/deps
-planit_server/node_modules
+planit_server/node_modules/*
 
 planit_server/config/dev.exs
 
 # dependencies
-planit/node_modules
+planit_client/node_modules
 
 # testing
-planit/coverage
+planit_client/coverage
 
 # production
-planit/build
+planit_client/build
 
 # misc
-planit/.DS_Store
-planit/.env.local
-planit/.env.development.local
-planit/.env.test.local
-planit/.env.production.local
+planit_client/.DS_Store
+planit_client/.env.local
+planit_client/.env.development.local
+planit_client/.env.test.local
+planit_client/.env.production.local
 
-planit/npm-debug.log*
-planit/yarn-debug.log*
-planit/yarn-error.log
+
+planit_client/npm-debug.log*
+planit_client/yarn-debug.log*
+planit_client/yarn-error.log
+

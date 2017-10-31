@@ -1,13 +1,29 @@
 import React, { Component } from 'react';
-import './index.scss'
+import { withRouter, Link } from 'react-router-dom';
+require('./index.scss')
 
-export default class NavBar extends Component {
+class NavBar extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			background: this.props.background
+		}
+	}
+
 	render() {
 		return (
 			<div>
-				<h1 className="App-title">Welcome to Planit</h1>
+				<div className={`${this.state.background} nav_bar`}>
+					<Link to='/'><div className='logo'>planit</div></Link>
+					<div className='options'>
+						<Link to='/workspace'><div>Explore</div></Link>
+						<Link to='/'><div>Sign up</div></Link>
+						<Link to='/'><div>Log in</div></Link>
+					</div>
+				</div>
 			</div>
 		)
 	}
 }
 
+export default withRouter(NavBar)
