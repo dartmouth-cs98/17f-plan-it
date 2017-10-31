@@ -104,7 +104,7 @@ export default class Workspace extends Component {
 				name: card.name,
 				type: 'Attraction',
 				description: card.description,
-				next: afterTravel, 
+				next: afterTravel.id, 
 				startDatetime: startDate.toString(),
 				endDatetime: endDate.toString()
 			}

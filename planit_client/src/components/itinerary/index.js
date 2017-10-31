@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import $ from 'jquery'
+import _ from 'lodash'
 import {scaleLinear} from 'd3-scale'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
@@ -59,7 +60,24 @@ export default class Itinerary extends Component {
 			.domain([0, 1440])
 			.range([0, 750])
 
-		const cards = this.props.itinerary.cards.map((card) => {
+		// reorder cards based on id pointers
+
+		const currentCard = this.props.itinerary.cards[0]
+		let orderedCards = [currentCard]
+
+		while(true) {
+			const nextCard = _.find(this.props.itinerary.cards, (card) => {
+				return card.id === orderedCards[orderedCards.length - 1].next
+			})
+
+			if (!_.isUndefined(nextCard)) {
+				orderedCards.push(nextCard)
+			} else {
+				break
+			}
+		}
+
+		const cards = orderedCards.map((card) => {
 			if (card.type === 'Attraction') {
 				const start = new Date(card.start_datetime)
 				const end = new Date(card.end_datetime)
