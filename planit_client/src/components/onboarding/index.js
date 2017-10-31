@@ -5,7 +5,7 @@ import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
 import { Map, List } from 'immutable'
 import Modal from 'react-modal'
-require('./index.scss')
+import './index.scss'
 
 function NextArrow(props) {
   const { onClick } = props
@@ -33,8 +33,9 @@ class Onboarding extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
+			landing_page: true,
 			trip_name: '',
-			cities: List([Map({ type: 'city', name: this.props.city_name, start_date: null, end_date: null})]),
+			cities: List([Map({ type: 'city', name: '', start_date: null, end_date: null})]),
 			hotels: List([Map({ type: 'hotel', name: '', start_date: null, end_date: null})]),
 			must_dos: List([Map({ type: 'must_do', name: '', start_date: null, end_date: null})]),
 			modal_open: false
@@ -49,6 +50,8 @@ class Onboarding extends Component {
 		this.onEndDateChange = this.onEndDateChange.bind(this)
 		this.onModalOpen = this.onModalOpen.bind(this)
 		this.onModalClose = this.onModalClose.bind(this)
+		this.onLetsGo = this.onLetsGo.bind(this)
+		this.onCityChange = this.onCityChange.bind(this)
 	}
 
 	onModalOpen(event) {
@@ -57,6 +60,16 @@ class Onboarding extends Component {
 
 	onModalClose(event) {
 		this.setState( { modal_open: false } )
+	}
+
+	onLetsGo(event) {
+		this.setState( { landing_page: false } )
+	}
+
+	onCityChange(event) {
+		const first_city = this.state.cities.get(0).set('name', event.target.value)
+		const state_array = this.state.cities.set(0, first_city)
+		this.setState({ cities: state_array})
 	}
 
 	onNameChange(event) {
@@ -280,27 +293,43 @@ class Onboarding extends Component {
 	      prevArrow: <PrevArrow/>
     	};
 
-		return (
-			<div>
-				<div className='onboarding'>
-					<NavBar background={'no_background'}/>
-					<Modal
-					    isOpen={this.state.modal_open}
-					    onRequestClose={this.onModalClose}
-					    className='card horizontal center no_outline'>
-						<div class="card-content">
-				        	<p>Input at least one city with a start date</p>
-				        </div>
-					</Modal>
-					<Slider {...settings} className='slider'>
-				        {this.name_slide()}
-				        {this.cities_slide()}
-				        {this.hotels_slide()}
-				        {this.mustdo_slide()}
-			      	</Slider>
+    	if (this.state.landing_page) {
+    		return (
+				<div>
+					<div className='landing_page'>
+						<NavBar background={'no_background'}/>
+						<div className='buttons centered'>
+							<input type='text' placeholder='Where does your adventure begin?' 
+								onChange={this.onCityChange}
+								className='landing_input'/>
+							<div className='button_box' onClick={this.onLetsGo}>Let's go</div>
+						</div>
+					</div>
 				</div>
-			</div>
-		)
+			)
+    	} else {
+			return (
+				<div>
+					<div className='onboarding'>
+						<NavBar background={'no_background'}/>
+						<Modal
+						    isOpen={this.state.modal_open}
+						    onRequestClose={this.onModalClose}
+						    className='card horizontal center no_outline'>
+							<div class="card-content">
+					        	<p>Input at least one city with a start date</p>
+					        </div>
+						</Modal>
+						<Slider {...settings} className='slider'>
+					        {this.name_slide()}
+					        {this.cities_slide()}
+					        {this.hotels_slide()}
+					        {this.mustdo_slide()}
+				      	</Slider>
+					</div>
+				</div>
+			)
+		}
 	}
 }
 
