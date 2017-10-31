@@ -7,6 +7,8 @@ import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
 require('./index.scss')
 
+const DEFAULT_START = '9:00:00'
+const DEFAULT_END = '10:00:00'
 const ITINERARY = [
 	{
 		date: 'November 14',
@@ -17,8 +19,8 @@ const ITINERARY = [
 				type: 'Attraction',
 				name: 'Thai Taiwanese Embassy',
 				description: 'Two become one',
-				startDatetime: 'October 28, 2017 9:45:00',
-				endDatetime: 'October 28, 2017 10:30:00',
+				startDatetime: 'November 14, 2017 9:45:00',
+				endDatetime: 'November 14, 2017 10:30:00',
 				next: 193048
 			},
 			{
@@ -45,8 +47,8 @@ const ITINERARY = [
 				type: 'Attraction',
 				name: 'Thai Taiwanese Embassy',
 				description: 'Two become one',
-				startDatetime: 'October 28, 2017 9:45:00',
-				endDatetime: 'October 28, 2017 10:30:00',
+				startDatetime: 'November 14, 2017 9:45:00',
+				endDatetime: 'November 14, 2017 10:30:00',
 				next: 193048
 			},
 			{
@@ -84,7 +86,23 @@ export default class Workspace extends Component {
 	}
 
 	addCard(card) {
-		if (!_.isNull(this.state.selected) && _.isUndefined(_.find(this.state.itinerary.cards, (item) => {
+		if (this.state.itinerary.cards.length === 0) {
+			let newCard = {
+				id: card.id,
+				name: card.name,
+				type: 'Attraction',
+				description: card.description,
+				startDatetime: `${this.state.itinerary.date}, ${DEFAULT_START}`,
+				endDatetime: `${this.state.itinerary.date}, ${DEFAULT_END}`
+			}
+
+			this.setState({
+				itinerary: _.assign(this.state.itinerary, {
+					cards: [newCard],
+					startCard: newCard.id
+				})
+			})
+		} else if (!_.isNull(this.state.selected) && _.isUndefined(_.find(this.state.itinerary.cards, (item) => {
 			return card.id === item.id
 		}))) {
 			const prevTravel = _.find(this.state.itinerary.cards, (card) => {
@@ -142,17 +160,70 @@ export default class Workspace extends Component {
 		this.setState({ selected: card })
 	}
 
-	removeCard(id) {
-		this.setState({
-			itinerary: {
-				date: this.state.itinerary.date,
-				cards: _.filter(this.state.itinerary.cards, (card) => { 
-					return card.id !== id
-				})
-			}
+	removeCard(card) {
+		let prevTravel = _.find(this.state.itinerary.cards, (item) => {
+			return item.next === card.id
 		})
 
-		// api call to remove card from itinerary
+		const nextTravel = _.find(this.state.itinerary.cards, (item) => {
+			return card.next === item.id
+		})
+
+		let toDelete = [card.id]
+		let prevCard
+		let startCard
+
+		if (!_.isUndefined(prevTravel)) {
+			prevCard = _.find(this.state.itinerary.cards, (item) => {
+				return item.next === prevTravel.id
+			})
+
+			toDelete.push(prevCard.id)
+
+			if (!_.isUndefined(nextTravel)) {
+				_.assign(prevTravel, { next: nextTravel.next })
+			}
+
+			toDelete.push(prevTravel.id)
+		} else {
+			if (!_.isUndefined(nextTravel)) {
+				startCard = nextTravel.next
+			}
+		}
+
+		if (!_.isUndefined(nextTravel)) {
+			console.log(nextTravel)
+			toDelete.push(nextTravel.id)
+		} else {
+			prevTravel = null
+
+			if (!_.isUndefined(prevCard)) {
+				_.assign(prevCard, { next: null })
+			}
+		}
+
+		let newCards = _.filter(this.state.itinerary.cards, (item) => {
+			return _.indexOf(toDelete, item.id) < 0
+		})
+
+		if (!_.isNil(prevTravel)) {
+			newCards.push(prevTravel)
+		}
+
+		if (!_.isUndefined(prevCard)) {
+			newCards.push(prevCard)
+		}
+
+		console.log(newCards)
+
+		this.setState({
+			itinerary: _.assign(this.state.itinerary, {
+				startCard: startCard || this.state.itinerary.startCard,
+				cards: newCards
+			}), 
+			selected: null
+		})
+		// TODO: hook up api call to remove card from itinerary
 	}
 
 	dayForward() {
@@ -173,6 +244,8 @@ export default class Workspace extends Component {
 	}
 
 	render() {
+							// <Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
+
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
@@ -189,7 +262,6 @@ export default class Workspace extends Component {
 						backArrow={this.state.day > 1}
 						forwardArrow={this.state.day < ITINERARY.length}
 					/>
-					<Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
 				</div>
 			</div>
 		)

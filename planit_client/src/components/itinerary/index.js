@@ -55,16 +55,20 @@ export default class Itinerary extends Component {
 	}
 
 	renderList() {
+		if (this.props.itinerary.cards.length === 0) {
+			return 
+		}
+
 		// scale to convert time units to positioning on itinerary
 		const timeScale = scaleLinear()
 			.domain([0, 1440])
 			.range([0, 750])
 
 		// reorder cards based on id pointers
-
 		const currentCard = _.find(this.props.itinerary.cards, (card) => {
 			return card.id === this.props.itinerary.startCard
 		})
+
 		let orderedCards = [currentCard]
 
 		while(true) {
@@ -96,7 +100,7 @@ export default class Itinerary extends Component {
 							this.props.selectCard(card)
 						}}
 						remove={() => {
-							this.props.removeCard(card.id)
+							this.props.removeCard(card)
 						}}
 						style={{height: `${height}px`}}
 					/>
