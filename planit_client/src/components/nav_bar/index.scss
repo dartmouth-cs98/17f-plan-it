@@ -10,8 +10,9 @@
 .options {
   display: flex;
   justify-content: space-around;
-  width: 30vw;
+  width: 35vw;
   font-family: 'Roboto';
+  font-weight: 220;
 }
 
 .logo {
@@ -28,7 +29,7 @@
 }
 
 .road_trip_background a {
-  color: white;
+  color: #4F4F4F;
 }
 
 .road_trip_background a:hover {
