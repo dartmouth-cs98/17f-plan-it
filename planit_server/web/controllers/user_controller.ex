@@ -34,7 +34,7 @@ defmodule PlanIt.UserController do
       json put_status(conn, 400), error
     end
 
-    json conn, "ok"
+    json conn, changeset.id
   end
 
   # PUT - update an existing user
