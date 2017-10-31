@@ -1,7 +1,6 @@
 defmodule PlanIt.CardController do
   alias PlanIt.Repo
   alias PlanIt.Card
-  alias PlanIt.Travel
 
   import Ecto.Query
   import Ecto.Changeset
@@ -14,14 +13,15 @@ defmodule PlanIt.CardController do
       json put_status(conn, 400), "bad parameters"
     end
 
-    cards = (from c in Card,
-      left_join: t in Travel, on: c.travel_id == t.id,
-      where: c.trip_id == ^trip_id and c.day_number == ^day_num,
-      select: c,
-      order_by: [asc: :start_time],
-      preload: [:travel]
-     ) |> Repo.all
+    #    cards = (from c in Card,
+    #      left_join: t in Travel, on: c.travel_id == t.id,
+    #      where: c.trip_id == ^trip_id and c.day_number == ^day_num,
+    #      select: c,
+    #      order_by: [asc: :start_time],
+    #      preload: [:travel]
+    #     ) |> Repo.all
 
+        cards = []
     json conn, cards
   end
 
@@ -31,13 +31,14 @@ defmodule PlanIt.CardController do
       json put_status(conn, 400), "bad parameters"
     end
 
-    cards = (from c in Card,
-      left_join: t in Travel, on: c.travel_id == t.id,
-      where: c.trip_id == ^trip_id,
-      select: c,
-      order_by: [asc: :start_time],
-      preload: [:travel]
-     ) |> Repo.all
+    #   cards = (from c in Card,
+    #     left_join: t in Travel, on: c.travel_id == t.id,
+    #     where: c.trip_id == ^trip_id,
+    #     select: c,
+    #     order_by: [asc: :start_time],
+    #     preload: [:travel]
+    #    ) |> Repo.all
+    cards = []
 
     json conn, cards
   end

@@ -5,7 +5,6 @@ defmodule PlanIt.Card do
   @primary_key {:id, :id, autogenerate: true}
   schema "card" do
     belongs_to :trip, PlanIt.Trip
-    belongs_to :travel, PlanIt.Travel
 
     field :type, :string
     field :name, :string
@@ -18,14 +17,17 @@ defmodule PlanIt.Card do
     field :end_time, :utc_datetime
     field :day_number, :integer
 
+    field :travel_type, :string
+    field :travel_duration, :time
+
     timestamps()
   end
 
   def changeset(card, params) do
     #validate format of lat and long
     card
-    |> cast(params, [:type, :name, :city, :country, :address, :lat, :long, :start_time, :end_time, :day_number])
-    |> cast(params, [:travel_id, :trip_id])
+    |> cast(params, [:type, :name, :city, :country, :address, :lat, :long, :start_time, :end_time, :day_number, :travel_type, :travel_duration])
+    |> cast(params, [:trip_id])
     |> validate_required([:name, :country, :day_number])
   end
 end
