@@ -85,41 +85,46 @@ export default class Workspace extends Component {
 		if (!_.isNull(this.state.selected)) {
 			const prevTravel = _.find(this.state.itinerary.cards, (card) => {
 				return card.id === this.state.selected.next
-			})
-
-			// console.log(prevTravel)
+			}) || {
+				id: card.id - 1,
+				type: 'Travel'
+			}
 
 			const prevEnd = new Date(this.state.selected.endDatetime)
 			const startDate = new Date(prevEnd.getTime() + 15*60000)
 			const endDate = new Date(startDate.getTime() + 60*60000)
 
-			const afterTravel = {
-				id: 103840,
-				type: 'Travel',
-				next: prevTravel.next
-			}
+			let toAdd = []
 
-			const newCard = {
+			let newCard = {
 				id: card.id,
 				name: card.name,
 				type: 'Attraction',
 				description: card.description,
-				next: afterTravel.id, 
 				startDatetime: startDate.toString(),
 				endDatetime: endDate.toString()
 			}
 
-			const beforeTravel = _.assign(prevTravel, {	next: card.id })
+			if (!_.isUndefined(this.state.selected.next)) {
+				toAdd.push({
+					id: card.id + 1,
+					type: 'Travel',
+					next: prevTravel.next
+				})
+
+				newCard = _.assign(newCard, { next: card.id + 1 })
+			}
+
+			toAdd.push(_.assign(this.state.selected, { next: prevTravel.id }))
+			toAdd.push(_.assign(prevTravel, {	next: card.id }))
+			toAdd.push(newCard)
 
 			let newCards = _.filter(this.state.itinerary.cards, (card) => {
-				return card.id !== prevTravel.id
+				return card.id !== prevTravel.id && card.id !== this.state.selected.id
 			})
 
-			// console.log(newItinerary)
+			newCards = newCards.concat(toAdd)
 
-			newCards = newCards.concat([beforeTravel, newCard, afterTravel])
-
-			console.log(newCards)
 			this.setState({
 				itinerary: _.assign(this.state.itinerary, {
 					cards: newCards
