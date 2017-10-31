@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { connect } from 'react-redux';
+import { withRouter, Link } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
 import { Map, List } from 'immutable'
 import Modal from 'react-modal'
+import { createTrip } from '../../actions/index.js'
 import './index.scss'
 
 function NextArrow(props) {
@@ -52,6 +54,12 @@ class Onboarding extends Component {
 		this.onModalClose = this.onModalClose.bind(this)
 		this.onLetsGo = this.onLetsGo.bind(this)
 		this.onCityChange = this.onCityChange.bind(this)
+		this.onCreateTrip = this.onCreateTrip.bind(this)
+	}
+
+	onCreateTrip() {
+		const trip = Map({ 'name': this.state.trip_name, 'user_id': 0 })
+		this.props.createTrip(trip)
 	}
 
 	onModalOpen(event) {
@@ -227,7 +235,7 @@ class Onboarding extends Component {
 		else {
 			return (
 				<Link to='/workspace'>
-					<div className='button_container start'>Start Trip</div>
+					<div className='button_container start' onClick={this.onCreateTrip}>Start Trip</div>
 				</Link>
 			)
 		}
@@ -333,4 +341,4 @@ class Onboarding extends Component {
 	}
 }
 
-export default Onboarding
+export default withRouter(connect(null, { createTrip })(Onboarding));
