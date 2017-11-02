@@ -45,35 +45,55 @@ defmodule PlanIt.CardController do
 
   # POST - insert new cards
   def create(conn, %{"_json" => cards } = params) do
-    ecto_cards = Enum.map(cards, fn(c) ->
-      %{
-      type: Map.get(c, "type"),
-      name: Map.get(c, "name"),
-      city: Map.get(c, "city"),
-      country: Map.get(c, "country"),
-      address: Map.get(c, "address"),
-      lat: Map.get(c, "lat"),
-      long: Map.get(c, "long"),
-      start_time: Map.get(c, "start_time") |> Ecto.DateTime.cast!,
-      end_time: Map.get(c, "end_time") |> Ecto.DateTime.cast!,
-      day_number: Map.get(c, "day_number"),
-      trip_id: Map.get(c, "trip_id"),
+    #    ecto_cards = Enum.map(cards, fn(c) ->
+    #      %{
+    #      type: Map.get(c, "type"),
+    #      name: Map.get(c, "name"),
+    #      city: Map.get(c, "city"),
+    #      country: Map.get(c, "country"),
+    #      address: Map.get(c, "address"),
+    #      lat: Map.get(c, "lat"),
+    #      long: Map.get(c, "long"),
+    #      start_time: Map.get(c, "start_time") |> Ecto.DateTime.cast!,
+    #      end_time: Map.get(c, "end_time") |> Ecto.DateTime.cast!,
+    #      day_number: Map.get(c, "day_number"),
+    #      trip_id: Map.get(c, "trip_id"),
+    #
+    #      travel_type: Map.get(c, "travel_type"),
+    #      travel_duration: Map.get(c, "travel_duration")|> Ecto.Time.cast!,
+    #
+    #      inserted_at: Ecto.DateTime.utc,
+    #      updated_at: Ecto.DateTime.utc
+    #      }
+    #    end)
 
-      travel_type: Map.get(c, "travel_type"),
-      travel_duration: Map.get(c, "travel_duration")|> Ecto.Time.cast!,
+    #try do
+    #   Repo.insert_all(Card, ecto_cards)
+    #catch
+    #  _, _ -> json put_status(conn, 400), "BAD"
+    #end
 
-      inserted_at: Ecto.DateTime.utc,
-      updated_at: Ecto.DateTime.utc
-      }
+    return_items = Enum.map(cards, fn(c) ->
+      {status, changeset} = Card.changeset(%Card{}, c) |> Repo.insert()
     end)
 
-    try do
-       Repo.insert_all(Card, ecto_cards)
-    catch
-      _, _ -> json put_status(conn, 400), "BAD"
-    end
+    changesets = Enum.map(return_items, fn(c) ->
+      case c do
+        {:ok, changeset} -> changeset
+        _ ->
+      end
+    end)
+    |> Enum.filter(fn(i) -> i end)
 
-    json conn, "ok"
+    messages = Enum.map(return_items, fn(c) ->
+      case c do
+        {:error, message} -> message
+         _ -> nil
+      end
+    end)
+    |> Enum.filter(fn(i) -> i end)
+
+    json conn, changesets
   end
 
   # PUT - update an existing card
