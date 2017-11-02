@@ -17,6 +17,6 @@ defimpl Poison.Encoder, for: Any do
   end
 
   defp sanitize_trip(map) do
-    Map.drop(map, [:card, :user])
+    Map.drop(map, [:card, :user, :favorited_trip])
   end
 end
