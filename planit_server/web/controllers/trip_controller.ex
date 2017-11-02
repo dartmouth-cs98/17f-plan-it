@@ -28,8 +28,7 @@ defmodule PlanIt.TripController do
   # GET - get a trip by id
   def show(conn, %{"id" => trip_id } = params) do
     card_query = from c in Card,
-      order_by: c.start_time,
-      preload: [:travel]
+      order_by: c.start_time
 
     trips = (from t in PlanIt.Trip,
       where: t.id == ^trip_id,
