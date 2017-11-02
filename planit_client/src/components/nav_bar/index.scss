@@ -15,6 +15,30 @@
   font-weight: 220;
 }
 
+.nav-button {
+  display: inherit;
+  background-color: inherit;
+  color: inherit;
+  width: inherit;
+  padding-top: inherit;
+  padding-bottom: inherit;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+  border-bottom-left-radius: inherit;
+  border: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  background-position: inherit;
+  background-repeat: inherit;
+}
+
+.nav-button:focus {
+  outline: inherit;
+  text-shadow: 0 0 10px grey;
+}
+
 .logo {
   font-size: 30px;
   font-family: 'Source Sans Pro';
