@@ -21,8 +21,10 @@ defmodule PlanIt.TripController do
   end
 
   def index(conn, _params) do
-    error = "no resource available"
-    json put_status(conn, 400), error
+    trips = (from t in PlanIt.Trip,
+      where: t.publish == true,
+      select: t) |> Repo.all
+    json conn, trips
   end
 
   # GET - get a trip by id
