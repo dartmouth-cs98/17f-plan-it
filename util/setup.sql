@@ -4,17 +4,10 @@
    
 USE plan_it_dev;
 
-/* Planit
-   Jeff Gao, Helen He, Sam Lee, Emily Lin, Rob Sayegh, Jiyun Sung | 17F/18W
-   setup.sql */
-   
-USE plan_it_dev;
-
 DROP TABLE IF EXISTS person;
 DROP TABLE IF EXISTS edit_permission;
 DROP TABLE IF EXISTS trip;
 DROP TABLE IF EXISTS card;
-DROP TABLE IF EXISTS travel;
 DROP TABLE IF EXISTS trip_comment;
 
 CREATE TABLE person (
@@ -46,19 +39,17 @@ CREATE TABLE card (
 	card_start_time	DATETIME	 NOT NULL,
     card_end_time	DATETIME	 NOT NULL,
 	card_day_number INT			 NOT NULL,
+    travel_type		VARCHAR(50),
+    travel_duration	TIME,
     PRIMARY KEY	(card_id),
-	FOREIGN KEY (trip_id) 	REFERENCES trip(trip_id),
-	FOREIGN KEY (travel_id) REFERENCES travel(travel_id)
+	FOREIGN KEY (trip_id) 	REFERENCES trip(trip_id)
 	);
     
-CREATE TABLE travel (
-	travel_id		INT			AUTO_INCREMENT,
-    travel_type		VARCHAR(50)	NOT NULL,
-    travel_duration		TIME	NOT NULL,
-    PRIMARY KEY (travel_id),
-	FOREIGN KEY (card_id) REFERENCES card(card_id)
-    );
-    
+CREATE TABLE favorited_trip (
+	PRIMARY KEY (person_id, user_id),
+    FOREIGN KEY (person_id) REFERENCES person(person_id),
+    FOREIGN KEY (trip_id) REFERENCES trip(trip_id)
+);
 
 /* Future additions
 CREATE TABLE edit_permission (

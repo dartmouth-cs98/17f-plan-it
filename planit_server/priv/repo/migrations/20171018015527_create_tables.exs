@@ -3,10 +3,18 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
 
   def change do
 
-    create table(:travel) do
+    create table(:user) do
+      add :fname, :string
+      add :lname, :string
+      add :email, :string
+      add :username, :string
+      add :birthday, :date
 
       timestamps()
     end
+
+    create unique_index(:user, [:email])
+    create unique_index(:user, [:username])
 
     create table(:trip) do
       add :name, :string
@@ -21,22 +29,25 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :city, :string
       add :country, :string
       add :address, :string
+      add :lat, :float
+      add :long, :float
       add :start_time, :utc_datetime
       add :end_time, :utc_datetime
       add :day_number, :integer
 
-      add :travel_id, references(:travel)
+      add :travel_type, :string
+      add :travel_duration, :time
+
       add :trip_id, references(:trip)
 
       timestamps()
     end
 
-    alter table(:travel) do
-      add :type, :string
-      add :duration, :time
+    create table(:favorited_trip) do
+      add :user_id, references(:user)
+      add :trip_id, references(:trip)
 
-      add :card_id, references(:card)
+      timestamps()
     end
-
   end
 end
