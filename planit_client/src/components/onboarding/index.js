@@ -254,7 +254,7 @@ class Onboarding extends Component {
 	cities_slide() {
 		return (
 			<div className='slide'>
-				<div className='title'>Where are you going?</div>
+				<div className='slide_title'>Where are you going?</div>
 				<div className='scrollable'>
 					{this.renderCities()}
 					<div className='button_container add' onClick={this.onAddCity}>Add</div>
@@ -267,8 +267,9 @@ class Onboarding extends Component {
 	hotels_slide() {
 		return (
 			<div className='slide'>
-				<div className='title'>Where are you staying?</div>
+				
 				<div className='scrollable'>
+					<div className='slide_title'>Where are you staying?</div>
 					{this.renderHotels()}
 					<div className='button_container add' onClick={this.onAddHotel}>Add</div>
 				</div>
@@ -280,7 +281,7 @@ class Onboarding extends Component {
 	mustdo_slide() {
 		return (
 			<div className='slide'>
-				<div className='title'>Any must do's?</div>
+				<div className='slide_title'>Any must do's?</div>
 				<div className='scrollable'>
 					{this.renderMustDos()}
 					<div className='button_container add' onClick={this.onAddMustDo}>Add</div>

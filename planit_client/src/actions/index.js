@@ -28,7 +28,7 @@ export const ActionTypes = {
 
 export function fetchTrips(id) {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/trips?user_id=:${id}`).then((response) => {
+    axios.get(`${ROOT_URL}/trips?user_id=${id}`).then((response) => {
       dispatch({ type: 'FETCH_TRIPS', payload: response.data });
     }).catch((error) => {
       dispatch({ type: 'FETCH_TRIPS_ERROR', payload: error });
@@ -38,7 +38,7 @@ export function fetchTrips(id) {
 
 export function fetchTrip(id) {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/trips/:${id}`).then((response) => {
+    axios.get(`${ROOT_URL}/trips/${id}`).then((response) => {
       dispatch({ type: 'FETCH_TRIP', payload: response.data });
     }).catch((error) => {
       dispatch({ type: 'FETCH_TRIP_ERROR', payload: error });
