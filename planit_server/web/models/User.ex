@@ -12,6 +12,7 @@ defmodule PlanIt.User do
     field :birthday, :date
 
     has_many :trip, PlanIt.Trip
+    has_many :favorited_trip, PlanIt.Trip
     timestamps()
   end
 

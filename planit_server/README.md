@@ -112,7 +112,7 @@ Returns trip id if create is successful.
 Returns 400 and an error message if not successful.
 
 #### Update a trip (PUT)
-The only field that should be updated for a trip is its name.
+At this point, the only field that should be updated for a trip is its name.
 
 ```
 /api/v1/trips/:id
@@ -142,7 +142,7 @@ Returns an empty list if that combination of trip id and day number isn't associ
 
 #### Create new cards (POST)
 
-Must provide a list of cards, even if you are only trying to insert one card.
+Must provide a **list** of cards, even if you are only trying to insert one card.
 
 ```
 /api/v1/cards

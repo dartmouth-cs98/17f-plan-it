@@ -10,6 +10,7 @@ defmodule PlanIt.Trip do
     field :name, :string
 
     has_many :card, PlanIt.Card
+    has_many :favorite_trip, PlanIt.Trip
 
     timestamps()
   end

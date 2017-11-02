@@ -43,6 +43,11 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       timestamps()
     end
 
+    create table(:favorited_trip) do
+      add :user_id, references(:user)
+      add :trip_id, references(:trip)
 
+      timestamps()
+    end
   end
 end

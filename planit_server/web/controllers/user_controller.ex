@@ -3,6 +3,7 @@ defmodule PlanIt.UserController do
   alias PlanIt.User
   alias PlanIt.Card
   alias PlanIt.Trip
+  alias PlanIt.FavoritedTrip
 
   use PlanIt.Web, :controller
 
@@ -54,15 +55,24 @@ defmodule PlanIt.UserController do
 
   # GET - inserts sample data
   def create_sample(conn, _params) do
+
     Repo.insert!(%User{
       fname: "Sam",
       lname: "Lee",
       email: "samlee@example.com",
       username: "slee",
       birthday: ~D[1996-12-31]})
+    Repo.insert!(%User{
+      fname: "John",
+      lname: "Doe",
+      email: "jd@example.com",
+      username: "johndoe",
+      birthday: ~D[1996-01-01]})
 
 
     Repo.insert!(%Trip{name: "test trip", user_id: 1})
+    Repo.insert!(%Trip{name: "Sam's trip", user_id: 1})
+    Repo.insert!(%Trip{name: "John's trip", user_id: 2})
 
     Repo.insert!(%Card{
       type: "restaurant",
@@ -92,7 +102,7 @@ defmodule PlanIt.UserController do
       trip_id: 1
     })
 
-
+    Repo.insert!(%FavoritedTrip{user_id: 1, trip_id: 2})
 
     json conn, []
   end

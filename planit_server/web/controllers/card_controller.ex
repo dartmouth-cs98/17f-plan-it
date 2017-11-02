@@ -37,6 +37,7 @@ defmodule PlanIt.CardController do
     json conn, cards
   end
 
+  # GET - bad params
   def index(conn, _params) do
     error = "no resource available"
     json put_status(conn, 400), error
@@ -90,7 +91,7 @@ defmodule PlanIt.CardController do
     json conn, "ok"
   end
 
-  #DELETE
+  # DELETE - delete a card
   def delete(conn, %{"id" => card_id} = params) do
     card = Repo.get!(Card, card_id)
     case Repo.delete card do

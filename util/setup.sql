@@ -44,6 +44,12 @@ CREATE TABLE card (
     PRIMARY KEY	(card_id),
 	FOREIGN KEY (trip_id) 	REFERENCES trip(trip_id)
 	);
+    
+CREATE TABLE favorited_trip (
+	PRIMARY KEY (person_id, user_id),
+    FOREIGN KEY (person_id) REFERENCES person(person_id),
+    FOREIGN KEY (trip_id) REFERENCES trip(trip_id)
+);
 
 /* Future additions
 CREATE TABLE edit_permission (
