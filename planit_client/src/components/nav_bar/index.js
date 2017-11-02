@@ -15,7 +15,7 @@ class NavBar extends Component {
 		if (this.authenticated) {
 			return (
 				<div className='options'>
-					<Link to='/workspace'><div>Explore</div></Link>
+					<Link to='/explore'><div>Explore</div></Link>
 					<Link to='/'><div>New Trip</div></Link>
 					<Link to='/dashboard'><div>Dashboard</div></Link>
 					<Link to='/'><div>Log out</div></Link>
@@ -24,7 +24,7 @@ class NavBar extends Component {
 		} else {
 			return (
 				<div className='options'>
-					<Link to='/workspace'><div>Explore</div></Link>
+					<Link to='/explore'><div>Explore</div></Link>
 					<Link to='/'><div>Sign up</div></Link>
 					<Link to='/'><div>Log in</div></Link>
 				</div>
