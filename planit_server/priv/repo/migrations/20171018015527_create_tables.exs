@@ -38,14 +38,14 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :travel_type, :string
       add :travel_duration, :time
 
-      add :trip_id, references(:trip)
+      add :trip_id, references(:trip, on_delete: :delete_all)
 
       timestamps()
     end
 
     create table(:favorited_trip) do
       add :user_id, references(:user)
-      add :trip_id, references(:trip)
+      add :trip_id, references(:trip, on_delete: :delete_all)
 
       timestamps()
     end

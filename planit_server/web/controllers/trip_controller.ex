@@ -42,7 +42,6 @@ defmodule PlanIt.TripController do
 
   # POST - insert a new trip
   def create(conn, params) do
-
       {message, changeset} = Trip.changeset(%Trip{}, params)
       |> Repo.insert
 
@@ -66,6 +65,15 @@ defmodule PlanIt.TripController do
     else
       error = "error: #{inspect changeset.errors}"
       json put_status(conn, 400), error
+    end
+  end
+
+  # DELETE - delete an existing trip
+  def delete(conn, %{"id" => trip_id}) do
+    trip = Repo.get(Trip, trip_id)
+    case Repo.delete trip do
+      {:ok, struct} -> json conn, "ok"
+      {:error, message} -> json put_status(conn, 400), "failed to delete"
     end
   end
 end
