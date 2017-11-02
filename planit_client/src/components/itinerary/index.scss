@@ -1,6 +1,33 @@
-#itinerary-container {
-	min-height: 500px;
-	width: 35%;
+#itinerary-box {
+	min-width: 350px;
+	min-height: 750px;
+	margin-right: 5px;
 	display: inline-block;
 	background-color: #F2F2F2;
+	overflow-y: scroll;
+
+	.itinerary-header {
+		height: 35px;
+		background-color: #66A9CD;
+		line-height: 35px;
+		display: flex;
+
+		.itinerary-label {
+			color: #FFFFFF !important;
+			font-size: 14px !important;
+			width: 100%;
+		}
+
+		.left-button {
+			min-width: 40px !important;
+		}
+
+		.right-button {
+			min-width: 40px !important;
+		}
+	}
+}
+
+.travel-bar {
+	text-align: center;
 }
