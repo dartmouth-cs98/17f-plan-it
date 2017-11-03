@@ -15,7 +15,8 @@ defmodule PlanIt.FavoritedTripController do
 
     favorited_trips = (from t in PlanIt.FavoritedTrip,
       where: t.user_id == ^user_id,
-      select: t)
+      select: t,
+      order_by: [desc: :updated_at])
       |> Repo.all
 
     json conn, favorited_trips
@@ -38,7 +39,7 @@ defmodule PlanIt.FavoritedTripController do
         json put_status(conn, 400), error
       end
 
-      json conn, changeset.id
+      json conn, "ok"
   end
 
   # DELETE - delete a favorited trip by user id and trip id

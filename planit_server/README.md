@@ -42,7 +42,7 @@ General information:
 * All information should be sent in JSON. Set header to application/json.
 * For updates, only include the fields that should be updated.
 
-To create sample data:
+To create sample data (GET):
 
 ```
 /api/v1/createsample
@@ -89,7 +89,7 @@ Returns 400 and an error message if the update is not successful.
 
 ## Trips
 
-#### Get all "public" trips to display on the explore page
+#### Get all "published" trips to display on the explore page (GET)
 ```
 /api/v1/trips
 ```
@@ -119,6 +119,7 @@ Returns an empty list if that trip id doesn't exist in the database.
 
 payload = {
   name: "Thailand Fun Adventure",
+  publish: true,
   user_id: 2
 }
 ```
@@ -127,8 +128,6 @@ Returns trip id if create is successful.
 Returns 400 and an error message if not successful.
 
 #### Update a trip (PUT)
-At this point, the only field that should be updated for a trip is its name.
-
 ```
 /api/v1/trips/:id
 
@@ -142,7 +141,7 @@ Returns 400 and an error message if the update is not successful.
 
 #### Delete a trip (DELETE)
 
-Deleting a trip also deletes its associated cards. It is also removed as a favorited trip for any users who have favorited it.
+Deleting a trip deletes any cards associated with the trip. The trip is also removed as a favorited trip for any users who have favorited it.
 
 ```
 /api/v1/trips/:id
@@ -150,6 +149,31 @@ Deleting a trip also deletes its associated cards. It is also removed as a favor
 
 Returns "ok" if delete is successful. 
 Returns 400 and an error message if the delete is not successful.
+
+## Favorited trips
+#### Get all trips favorited by a user (GET)
+```
+/api/v1/favorited?user_id=:id
+```
+
+Returns a list of trip ids that correspond to the user's favorited trips if get is successful. The list is ordered by descending update time. 
+Returns an empty list if that user hasn't favorited any trips or does not exist.
+
+#### Favorite a trip (POST)
+```
+/api/v1/favorited?user_id=:user_id&trip_id=:trip_id
+```
+
+Returns "ok" if insert is successful.
+Returns 400 and an error message if not successful.
+
+#### Un-favorite a trip (DELETE)
+```
+/api/v1/favorited?user_id=:user_id&trip_id=:trip_id
+```
+
+Returns "ok" if delete is successful.
+Returns 400 and an error message if not successful.
 
 ## Cards
 #### Get cards by trip id  (GET)
@@ -253,7 +277,6 @@ package = [
 Returns a list of card objects if create is successful. You'll have to get the new id from this list.
 Returns "BAD" if the card is not successful.
 
-
 #### Update a single card (PUT)
 ```
 /api/v1/cards/:id
@@ -276,6 +299,7 @@ Returns 400 and an error message if not successful.
 
 Returns "ok" if delete is successful. 
 Returns 400 and an error message if the delete is not successful.
+
 
 # TESTING
 
