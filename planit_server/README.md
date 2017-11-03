@@ -17,6 +17,11 @@ mix local.hex
 mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
 
+### Install Dependencies
+```
+mix deps.gets
+```
+
 ### Make sure that mysql.server is running
 ```
 mysql.server start
