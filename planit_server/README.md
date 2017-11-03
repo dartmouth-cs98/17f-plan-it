@@ -42,6 +42,12 @@ General information:
 * All information should be sent in JSON. Set header to application/json.
 * For updates, only include the fields that should be updated.
 
+To create sample data:
+
+```
+/api/v1/createsample
+```
+
 ## Users
 #### Get a user by user id (GET)
 ```
@@ -82,6 +88,15 @@ Returns "ok" if update is successful.
 Returns 400 and an error message if the update is not successful.
 
 ## Trips
+
+#### Get all "public" trips to display on the explore page
+```
+/api/v1/trips
+```
+
+Returns a list of trip objects if get is successful.
+Returns an empty list if there are no trips in the database.
+
 #### Get all trips created by a user (GET) 
 ```
 /api/v1/trips?user_id=:id
@@ -124,6 +139,17 @@ payload = {
 
 Returns "ok" if update is successful.
 Returns 400 and an error message if the update is not successful.
+
+#### Delete a trip (DELETE)
+
+Deleting a trip also deletes its associated cards. It is also removed as a favorited trip for any users who have favorited it.
+
+```
+/api/v1/trips/:id
+```
+
+Returns "ok" if delete is successful. 
+Returns 400 and an error message if the delete is not successful.
 
 ## Cards
 #### Get cards by trip id  (GET)
@@ -182,15 +208,53 @@ package = [
 Returns "ok" if create is successful.
 Returns 400 and "BAD" if the create is not successful. Nothing will be inserted into the database if this error message is returned. We're still working on figuring out a more useful error message.
 
-#### Delete a card (DELETE)
+#### Update multiple cards (POST)
+
+Takes in a list of cards to update and/or insert into the database. Only one new card can be inserted into the database, and it must have an id of 0. Must provide a **list** of cards, even if you are only trying to insert/udate one card.
+
 ```
-/api/v1/cards/:id
+/api/v1/cards?trip_id=:id
+
+package = [ 
+{ id: 5,
+  type:"hotel",
+  name:"Hanover Inn",
+  city:"hanover",
+  country:"USA",
+  address:"3 Wheelock street",
+  lat:123123.12,
+  long:121231.12312,
+  start_time:"2017-12-12 20:01:01",
+  end_time:"2017-12-13 20:01:01",
+  day_number:1,
+  trip_id:1,
+  travel_duration:"10:10:10",
+  travel_type:"bike"
+  },
+{ id: 0
+  type:"restaurant",
+  name:"Pine",
+  city:"hanover",
+  country:"USA",
+  address:"3 Wheelock street",
+  lat:123123.12,
+  long:121231.12312,
+  start_time:"2017-12-12 20:01:01",
+  end_time:"2017-12-13 20:01:01",
+  day_number:1,
+  trip_id:1,
+  travel_duration:"00:05:30",
+  travel_type:"walking"
+  }
+]
 ```
 
-Returns "ok" if delete is successful. 
-Returns 400 and an error message if the delete is not successful.
 
-#### Update a card (PUT)
+Returns a list of card objects if create is successful. You'll have to get the new id from this list.
+Returns "BAD" if the card is not successful.
+
+
+#### Update a single card (PUT)
 ```
 /api/v1/cards/:id
 
@@ -204,6 +268,14 @@ payload =
 
 Returns "ok" if update is successful.
 Returns 400 and an error message if not successful.
+
+#### Delete a card (DELETE)
+```
+/api/v1/cards/:id
+```
+
+Returns "ok" if delete is successful. 
+Returns 400 and an error message if the delete is not successful.
 
 # TESTING
 
