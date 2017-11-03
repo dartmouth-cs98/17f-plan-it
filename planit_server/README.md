@@ -178,7 +178,7 @@ Returns 400 and an error message if not successful.
 /api/v1/favorited?user_id=:user_id&trip_id=:trip_id
 
 payload = {
-  updated_at: "2017-12-13 20:01:01"
+  visited_at: "2017-12-13 20:01:01"
 }
 ```
 
@@ -324,7 +324,7 @@ Returns 400 and an error message if the delete is not successful.
 ## Example curls 
 
 ### Create a user
-curl -X POST -d '{"fname":"david","lname":"walsh","email":"davidwalsh@example.com","username":"davidwalsh2","birthday":"14"}' -H "Content-Type: application/json" http://localhost:4000/api/v1/users
+curl -X POST -d '{"fname":"david","lname":"walsh","email":"davidwalsh@example.com","username":"davidwalsh2","birthday":"2000-11-20"}' -H "Content-Type: application/json" http://localhost:4000/api/v1/users
 
 ### Update a user
 curl -X PUT -d '{"fname":"john","email":"davidwalsh@example.com"}' -H "Content-Type: application/json" http://localhost:4000/api/v1/users/1

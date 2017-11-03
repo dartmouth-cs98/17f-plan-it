@@ -17,7 +17,7 @@ defmodule PlanIt.FavoritedTripController do
     favorited_trips = (from t in PlanIt.FavoritedTrip,
       where: t.user_id == ^user_id,
       select: t,
-      order_by: [desc: :updated_at])
+      order_by: [desc: :last_visited])
       |> Repo.all
 
     json conn, favorited_trips
@@ -32,7 +32,7 @@ defmodule PlanIt.FavoritedTripController do
   # POST - insert a new favorited trip
   def create(conn, params) do
 
-      {message, changeset} = Trip.changeset(%FavoritedTrip{}, params)
+      {message, changeset} = FavoritedTrip.changeset(%FavoritedTrip{}, params)
       |> Repo.insert
 
       if message == :error  do

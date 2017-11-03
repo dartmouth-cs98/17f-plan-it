@@ -39,20 +39,22 @@ defmodule PlanIt.TripController do
       preload: [card: ^card_query])
       |> Repo.all
 
-      json conn, trips
+    json conn, trips
   end
 
   # POST - insert a new trip
   def create(conn, params) do
-      {message, changeset} = Trip.changeset(%Trip{}, params)
-      |> Repo.insert
+    IO.inspect(params)
 
-      if message == :error  do
-        error = "error: #{inspect changeset.errors}"
-        json put_status(conn, 400), error
-      end
+    {message, changeset} = Trip.changeset(%Trip{}, params)
+    |> Repo.insert
 
-      json conn, changeset.id
+    if message == :error  do
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
+    end
+
+    json conn, changeset.id
   end
 
   # PUT - update an existing trip

@@ -80,7 +80,7 @@ defmodule PlanIt.CardController do
     changesets = Enum.map(return_items, fn(c) ->
       case c do
         {:ok, changeset} -> changeset
-        _ ->
+        _ -> nil
       end
     end)
     |> Enum.filter(fn(i) -> i end)
