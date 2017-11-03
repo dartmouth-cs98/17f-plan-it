@@ -267,9 +267,8 @@ class Onboarding extends Component {
 	hotels_slide() {
 		return (
 			<div className='slide'>
-				
+				<div className='slide_title'>Where are you staying?</div>
 				<div className='scrollable'>
-					<div className='slide_title'>Where are you staying?</div>
 					{this.renderHotels()}
 					<div className='button_container add' onClick={this.onAddHotel}>Add</div>
 				</div>

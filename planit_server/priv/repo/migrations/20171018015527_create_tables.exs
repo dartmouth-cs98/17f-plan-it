@@ -18,6 +18,7 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
 
     create table(:trip) do
       add :name, :string
+      add :publish, :boolean
       add :user_id, references(:user)
 
       timestamps()
