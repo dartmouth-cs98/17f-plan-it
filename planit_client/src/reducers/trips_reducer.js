@@ -1,16 +1,19 @@
 import { ActionTypes } from '../actions';
 
 const initialState = {
-  all: [],
+  userTrips: [],
+  favoritedTrips: [],
+  publishedTrips: [],
   trip: {},
-  error: null
+  error: null,
+
 };
 
 const TripsReducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionTypes.FETCH_TRIPS:
       return Object.assign({}, state, {
-        all: action.payload,
+        userTrips: action.payload,
       });
     case ActionTypes.FETCH_TRIPS_ERROR:
       return Object.assign({}, state, {
@@ -40,6 +43,22 @@ const TripsReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         error: action.payload,
       }); 
+    case ActionTypes.FETCH_FAVORITE_TRIPS:
+      return Object.assign({}, state, {
+        favoritedTrips: action.payload,
+      }); 
+    case ActionTypes.FETCH_FAVORITE_TRIPS_ERROR:
+      return Object.assign({}, state, {
+        error: action.payload,
+      }); 
+    case ActionTypes.FETCH_PUBLISHED_TRIPS:
+      return Object.assign({}, state, {
+        publishedTrips: action.payload,
+      }); 
+    case ActionTypes.FETCH_PUBLISHED_TRIPS_ERROR:
+      return Object.assign({}, state, {
+          error: action.payload,
+        }); 
     default:
       return state;
   }

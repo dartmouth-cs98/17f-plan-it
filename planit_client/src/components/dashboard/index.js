@@ -39,7 +39,8 @@ class Dashboard extends Component {
 
 	renderTrips() {
 		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
-		return this.props.trips.map((trip) => {
+		console.log(this.props.allTrips)
+		return this.props.userTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`}>
 					<Card onClick={() => this.onClickTrip(trip.id)}>
@@ -94,7 +95,7 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    trips: state.trips.all,
+    userTrips: state.trips.userTrips
   };
 };
 

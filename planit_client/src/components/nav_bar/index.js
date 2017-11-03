@@ -32,9 +32,8 @@ class NavBar extends Component {
 			)
 		} else {
 			return (
-				<div className='options'>
+				<div className='options_logged_out'>
           <Link to='/workspace'><div>Explore</div></Link>
-          <Link to='/'><div>Sign up</div></Link>
           <Link to='/'><div><this.buttonDecision /></div></Link>
 				</div>
 			)
@@ -45,20 +44,19 @@ class NavBar extends Component {
     if (this.state.auth_status === 'logged_out') {
       return <GoogleLogin
         clientId="555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com"
-        buttonText="Login"
+        buttonText="Sign Up/Login"
         onSuccess={this.processSuccess}
         onFailure={this.processFailure}
         style={{}}
         className='nav-button'
         >
-        <span>Login</span>
         </GoogleLogin>
     }
 
-    return <button
+    return <div
       className='nav-button'
       onClick={this.processLogout}
-    >Logout</button>;
+    >Logout</div>;
   }
 
   componentWillMount() {
@@ -106,9 +104,7 @@ class NavBar extends Component {
       <div>
 				<div className={`${this.state.background} nav_bar`}>
 					<Link to='/'><div className='logo'>planit</div></Link>
-					<div className='options'>
 						{this.renderOptions()}
-					</div>
 				</div>
       </div>
 		)
