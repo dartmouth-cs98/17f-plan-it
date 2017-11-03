@@ -29,7 +29,9 @@ defmodule PlanIt.Router do
 
     resources "/cards", CardController, only: [:index, :create, :update, :delete]
 
-    resources "/favorited", FavoritedTripController, only: [:index, :create, :delete]
+    resources "/favorited", FavoritedTripController, only: [:index, :create]
+    put "/favorited", FavoritedTripController, :change
+    delete "/favorited", FavoritedTripController, :remove
 
   end
 end

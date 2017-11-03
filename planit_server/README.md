@@ -156,15 +156,33 @@ Returns 400 and an error message if the delete is not successful.
 /api/v1/favorited?user_id=:id
 ```
 
-Returns a list of trip ids that correspond to the user's favorited trips if get is successful. The list is ordered by descending update time. 
+Returns a list of trip ids that correspond to the user's favorited trips if get is successful. The list is ordered by descending update time (will change this to visited time soon). 
 Returns an empty list if that user hasn't favorited any trips or does not exist.
 
 #### Favorite a trip (POST)
 ```
-/api/v1/favorited?user_id=:user_id&trip_id=:trip_id
+/api/v1/favorited
+
+payload = {
+  user_id: 100,
+  trip_id: 5
+}
+
 ```
 
 Returns "ok" if insert is successful.
+Returns 400 and an error message if not successful.
+
+#### Update a favorited trip (PUT)
+```
+/api/v1/favorited?user_id=:user_id&trip_id=:trip_id
+
+payload = {
+  visited_at: "2017-12-13 20:01:01"
+}
+```
+
+Returns "ok" if update is successful.
 Returns 400 and an error message if not successful.
 
 #### Un-favorite a trip (DELETE)
@@ -306,7 +324,7 @@ Returns 400 and an error message if the delete is not successful.
 ## Example curls 
 
 ### Create a user
-curl -X POST -d '{"fname":"david","lname":"walsh","email":"davidwalsh@example.com","username":"davidwalsh2","birthday":"14"}' -H "Content-Type: application/json" http://localhost:4000/api/v1/users
+curl -X POST -d '{"fname":"david","lname":"walsh","email":"davidwalsh@example.com","username":"davidwalsh2","birthday":"2000-11-20"}' -H "Content-Type: application/json" http://localhost:4000/api/v1/users
 
 ### Update a user
 curl -X PUT -d '{"fname":"john","email":"davidwalsh@example.com"}' -H "Content-Type: application/json" http://localhost:4000/api/v1/users/1

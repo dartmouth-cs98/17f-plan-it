@@ -10,7 +10,8 @@ defmodule PlanIt.CardController do
   # GET - get all cards on a specific day of a specific trip
   def index(conn, %{"trip_id" => trip_id, "day" => day_num}) do
     if trip_id == nil or day_num == nil do
-      json put_status(conn, 400), "bad parameters" end
+      json put_status(conn, 400), "bad parameters"
+    end
 
     cards = (from c in Card,
           where: c.trip_id == ^trip_id and c.day_number == ^day_num,
@@ -134,6 +135,8 @@ defmodule PlanIt.CardController do
     json conn, changesets
   end
 
+
+
   # PUT - update an existing card
   def update(conn, %{"id" => card_id} = params) do
     card = Repo.get(Card, card_id)
@@ -148,7 +151,6 @@ defmodule PlanIt.CardController do
 
     json conn, "ok"
   end
-
 
   # DELETE - delete a card
   def delete(conn, %{"id" => card_id} = params) do
