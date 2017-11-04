@@ -82,6 +82,7 @@ class NavBar extends Component {
             lname: response.data.family_name
             
           })
+          console.log(this.props.user_id)
           this.setState({ auth_status: 'logged_in' });
           cookie.save('auth', this.props.user_id, { path: '/' });
        }
