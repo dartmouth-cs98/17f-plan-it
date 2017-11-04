@@ -15,6 +15,33 @@
   font-weight: 220;
 }
 
+.options_logged_out {
+  display: flex;
+  justify-content: space-around;
+  width: 25vw;
+  font-family: 'Roboto';
+  font-weight: 220;
+}
+
+.nav-button {
+  display: inherit;
+  background-color: inherit;
+  color: inherit;
+  width: inherit;
+  border: none !important;
+  background: none !important;
+}
+
+.nav-button:focus {
+  outline: inherit;
+  text-shadow: 0 0 10px grey;
+  background: none !important;
+}
+
+.nav-button:hover {
+  text-shadow: 0 0 10px grey;
+}
+
 .logo {
   font-size: 30px;
   font-family: 'Source Sans Pro';

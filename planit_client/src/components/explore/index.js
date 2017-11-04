@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
-import { fetchTrips } from '../../actions/index.js';
+import { fetchPublishedTrips } from '../../actions/index.js';
 import './index.scss'
 
 function NextArrow(props) {
@@ -29,18 +29,15 @@ function PrevArrow(props) {
   );
 }
 
-
-class Dashboard extends Component {
+class Explore extends Component {
 
 	componentDidMount() {
-		this.props.fetchTrips(1)
+		this.props.fetchPublishedTrips()
 	}
 
-
-	renderTrips() {
+	renderPublished() {
 		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
-		console.log(this.props.allTrips)
-		return this.props.userTrips.map((trip) => {
+		return this.props.publishedTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`}>
 					<Card onClick={() => this.onClickTrip(trip.id)}>
@@ -65,29 +62,15 @@ class Dashboard extends Component {
 	      prevArrow: <PrevArrow/>
     	};
 
-    	return (
+		return (
 			<div>
 				<NavBar background={'road_trip_background'}/>
 				<div>
 					<div className='title'>My Trips</div>
 					<Slider {...settings} className='slider'>
-						{this.renderTrips()}
-						<Link to='/'>
-							<Card className='trip_card add_card'>
-								<i className="fa fa-plus fa-5x plus_sign" aria-hidden="true"></i>
-							</Card>
-						</Link>
+						{this.renderPublished()}
 					</Slider>
-					<div className='title'>Inspiration Board</div>
-					<Slider {...settings} className='slider'>
-						{this.renderTrips()}
-						<Link to='/explore'>
-							<Card className='trip_card add_card'>
-								<i className="fa fa-plus fa-5x plus_sign" aria-hidden="true"></i>
-							</Card>
-						</Link>
-					</Slider>
-				</div>
+				</div>			
 			</div>
 		)
 	}
@@ -95,8 +78,8 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userTrips: state.trips.userTrips
+    publishedTrips: state.trips.publishedTrips
   };
 };
 
-export default withRouter(connect(mapStateToProps, { fetchTrips })(Dashboard));
+export default withRouter(connect(mapStateToProps, { fetchPublishedTrips })(Explore));

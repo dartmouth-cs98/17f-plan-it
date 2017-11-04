@@ -9,13 +9,15 @@ defmodule PlanIt.FavoritedTripController do
 
   # GET - get all trips favorited by a user
   def index(conn, %{"user_id" => user_id } = params) do
+    IO.inspect(params)
     if user_id == nil do
       json put_status(conn, 400), "no user_id provided"
     end
 
     favorited_trips = (from t in PlanIt.FavoritedTrip,
       where: t.user_id == ^user_id,
-      select: t)
+      select: t,
+      order_by: [desc: :last_visited])
       |> Repo.all
 
     json conn, favorited_trips
@@ -30,7 +32,7 @@ defmodule PlanIt.FavoritedTripController do
   # POST - insert a new favorited trip
   def create(conn, params) do
 
-      {message, changeset} = Trip.changeset(%Trip{}, params)
+      {message, changeset} = FavoritedTrip.changeset(%FavoritedTrip{}, params)
       |> Repo.insert
 
       if message == :error  do
@@ -38,11 +40,31 @@ defmodule PlanIt.FavoritedTripController do
         json put_status(conn, 400), error
       end
 
-      json conn, changeset.id
+      json conn, "ok"
+  end
+
+  # PUT - update an existing favorited trip
+  def change(conn, %{"user_id" => user_id, "trip_id" => trip_id} = params) do
+    favorited_trip = (from t in FavoritedTrip,
+      where: t.user_id == ^user_id and t.trip_id == ^trip_id,
+      select: t
+    ) |> Repo.one
+
+    changeset = FavoritedTrip.changeset(favorited_trip, params)
+
+    {message, changeset} = Repo.update(changeset)
+
+    if message == :error do
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
+    end
+
+    json conn, "ok"
   end
 
   # DELETE - delete a favorited trip by user id and trip id
-  def delete(conn, %{"user_id" => user_id, "trip_id" => trip_id}) do
+  def remove(conn, %{"user_id" => user_id, "trip_id" => trip_id}) do
+
     favorited_trip = (from t in FavoritedTrip,
       where: t.user_id == ^user_id and t.trip_id == ^trip_id,
       select: t

@@ -8,9 +8,10 @@ defmodule PlanIt.Trip do
     belongs_to :user, PlanIt.User
 
     field :name, :string
+    field :publish, :boolean
 
     has_many :card, PlanIt.Card
-    has_many :favorite_trip, PlanIt.Trip
+    has_many :favorited_trip, PlanIt.Trip
 
     timestamps()
   end

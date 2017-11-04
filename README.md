@@ -4,11 +4,16 @@ Planning a trip is hard. At the very least, you have to figure out what to do, w
 
 Planit is a web application that allows users to create a fully fleshed-out itinerary for an upcoming trip. It also gives users the capability to save trips, collaborate on trips with other people, and browse other people’s trips that have been made publicly available.
 
+![Team Photo](https://github.com/dartmouth-cs98/17f-plan-it/raw/master/misc/landing_page.png)
+
 ## Architecture
 
-We've separated our code into the frontend (client) code and backend (server) code.
+Frontend:
+* React
 
-TODO:  descriptions of code organization and tools and libraries used
+Backend:
+* Phoenix
+* MySQL
 
 ## Setup
 
@@ -32,14 +37,19 @@ The backend requires the following programs/applications to be installed:
 
 ## Deployment
 
+This project currently runs on localhost, but we plan to eventually have our own webpage and host the server on Heroku.
+
 How to deploy the frontend:
 * cd to planit_client
-* run the command yarn start
+* run `yarn start`
 
 How to deploy the backend:
 * cd to planit_server
-* run the command mix ecto.migrate
-* run the command mix phx.server
+* run `make drop`
+* run `make setup`
+* run `make start`
+
+For further details, see the READMEs in /planit\_client and /planit\_server.
 
 ## Authors
 

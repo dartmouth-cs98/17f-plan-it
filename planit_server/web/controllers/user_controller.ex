@@ -70,9 +70,21 @@ defmodule PlanIt.UserController do
       birthday: ~D[1996-01-01]})
 
 
-    Repo.insert!(%Trip{name: "test trip", user_id: 1})
-    Repo.insert!(%Trip{name: "Sam's trip", user_id: 1})
-    Repo.insert!(%Trip{name: "John's trip", user_id: 2})
+    Repo.insert!(%Trip{
+      name: "test trip",
+      publish: true,
+      user_id: 1
+    })
+    Repo.insert!(%Trip{
+      name: "Sam's trip",
+      publish: true,
+      user_id: 1
+    })
+    Repo.insert!(%Trip{
+      name: "John's trip",
+      publish: false,
+      user_id: 2
+    })
 
     Repo.insert!(%Card{
       type: "restaurant",
@@ -102,7 +114,9 @@ defmodule PlanIt.UserController do
       trip_id: 1
     })
 
-    Repo.insert!(%FavoritedTrip{user_id: 1, trip_id: 2})
+    Repo.insert!(%FavoritedTrip{user_id: 1, trip_id: 3, last_visited: Ecto.DateTime.utc})
+    Repo.insert!(%FavoritedTrip{user_id: 2, trip_id: 1, last_visited: Ecto.DateTime.utc})
+    Repo.insert!(%FavoritedTrip{user_id: 1, trip_id: 2, last_visited: Ecto.DateTime.utc})
 
     json conn, []
   end

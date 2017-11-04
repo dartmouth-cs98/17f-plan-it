@@ -24,7 +24,7 @@
 	background-color: #B6D6E7;
 	position: fixed;
   	top: 50%;
-  	left: 90%;
+  	left: 100%;
   	transform: translate(-50%, -50%);
 }
 
@@ -47,8 +47,9 @@
 	vertical-align: middle;
 }
 
-.title {
-	color: white;
+.slide_title {
+	color: #828282;
+	font-family: 'Source Sans Pro';
 	font-size: 32px;
 	margin-bottom: 10px;
 }

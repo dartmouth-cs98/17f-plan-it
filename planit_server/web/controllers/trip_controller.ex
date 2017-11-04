@@ -21,8 +21,10 @@ defmodule PlanIt.TripController do
   end
 
   def index(conn, _params) do
-    error = "no resource available"
-    json put_status(conn, 400), error
+    trips = (from t in PlanIt.Trip,
+      where: t.publish == true,
+      select: t) |> Repo.all
+    json conn, trips
   end
 
   # GET - get a trip by id
@@ -37,21 +39,22 @@ defmodule PlanIt.TripController do
       preload: [card: ^card_query])
       |> Repo.all
 
-      json conn, trips
+    json conn, trips
   end
 
   # POST - insert a new trip
   def create(conn, params) do
+    IO.inspect(params)
 
-      {message, changeset} = Trip.changeset(%Trip{}, params)
-      |> Repo.insert
+    {message, changeset} = Trip.changeset(%Trip{}, params)
+    |> Repo.insert
 
-      if message == :error  do
-        error = "error: #{inspect changeset.errors}"
-        json put_status(conn, 400), error
-      end
+    if message == :error  do
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
+    end
 
-      json conn, changeset.id
+    json conn, changeset.id
   end
 
   # PUT - update an existing trip
@@ -66,6 +69,15 @@ defmodule PlanIt.TripController do
     else
       error = "error: #{inspect changeset.errors}"
       json put_status(conn, 400), error
+    end
+  end
+
+  # DELETE - delete an existing trip
+  def delete(conn, %{"id" => trip_id}) do
+    trip = Repo.get(Trip, trip_id)
+    case Repo.delete trip do
+      {:ok, struct} -> json conn, "ok"
+      {:error, message} -> json put_status(conn, 400), "failed to delete"
     end
   end
 end

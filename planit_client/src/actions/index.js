@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const ROOT_URL = 'http://localhost:4000/api/v1';
+
 // const ROOT_URL = 'https://lab6-elin.herokuapp.com/api';
 // const ROOT_URL = 'https://cs52-blog.herokuapp.com/api';
 // const API_KEY = '?key=e_lin';
@@ -11,7 +12,10 @@ export const ActionTypes = {
   FETCH_TRIPS_ERROR: 'FETCH_TRIPS_ERROR',
   FETCH_TRIP: 'FETCH_TRIP',
   FETCH_TRIP_ERROR: 'FETCH_TRIP_ERROR',
-  CREATE_TRIP: 'CREATE_TRIP',
+  FETCH_FAVORITE_TRIP: 'FETCH_FAVORITE_TRIP',
+  FETCH_FAVORITE_TRIP_ERROR: 'FETCH_FAVORITE_TRIP_ERROR',
+  FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
+  'FETCH_PUBLISHED_TRIPS_ERROR': 'FETCH_PUBLISHED_TRIPS_ERROR',
   CREATE_TRIP_ERROR: 'CREATE_TRIP_ERROR',
   UPDATE_TRIP: 'UPDATE_TRIP',
   UPDATE_TRIP_ERROR: 'UPDATE_TRIP_ERROR',
@@ -28,20 +32,21 @@ export const ActionTypes = {
 
 export function fetchTrips(id) {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/trips?user_id=:${id}`).then((response) => {
-      dispatch({ type: 'FETCH_TRIPS', payload: response.data });
+    axios.get(`${ROOT_URL}/trips?user_id=${id}`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_TRIPS, payload: response.data });
     }).catch((error) => {
-      dispatch({ type: 'FETCH_TRIPS_ERROR', payload: error });
+      console.log(error)
+      dispatch({ type: ActionTypes.FETCH_TRIPS_ERROR, payload: error });
     });
   };
 }
 
 export function fetchTrip(id) {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/trips/:${id}`).then((response) => {
-      dispatch({ type: 'FETCH_TRIP', payload: response.data });
+    axios.get(`${ROOT_URL}/trips/${id}`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_TRIP, payload: response.data });
     }).catch((error) => {
-      dispatch({ type: 'FETCH_TRIP_ERROR', payload: error });
+      dispatch({ type: ActionTypes.FETCH_TRIP_ERROR, payload: error });
     });
   };
 }
@@ -49,10 +54,20 @@ export function fetchTrip(id) {
 export function createTrip(trip) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/trips`, trip).then((response) => {
-        dispatch({ type: 'CREATE_TRIP', payload: response.data });
+        dispatch({ type: ActionTypes.CREATE_TRIP, payload: response.data });
       }).catch((error) => {
-        dispatch({ type: 'CREATE_TRIP_ERROR', payload: error });
+        dispatch({ type: ActionTypes.CREATE_TRIP_ERROR, payload: error });
       });
+  };
+}
+
+export function fetchPublishedTrips() {
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/trips?user_id=1`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_PUBLISHED_TRIPS, payload: response.data });
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.FETCH_PUBLISHED_TRIPS_ERROR, payload: error });
+    });
   };
 }
 
