@@ -6,7 +6,75 @@ import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import './index.scss'
 
+const TRAVEL_TIME = 900000
+
 export default class Itinerary extends Component {
+	constructor(props) {
+		super(props) 
+
+		this.formatCards = this.formatCards.bind(this)
+	}
+
+	componentDidUpdate() {
+		console.log(this.props.cards)
+		this.formatCards()
+	}
+
+	formatCards() {
+		let cardList = []
+		let startCard
+		let prevEnd
+
+		_.each(this.props.cards, (card) => {
+			if (_.isUndefined(startCard)) {
+				console.log(card) 
+				startCard = card.id	
+
+				const startTime = new Date(card.start_time)
+				const startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
+
+				// add free time at end of the day
+				if (startTime.getTime() > startOfDay.getTime()) {
+					const freeTime = {
+						type: 'free',
+						start_time: startOfDay.toString(),
+						end_time: startTime.toString()
+					}
+
+					cardList.push(freeTime)
+				}
+			} else {
+				const cardStart = new Date(card.start_time)
+
+				const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
+				const travel = {
+					type: 'travel',
+					start_time: travelStart.toString(),
+					end_time: card.start_time,
+					travelType: card.travelType
+				}
+
+				// add the free time and travel before a card
+				if (!_.isUndefined(prevEnd) && prevEnd.getTime() < travelStart.getTime()) {
+					const freeTime = {
+						type: 'free',
+						start_time: prevEnd.toString(),
+						end_time: travelStart.toString()
+					}
+
+					cardList.push(freeTime)
+				}
+
+				cardList.push(travel)
+			}
+
+			cardList.push(card)
+			prevEnd = new Date(card.end_time)
+		})
+
+		console.log(cardList)
+	}
+
 	renderBackButton() {
 		if (this.props.backArrow) {
 			return (
