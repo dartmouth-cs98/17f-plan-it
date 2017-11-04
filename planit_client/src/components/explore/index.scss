@@ -30,8 +30,9 @@
 	height: 140px !important;
 }
 
-.slider {
+.explore_slider {
 	width: 90vw;
+	margin: auto;
 }
 
 .next_arrow {
@@ -56,6 +57,7 @@
 	margin-top: 60px;
 }
 
-.slick-slide {
+.explore_slider .slick-slide {
 	width: 180px !important;
 }
+

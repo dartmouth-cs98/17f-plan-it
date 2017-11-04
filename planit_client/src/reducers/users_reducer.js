@@ -1,9 +1,11 @@
 import { ActionTypes } from '../actions';
 
 const initialState = {
-  user_id: {},
+  user_id: null,
   error: null,
-
+  email: null, 
+  fname: null, 
+  lname: null
 };
 
 const UsersReducer = (state = initialState, action) => {

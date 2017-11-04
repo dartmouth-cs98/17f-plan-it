@@ -73,10 +73,8 @@ export function fetchPublishedTrips() {
 export function createUser(user) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/users`, user).then((response) => {
-        console.log(response)
         dispatch({ type: ActionTypes.CREATE_USER, payload: response.data });
       }).catch((error) => {
-        console.log(error)
         dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
       });
   };
