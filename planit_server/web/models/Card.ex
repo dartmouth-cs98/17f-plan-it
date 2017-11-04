@@ -18,7 +18,7 @@ defmodule PlanIt.Card do
     field :day_number, :integer
 
     field :travel_type, :string
-    field :travel_duration, :time
+    field :travel_duration, :integer
 
     timestamps()
   end

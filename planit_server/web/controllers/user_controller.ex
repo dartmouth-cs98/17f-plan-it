@@ -108,7 +108,9 @@ defmodule PlanIt.UserController do
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
-      trip_id: 1
+      trip_id: 1,
+      travel_type: "walking",
+      travel_duration: 900
     })
 
     Repo.insert!(%Card{
@@ -122,7 +124,9 @@ defmodule PlanIt.UserController do
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
-      trip_id: 1
+      trip_id: 1,
+      travel_type: "bike",
+      travel_duration: 900
     })
 
     Repo.insert!(%FavoritedTrip{user_id: 1, trip_id: 3, last_visited: Ecto.DateTime.utc})
