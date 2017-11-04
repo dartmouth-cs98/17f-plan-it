@@ -25,9 +25,8 @@ export const ActionTypes = {
   DELETE_CARD_ERROR: 'DELETE_CARD_ERROR',
   UPDATE_CARD: 'UPDATE_CARD',
   UPDATE_CARD_ERROR: 'UPDATE_CARD_ERROR',
-  AUTH_USER: 'AUTH_USER',
-  DEAUTH_USER: 'DEAUTH_USER',
-  AUTH_ERROR: 'AUTH_ERROR',
+  CREATE_USER: 'CREATE_USER',
+  CREATE_USER_ERROR: 'CREATE_USER_ERROR'
 };
 
 export function fetchTrips(id) {
@@ -68,6 +67,18 @@ export function fetchPublishedTrips() {
     }).catch((error) => {
       dispatch({ type: ActionTypes.FETCH_PUBLISHED_TRIPS_ERROR, payload: error });
     });
+  };
+}
+
+export function createUser(user) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/users`, user).then((response) => {
+        console.log(response)
+        dispatch({ type: ActionTypes.CREATE_USER, payload: response.data });
+      }).catch((error) => {
+        console.log(error)
+        dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
+      });
   };
 }
 

@@ -1,12 +1,9 @@
-
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import thunk from 'redux-thunk'
 import App from './App'
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
-import { ActionTypes } from './actions'
 import reducers from './reducers'
 import './index.scss'
 import registerServiceWorker from './registerServiceWorker';

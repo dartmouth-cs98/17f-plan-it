@@ -7,6 +7,7 @@ import OnboardingInput from '../onboarding_input'
 import { Map, List } from 'immutable'
 import Modal from 'react-modal'
 import { createTrip } from '../../actions/index.js'
+import cookie from 'react-cookies'
 import './index.scss'
 
 function NextArrow(props) {
@@ -58,8 +59,10 @@ class Onboarding extends Component {
 	}
 
 	onCreateTrip() {
-		const trip = Map({ 'name': this.state.trip_name, 'user_id': 0 })
-		this.props.createTrip(trip)
+		this.props.createTrip({
+			name: this.state.trip_name,
+			user_id: cookie.load('auth')
+		})
 	}
 
 	onModalOpen(event) {
