@@ -1,14 +1,18 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import { withRouter, Link } from 'react-router-dom';
 import _ from 'lodash'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
+import { fetchTrip, fetchCards } from '../../actions/index.js';
 require('./index.scss')
 
 const DEFAULT_START = '9:00:00'
 const DEFAULT_END = '10:00:00'
+const TRIP_ID = 1
 const ITINERARY = [
 	{
 		date: 'November 14',
@@ -68,7 +72,7 @@ const ITINERARY = [
 	}
 ]
 
-export default class Workspace extends Component {
+class Workspace extends Component {
 	constructor(props) {
 		super(props)
 
@@ -83,6 +87,11 @@ export default class Workspace extends Component {
 		this.removeCard = this.removeCard.bind(this)
 		this.dayForward = this.dayForward.bind(this)
 		this.dayBackward = this.dayBackward.bind(this)
+	}
+
+	componentDidMount() {
+		this.props.fetchTrip(TRIP_ID)
+		this.props.fetchCards(TRIP_ID, 1)
 	}
 
 	addCard(card) {
@@ -252,6 +261,7 @@ export default class Workspace extends Component {
 					<Suggestions addCard={this.addCard}	/>
 					<Itinerary 
 						itinerary={this.state.itinerary}
+						cards={this.props.cards}
 						day={this.state.day}
 						selectCard={this.selectCard}
 						removeCard={this.removeCard}
@@ -266,3 +276,24 @@ export default class Workspace extends Component {
 		)
 	}
 }
+
+const mapStateToProps = (state) => {
+	return {
+		trip: state.trip, 
+		trips: state.trips,
+		cards: state.cards.all
+	}
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		fetchTrip: (id) => {
+			dispatch(fetchTrip(id))
+		}, 
+		fetchCards: (id, day) => {
+			dispatch(fetchCards(id, day))
+		}
+	}
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Workspace))
