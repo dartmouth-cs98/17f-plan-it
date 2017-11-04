@@ -34,4 +34,11 @@ defmodule PlanIt.Router do
     delete "/favorited", FavoritedTripController, :remove
 
   end
+
+  scope "/auth", PlanIt do
+    pipe_through :browser
+
+    get "/yelp", YelpController, :index
+    get "/yelp/topplaces", YelpController, :topplaces
+  end
 end

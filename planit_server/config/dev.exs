@@ -56,7 +56,10 @@ config :plan_it, PlanIt.Repo,
   pool_size: 10
 
 #yelp api
-config :yelp,
- id: "CYQN92eKQPcAzMpfGvDknA",
- secret: "sJ3mr4cd3TGZmJ9x1icWJdxpgPqELci5pRDDeYHJME9S4SBiKy16XtB2hJo7iXvu"
+# config :yelp,
+# id: "CYQN92eKQPcAzMpfGvDknA",
+# secret: "sJ3mr4cd3TGZmJ9x1icWJdxpgPqELci5pRDDeYHJME9S4SBiKy16XtB2hJo7iXvu"
 
+# put OAuth2 debug mode
+config :oauth2,
+  debug: true

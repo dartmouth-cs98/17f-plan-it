@@ -60,4 +60,5 @@ defmodule PlanIt.Mixfile do
       "test": ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
+
 end
