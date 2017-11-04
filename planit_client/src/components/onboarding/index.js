@@ -59,6 +59,7 @@ class Onboarding extends Component {
 	}
 
 	onCreateTrip() {
+		console.log(cookie.load('auth'))
 		this.props.createTrip({
 			name: this.state.trip_name,
 			user_id: cookie.load('auth')
