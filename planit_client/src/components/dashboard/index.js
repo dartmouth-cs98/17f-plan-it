@@ -5,6 +5,7 @@ import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
 import { fetchTrips } from '../../actions/index.js';
+import cookie from 'react-cookies'
 import './index.scss'
 
 function NextArrow(props) {
@@ -33,7 +34,7 @@ function PrevArrow(props) {
 class Dashboard extends Component {
 
 	componentDidMount() {
-		this.props.fetchTrips(1)
+		this.props.fetchTrips(cookie.load('auth'))
 	}
 
 
