@@ -74,7 +74,7 @@ class Dashboard extends Component {
 	}
 
 	render() {
-		let settings = {
+		const dashboard_settings = {
 	      dots: true,
 	      infinite: false,
 	      speed: 500,
@@ -89,7 +89,7 @@ class Dashboard extends Component {
 				<NavBar background={'road_trip_background'}/>
 				<div>
 					<div className='title'>My Trips</div>
-					<Slider {...settings} className='slider'>
+					<Slider {...dashboard_settings} className='dashboard_slider'>
 						{this.renderTrips()}
 						<Link to='/'>
 							<Card className='trip_card add_card'>
@@ -98,7 +98,7 @@ class Dashboard extends Component {
 						</Link>
 					</Slider>
 					<div className='title'>Inspiration Board</div>
-					<Slider {...settings} className='slider'>
+					<Slider {...dashboard_settings} className='dashboard_slider'>
 						{this.renderFavoritedTrips()}
 						<Link to='/explore'>
 							<Card className='trip_card add_card'>

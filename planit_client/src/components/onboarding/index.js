@@ -295,7 +295,7 @@ class Onboarding extends Component {
 	}
 
 	render() {
-		let settings = {
+		const onboarding_settings = {
 	      dots: true,
 	      infinite: true,
 	      speed: 500,
@@ -332,11 +332,11 @@ class Onboarding extends Component {
 					        	<p>Input at least one city with a start date</p>
 					        </div>
 						</Modal>
-						<Slider {...settings} className='slider'>
-					        {this.name_slide()}
-					        {this.cities_slide()}
-					        {this.hotels_slide()}
-					        {this.mustdo_slide()}
+						<Slider {...onboarding_settings} className='onboarding_slider'>
+					        <div>{this.name_slide()}</div>
+					        <div>{this.cities_slide()}</div>
+					        <div>{this.hotels_slide()}</div>
+					        <div>{this.mustdo_slide()}</div>
 				      	</Slider>
 					</div>
 				</div>
