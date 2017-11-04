@@ -19,7 +19,7 @@ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_
 
 ### Install Dependencies
 ```
-mix deps.gets
+mix deps.get
 ```
 
 ### Make sure that mysql.server is running
