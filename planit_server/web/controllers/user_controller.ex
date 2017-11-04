@@ -31,8 +31,15 @@ defmodule PlanIt.UserController do
     {message, changeset} = Repo.insert(changeset)
 
     if message == :error do
-      error = "error: #{inspect changeset.errors}"
-      json put_status(conn, 400), error
+      email = Map.get(params, "email")
+      # need to update this to handle different types of errors;
+      uid = (from u in User,
+        where: u.email == ^email,
+        select: u.id
+      ) |> Repo.one
+      #error = "error: #{inspect changeset.errors}"
+      #json put_status(conn, 400), error
+      json conn, uid
     end
 
     json conn, changeset.id
