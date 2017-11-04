@@ -71,10 +71,10 @@ class NavBar extends Component {
 
   componentDidUpdate() {
     if (this.state.authenticated) {
-      cookie.save('auth', this.props.user_id, { path: '/' });
-      console.log(`saved cookie ${cookie.load('auth')}`)
+      cookie.save('auth', this.props.user_id, { path: '/' })
+      console.log(`in nav bar ${cookie.load('auth')}`)
     } else {
-      cookie.remove('auth', { path: '/' });
+      cookie.remove('auth', { path: '/' })
     }
   }
 
