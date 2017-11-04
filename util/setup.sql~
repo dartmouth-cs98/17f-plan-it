@@ -40,7 +40,7 @@ CREATE TABLE card (
     card_end_time	DATETIME	 NOT NULL,
 	card_day_number INT			 NOT NULL,
     travel_type		VARCHAR(50),
-    travel_duration	INT,
+    travel_duration	TIME,
     PRIMARY KEY	(card_id),
 	FOREIGN KEY (trip_id) 	REFERENCES trip(trip_id)
 	);
