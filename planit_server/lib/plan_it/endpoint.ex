@@ -22,6 +22,8 @@ defmodule PlanIt.Endpoint do
   plug Plug.RequestId
   plug Plug.Logger
 
+
+
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
@@ -38,5 +40,6 @@ defmodule PlanIt.Endpoint do
     key: "_plan_it_key",
     signing_salt: "P+O32tvs"
 
+  plug CORSPlug
   plug PlanIt.Router
 end
