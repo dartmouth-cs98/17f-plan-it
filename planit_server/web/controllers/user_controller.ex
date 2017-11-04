@@ -27,19 +27,21 @@ defmodule PlanIt.UserController do
 
   # POST - insert a new user
   def create(conn, params) do
+    email = Map.get(params, "email")
+    id = (from u in User,
+        where: u.email == ^email,
+        select: u.id
+      ) |> Repo.one
+
+    if id != nil
+      json conn, id
+
     changeset = User.changeset(%User{}, params)
     {message, changeset} = Repo.insert(changeset)
 
     if message == :error do
-      email = Map.get(params, "email")
-      # need to update this to handle different types of errors;
-      uid = (from u in User,
-        where: u.email == ^email,
-        select: u.id
-      ) |> Repo.one
-      #error = "error: #{inspect changeset.errors}"
-      #json put_status(conn, 400), error
-      json conn, uid
+      error = "error: #{inspect changeset.errors}"
+      json put_status(conn, 400), error
     end
 
     json conn, changeset.id
