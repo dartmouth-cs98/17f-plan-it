@@ -42,12 +42,31 @@ class Dashboard extends Component {
 		console.log(this.props.allTrips)
 		return this.props.userTrips.map((trip) => {
 			return (
-				<Link to={`/workspace/:${trip.id}`}>
-					<Card onClick={() => this.onClickTrip(trip.id)}>
+				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+					<Card 
+						className='trip_card'>
 						<CardMedia className='card_img'>
 				      		<img src={image} alt='' />
 					    </CardMedia>
-					    <div className='card_title'>Thailand Trip</div>
+					    <div className='card_title'>{trip.name}</div>
+					</Card>
+				</Link>
+			)
+		})
+	}
+
+	renderFavoritedTrips() {
+		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
+		console.log(this.props.allTrips)
+		return this.props.favoritedTrips.map((trip) => {
+			return (
+				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+					<Card 
+						className='trip_card'>
+						<CardMedia className='card_img'>
+				      		<img src={image} alt='' />
+					    </CardMedia>
+					    <div className='card_title'>{trip.name}</div>
 					</Card>
 				</Link>
 			)
@@ -80,7 +99,7 @@ class Dashboard extends Component {
 					</Slider>
 					<div className='title'>Inspiration Board</div>
 					<Slider {...settings} className='slider'>
-						{this.renderTrips()}
+						{this.renderFavoritedTrips()}
 						<Link to='/explore'>
 							<Card className='trip_card add_card'>
 								<i className="fa fa-plus fa-5x plus_sign" aria-hidden="true"></i>
@@ -95,7 +114,8 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userTrips: state.trips.userTrips
+    userTrips: state.trips.userTrips,
+    favoritedTrips: state.trips.favoritedTrips
   };
 };
 
