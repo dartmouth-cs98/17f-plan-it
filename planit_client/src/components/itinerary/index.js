@@ -24,14 +24,14 @@ export default class Itinerary extends Component {
 		let cardList = []
 		let startCard
 		let prevEnd
+		let startOfDay
 
 		_.each(this.props.cards, (card) => {
 			if (_.isUndefined(startCard)) {
-				console.log(card) 
 				startCard = card.id	
 
 				const startTime = new Date(card.start_time)
-				const startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
+				startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
 
 				// add free time at end of the day
 				if (startTime.getTime() > startOfDay.getTime()) {
@@ -51,7 +51,8 @@ export default class Itinerary extends Component {
 					type: 'travel',
 					start_time: travelStart.toString(),
 					end_time: card.start_time,
-					travelType: card.travelType
+					travelType: card.travelType,
+					destination: card.name
 				}
 
 				// add the free time and travel before a card
@@ -72,7 +73,20 @@ export default class Itinerary extends Component {
 			prevEnd = new Date(card.end_time)
 		})
 
-		console.log(cardList)
+		if (!_.isUndefined(startOfDay)) {
+			const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000))
+			if (prevEnd.getTime() < endOfDay.getTime()) {
+				const freeTime = {
+					type: 'free',
+					start_time: prevEnd.toString(),
+					end_time: endOfDay.toString()
+				}
+
+				cardList.push(freeTime)
+			}
+		}
+
+		return cardList
 	}
 
 	renderBackButton() {
@@ -123,42 +137,15 @@ export default class Itinerary extends Component {
 	}
 
 	renderList() {
-		if (this.props.itinerary.cards.length === 0) {
-			return 
-		}
+		const cards = this.formatCards()
+		console.log(cards)
 
-		// scale to convert time units to positioning on itinerary
-		const timeScale = scaleLinear()
-			.domain([0, 1440])
-			.range([0, 750])
-
-		// reorder cards based on id pointers
-		const currentCard = _.find(this.props.itinerary.cards, (card) => {
-			return card.id === this.props.itinerary.startCard
-		})
-
-		let orderedCards = [currentCard]
-
-		while(true) {
-			const nextCard = _.find(this.props.itinerary.cards, (card) => {
-				return card.id === orderedCards[orderedCards.length - 1].next
-			})
-
-			if (!_.isUndefined(nextCard)) {
-				orderedCards.push(nextCard)
+		const toRender = _.map(cards, (card) => {
+			if (card.type === 'free') {
+				return <FreeTime duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()} />
+			} else if (card.type === 'travel') {
+				return <Travel destination={card.destination} />
 			} else {
-				break
-			}
-		}
-
-		const cards = orderedCards.map((card) => {
-			if (card.type === 'Attraction') {
-				const start = new Date(card.start_datetime)
-				const end = new Date(card.end_datetime)
-
-				const time = Math.abs(end - start) / 60000
-				const height = timeScale(time)
-
 				return (
 					<Item
 						key={card.id}
@@ -170,19 +157,12 @@ export default class Itinerary extends Component {
 						remove={() => {
 							this.props.removeCard(card)
 						}}
-						style={{height: `${height}px`}}
-					/>
-				)
-			} else {
-				return (
-					<Travel
-						key={card.id}
 					/>
 				)
 			}
 		})
 
-		return cards
+		return toRender
 	}
 
 	render() {
@@ -213,10 +193,6 @@ class Item extends Component {
 			    		label='Remove'
 			    		onClick={this.props.remove}
 		    		/>
-		    		<FlatButton
-		    			label='Select'
-		    			onClick={this.props.select}
-	    			/>
 		    	</CardActions>
 			  </Card>
 		  </div>
@@ -224,12 +200,37 @@ class Item extends Component {
 	}
 }
 
+class FreeTime extends Component {
+	render() {
+		// scale to convert time units to positioning on itinerary
+		const timeScale = scaleLinear()
+			.domain([0, 24 * 60 * 60 * 1000])
+			.range([0, 500])
+
+		const height = timeScale(this.props.duration)
+
+		return (
+			<div 
+				className='free-time'
+				style={{height: `${height}px`}}
+			>
+			</div>
+		)
+	}
+}
+
 class Travel extends Component {
 	render() {
 		return (
-			<div className='travel-bar'>
-				Travel
-			</div>
+			<div className='card-wrapper'>
+				<Card>
+			    <CardHeader
+			      title={`Travel to: ${this.props.destination}`}
+			      actAsExpander={false}
+			      showExpandableButton={false}
+			    />
+			  </Card>
+		  </div>
 		)
 	}
 }
