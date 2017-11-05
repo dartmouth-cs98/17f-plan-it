@@ -27,22 +27,26 @@ defmodule PlanIt.UserController do
 
   # POST - insert a new user
   def create(conn, params) do
-    changeset = User.changeset(%User{}, params)
-    {message, changeset} = Repo.insert(changeset)
+    email = Map.get(params, "email")
 
-    if message == :error do
-      email = Map.get(params, "email")
-      # need to update this to handle different types of errors;
-      uid = (from u in User,
+    id = (from u in User,
         where: u.email == ^email,
         select: u.id
       ) |> Repo.one
-      #error = "error: #{inspect changeset.errors}"
-      #json put_status(conn, 400), error
-      json conn, uid
-    end
 
-    json conn, changeset.id
+    if id != nil do
+      json conn, id
+    else
+      changeset = User.changeset(%User{}, params)
+      {message, changeset} = Repo.insert(changeset)
+
+      if message == :error do
+        error = "error: #{inspect changeset.errors}"
+        json put_status(conn, 400), error
+      end
+
+      json conn, changeset.id
+    end
   end
 
   # PUT - update an existing user
@@ -104,7 +108,9 @@ defmodule PlanIt.UserController do
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
-      trip_id: 1
+      trip_id: 1,
+      travel_type: "walking",
+      travel_duration: 900
     })
 
     Repo.insert!(%Card{
@@ -118,7 +124,9 @@ defmodule PlanIt.UserController do
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
-      trip_id: 1
+      trip_id: 1,
+      travel_type: "bike",
+      travel_duration: 900
     })
 
     Repo.insert!(%FavoritedTrip{user_id: 1, trip_id: 3, last_visited: Ecto.DateTime.utc})

@@ -39,8 +39,8 @@ class Explore extends Component {
 		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		return this.props.publishedTrips.map((trip) => {
 			return (
-				<Link to={`/workspace/:${trip.id}`}>
-					<Card onClick={() => this.onClickTrip(trip.id)}>
+				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+					<Card className='trip_card'>
 						<CardMedia className='card_img'>
 				      		<img src={image} alt='' />
 					    </CardMedia>
@@ -52,7 +52,7 @@ class Explore extends Component {
 	}
 
 	render() {
-		let settings = {
+		const explore_settings = {
 	      dots: true,
 	      infinite: false,
 	      speed: 500,
@@ -67,7 +67,7 @@ class Explore extends Component {
 				<NavBar background={'road_trip_background'}/>
 				<div>
 					<div className='title'>My Trips</div>
-					<Slider {...settings} className='slider'>
+					<Slider {...explore_settings} className='explore_slider'>
 						{this.renderPublished()}
 					</Slider>
 				</div>			

@@ -7,6 +7,7 @@ import OnboardingInput from '../onboarding_input'
 import { Map, List } from 'immutable'
 import Modal from 'react-modal'
 import { createTrip } from '../../actions/index.js'
+import cookie from 'react-cookies'
 import './index.scss'
 
 function NextArrow(props) {
@@ -58,8 +59,11 @@ class Onboarding extends Component {
 	}
 
 	onCreateTrip() {
-		const trip = Map({ 'name': this.state.trip_name, 'user_id': 0 })
-		this.props.createTrip(trip)
+		console.log(cookie.load('auth'))
+		this.props.createTrip({
+			name: this.state.trip_name,
+			user_id: cookie.load('auth')
+		})
 	}
 
 	onModalOpen(event) {
@@ -291,7 +295,7 @@ class Onboarding extends Component {
 	}
 
 	render() {
-		let settings = {
+		const onboarding_settings = {
 	      dots: true,
 	      infinite: true,
 	      speed: 500,
@@ -328,11 +332,11 @@ class Onboarding extends Component {
 					        	<p>Input at least one city with a start date</p>
 					        </div>
 						</Modal>
-						<Slider {...settings} className='slider'>
-					        {this.name_slide()}
-					        {this.cities_slide()}
-					        {this.hotels_slide()}
-					        {this.mustdo_slide()}
+						<Slider {...onboarding_settings} className='onboarding_slider'>
+					        <div>{this.name_slide()}</div>
+					        <div>{this.cities_slide()}</div>
+					        <div>{this.hotels_slide()}</div>
+					        <div>{this.mustdo_slide()}</div>
 				      	</Slider>
 					</div>
 				</div>

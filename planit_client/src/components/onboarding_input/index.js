@@ -40,7 +40,6 @@ class OnboardingInput extends Component {
 						onFocusChange={({ focused }) => this.setState({ start_focused: focused })}
 						withPortal={true}
 						hideKeyboardShortcutsPanel={true}
-						className='date_input'
 					/>
 					<SingleDatePicker
 						date={this.props.information.get('end_date')}
@@ -49,7 +48,6 @@ class OnboardingInput extends Component {
 						onFocusChange={({ focused }) => this.setState({ end_focused: focused })}
 						withPortal={true}
 						hideKeyboardShortcutsPanel={true}
-						className='date_input'
 					/>
 				</div>
 			)
