@@ -51,5 +51,16 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
 
       timestamps()
     end
+
+    create table(:token) do
+      add :service, :string
+      add :token_type, :string
+      add :access_token, :string
+      add :expires_at, :integer
+
+      timestamps()
+
+    end
+
   end
 end
