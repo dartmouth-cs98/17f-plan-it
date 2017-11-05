@@ -5,8 +5,8 @@ const initialState = {
   favoritedTrips: [],
   publishedTrips: [],
   trip: {},
+  trip_id: null,
   error: null,
-
 };
 
 const TripsReducer = (state = initialState, action) => {
@@ -37,7 +37,7 @@ const TripsReducer = (state = initialState, action) => {
       });
     case ActionTypes.CREATE_TRIP:
       return Object.assign({}, state, {
-        trip: action.payload,
+        trip_id: action.payload,
       });
     case ActionTypes.CREATE_TRIP_ERROR:
       return Object.assign({}, state, {

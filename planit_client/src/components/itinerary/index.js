@@ -15,7 +15,7 @@ export default class Itinerary extends Component {
 					onClick={this.props.dayBackward}
 					icon={
 						<i
-							class='fa fa-caret-left'
+							className='fa fa-caret-left'
 							style={{color: '#FFFFFF'}}
 						/>
 					}
@@ -32,7 +32,7 @@ export default class Itinerary extends Component {
 					onClick={this.props.dayForward}
 					icon={
 						<i
-							class='fa fa-caret-right'
+							className='fa fa-caret-right'
 							style={{color: '#FFFFFF'}}
 						/>
 					}

@@ -16,6 +16,7 @@ export const ActionTypes = {
   FETCH_FAVORITED_TRIPS_ERROR: 'FETCH_FAVORITED_TRIPS_ERROR',
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
   FETCH_PUBLISHED_TRIPS_ERROR: 'FETCH_PUBLISHED_TRIPS_ERROR',
+  CREATE_TRIP: 'CREATE_TRIP',
   CREATE_TRIP_ERROR: 'CREATE_TRIP_ERROR',
   UPDATE_TRIP: 'UPDATE_TRIP',
   UPDATE_TRIP_ERROR: 'UPDATE_TRIP_ERROR',
@@ -89,4 +90,15 @@ export function createUser(user) {
       });
   };
 }
+
+export function createCard(cards) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
+        dispatch({ type: ActionTypes.CREATE_CARD, payload: response.data });
+      }).catch((error) => {
+        dispatch({ type: ActionTypes.CREATE_CARD_ERROR, payload: error });
+      });
+  };
+}
+
 

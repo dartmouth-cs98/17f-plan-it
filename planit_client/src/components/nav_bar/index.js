@@ -35,7 +35,7 @@ class NavBar extends Component {
 		} else {
 			return (
 				<div className='options_logged_out'>
-          <Link to='/workspace'><div>Explore</div></Link>
+          <Link to='/explore'><div>Explore</div></Link>
           <Link to='/'><div><this.buttonDecision /></div></Link>
 				</div>
 			)
@@ -72,7 +72,6 @@ class NavBar extends Component {
   componentDidUpdate() {
     if (this.state.authenticated) {
       cookie.save('auth', this.props.user_id, { path: '/' })
-      console.log(`in nav bar ${cookie.load('auth')}`)
     } else {
       cookie.remove('auth', { path: '/' })
     }
