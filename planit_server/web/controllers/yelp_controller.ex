@@ -3,6 +3,8 @@ defmodule PlanIt.YelpController do
   use PlanIt.Web, :controller
   use HTTPoison.Base
   alias OAuth2
+  alias PlanIt.Card
+
 
   def index(conn, _params) do
     json conn, "ok"
@@ -94,7 +96,7 @@ defmodule PlanIt.YelpController do
   end
 
 
-	def topplaces(conn, params) do
+  def topplaces(conn, %{"latitude" => lat, "longitude" => long} = params) do
 
     # id = Application.get_env(:yelp, :id)
     # secret = Application.get_env(:yelp, :secret)
@@ -106,19 +108,16 @@ defmodule PlanIt.YelpController do
 
     {message, token} = get_token(client)
 
-    json conn, token
+    request_url = "https://api.yelp.com/v3/businesses/search?latitude=#{lat}&longitude=#{long}"
+    #request_url = "https://api.yelp.com/v3/businesses/search?location=03755"
+    headers = ["Authorization": "#{token.token_type} #{token.access_token}"]
 
-		# # Generate the authorization URL and redirect the user to the provider.
-		# OAuth2.Client.authorize_url!(client)
-		# # => "https://auth.example.com/oauth/authorize?client_id=client_id&redirect_uri=https%3A%2F%2Fexample.com%2Fauth%2Fcallback&response_type=code"
+    response = HTTPoison.get!(request_url, headers)
 
-    # params = [grant_type: "client_credentials", client_id: id, client_secret: secret]
+    body = Poison.decode!(response.body)
 
-		# # Use the authorization code returned from the provider to obtain an access token.
-		# client = OAuth2.Client.get_token!(client, params, code: "someauthcode")
+    businesses = Map.get(body, "businesses")
 
-		# Use the access token to make a request for resources
-		# resource = OAuth2.Client.get!(client, @api_url).body
-
+    json conn, businesses
 	end
 end

@@ -30,4 +30,5 @@ defmodule PlanIt.Card do
     |> cast(params, [:trip_id])
     |> validate_required([:name, :country, :day_number])
   end
+
 end
