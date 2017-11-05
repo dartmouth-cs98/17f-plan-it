@@ -33,12 +33,7 @@ defmodule PlanIt.Router do
     put "/favorited", FavoritedTripController, :change
     delete "/favorited", FavoritedTripController, :remove
 
+    get "/yelp", YelpController, :topplaces
   end
 
-  scope "/auth", PlanIt do
-    pipe_through :browser
-
-    get "/yelp", YelpController, :index
-    get "/yelp/topplaces", YelpController, :topplaces
-  end
 end

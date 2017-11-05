@@ -21,6 +21,8 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :publish, :boolean
       add :user_id, references(:user)
 
+      add :photo_url, :string
+
       timestamps()
     end
 
@@ -35,6 +37,10 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :start_time, :utc_datetime
       add :end_time, :utc_datetime
       add :day_number, :integer
+
+      add :description, :string
+      add :photo_url, :string
+      add :url, :string
 
       add :travel_type, :string
       add :travel_duration, :integer

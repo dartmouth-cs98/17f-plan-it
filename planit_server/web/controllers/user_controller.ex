@@ -73,6 +73,7 @@ defmodule PlanIt.UserController do
       email: "samlee@example.com",
       username: "slee",
       birthday: ~D[1996-12-31]})
+
     Repo.insert!(%User{
       fname: "John",
       lname: "Doe",
@@ -82,18 +83,21 @@ defmodule PlanIt.UserController do
 
 
     Repo.insert!(%Trip{
-      name: "test trip",
+      name: "Hanover Vacation",
       publish: true,
+      photo_url: "https://www.dartmouth.edu/~library/bakerberry/images/bb5.jpg",
       user_id: 1
     })
     Repo.insert!(%Trip{
-      name: "Sam's trip",
+      name: "Turlock Trip",
       publish: true,
+      photo_url: "https://blogjob.com/lifeandliving/files/2014/08/Turlock-california.jpg",
       user_id: 1
     })
     Repo.insert!(%Trip{
-      name: "John's trip",
+      name: "Seoul Eating Adventure",
       publish: false,
+      photo_url: "http://lh4.ggpht.com/_9ZFZVn5T9O0/Sv_zi5UJbII/AAAAAAAAbR8/_-2Mo20VoX0/s400/IMG_1348.JPG",
       user_id: 2
     })
 
@@ -103,14 +107,15 @@ defmodule PlanIt.UserController do
       city: "Hanover",
       country: "USA",
       address: "Corner of the Green",
-      lat: 17.00088,
-      long: 149.0055,
+      lat: 43.7021,
+      long: -72.2890,
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
       trip_id: 1,
-      travel_type: "walking",
-      travel_duration: 900
+      description: "Finest restaurant",
+      photo_url: "http://www.billrooneystudio.com/brimages/pine_wed_1a_001.jpg",
+      url: "https://www.yelp.com/biz/pine-restaurant-hanover-2",
     })
 
     Repo.insert!(%Card{
@@ -119,12 +124,14 @@ defmodule PlanIt.UserController do
       city: "Hanover",
       country: "USA",
       address: "In front of East Wheelock",
-      lat: 107.0268,
-      long: 29.815,
+      lat: 43.7021,
+      long: -72.2890,
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
       day_number: 1,
       trip_id: 1,
+      description: "Largest gym in Hanover",
+      photo_url: "http://image.cdnllnwnl.xosnetwork.com/pics33/640/MY/MYUWEHDGHFRUPUW.20151015131030.jpg",
       travel_type: "bike",
       travel_duration: 900
     })
