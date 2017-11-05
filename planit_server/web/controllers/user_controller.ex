@@ -95,7 +95,7 @@ defmodule PlanIt.UserController do
       lat: 17.00088,
       long: 149.0055,
       start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
-      end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
+      end_time: DateTime.from_naive!(~N[2016-05-24 14:26:08.003], "Etc/UTC"),
       day_number: 1,
       trip_id: 1
     })
@@ -108,8 +108,8 @@ defmodule PlanIt.UserController do
       address: "In front of East Wheelock",
       lat: 107.0268,
       long: 29.815,
-      start_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
-      end_time: DateTime.from_naive!(~N[2016-05-24 13:26:08.003], "Etc/UTC"),
+      start_time: DateTime.from_naive!(~N[2016-05-24 15:26:08.003], "Etc/UTC"),
+      end_time: DateTime.from_naive!(~N[2016-05-24 16:26:08.003], "Etc/UTC"),
       day_number: 1,
       trip_id: 1
     })
