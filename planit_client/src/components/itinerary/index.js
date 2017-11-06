@@ -230,6 +230,13 @@ export default class Itinerary extends Component {
       />
     ]
 
+		// <Checkbox
+	    // label="Shift later cards back"
+	    // checked={this.state.shift}
+	    // onCheck={this.toggleShift.bind(this)}
+	  // />
+
+
 		return (
 			<Dialog
 	      title={`Change start time for: ${this.state.editCard ? this.state.editCard.name : null}`}
@@ -247,11 +254,6 @@ export default class Itinerary extends Component {
 		      defaultTime={this.state.editCard ? new Date(this.state.editCard.start_time) : null}
 		      onChange={this.selectTime}
 		    />
-		     <Checkbox
-          label="Shift later cards back"
-          checked={this.state.shift}
-          onCheck={this.toggleShift.bind(this)}
-        />
 	    </Dialog>
     )
 	}
