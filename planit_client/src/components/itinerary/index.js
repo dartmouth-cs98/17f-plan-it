@@ -7,11 +7,6 @@ import FlatButton from 'material-ui/FlatButton'
 import './index.scss'
 
 export default class Itinerary extends Component {
-	constructor(props) {
-		super(props) 
-
-	}
-
 	renderBackButton() {
 		if (this.props.backArrow) {
 			return (

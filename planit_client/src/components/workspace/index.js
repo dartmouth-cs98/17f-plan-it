@@ -7,7 +7,7 @@ import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards, createCard, deleteCard } from '../../actions/index.js';
+import { fetchTrip, fetchCards, insertCard, deleteCard } from '../../actions/index.js';
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -53,18 +53,26 @@ class Workspace extends Component {
 
 			const duration = (new Date(this.state.selected.end_time)).getTime() - (new Date(this.state.selected.start_time)).getTime()
 			if (duration >= DEFAULT_DURATION + TRAVEL_TIME) {
-				const startTime = (new Date(this.state.selected.start_time)).getTime() + TRAVEL_TIME
+				let startTime = (new Date(this.state.selected.start_time)).getTime()
 
-				this.props.createCard([{
+				if (index > 0) {
+					startTime += TRAVEL_TIME
+				}
+
+				this.props.insertCard([{
 					...card,
-					lat:123123.12,
-				  long:121231.12312,
+					lat: 123123.12,
+				  long: 121231.12312,
 				  travel_duration: TRAVEL_TIME,
-				  start_time: (new Date(startTime)).toString(),
-				  end_time: (new Date(startTime + DEFAULT_DURATION)).toString(),
+				  start_time: (new Date(startTime)),
+				  end_time: (new Date(startTime + DEFAULT_DURATION)),
 				  trip_id: TRIP_ID,
 				  day_number: DAY_NUMBER
 				}], TRIP_ID, DAY_NUMBER)
+
+				// update the next card in the list
+
+				this.setState({ selected: null })
 			} 
 		}
 	}
@@ -119,6 +127,7 @@ class Workspace extends Component {
 			}
 
 			cardList.push(card)
+
 			prevEnd = new Date(card.end_time)
 		})
 
@@ -181,8 +190,8 @@ const mapDispatchToProps = (dispatch) => {
 		fetchCards: (id, day) => {
 			dispatch(fetchCards(id, day))
 		},
-		createCard: (cards) => {
-			dispatch(createCard(cards))
+		insertCard: (cards, trip, id) => {
+			dispatch(insertCard(cards, trip, id))
 		},
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))

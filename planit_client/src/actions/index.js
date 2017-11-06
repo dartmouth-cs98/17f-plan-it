@@ -91,7 +91,7 @@ export function fetchCards(id, day=null) {
   }
 }
 
-export function createCard(cards, trip, day) {
+export function insertCard(cards, trip, day) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
       dispatch(fetchCards(trip, day))
