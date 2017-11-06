@@ -56,10 +56,10 @@ export function fetchTrip(id) {
 export function createTrip(trip) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/trips`, trip).then((response) => {
-        dispatch({ type: ActionTypes.CREATE_TRIP, payload: response.data })
-      }).catch((error) => {
-        dispatch({ type: ActionTypes.CREATE_TRIP_ERROR, payload: error })
-      })
+      dispatch({ type: ActionTypes.CREATE_TRIP, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.CREATE_TRIP_ERROR, payload: error })
+    })
   }
 }
 
@@ -84,6 +84,27 @@ export function fetchCards(id, day=null) {
     }).catch((error) => {
       console.log(error)
       dispatch({ type: ActionTypes.FETCH_CARDS_ERROR, payload: error })
+    })
+  }
+}
+
+export function createCard(cards) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
+      dispatch({ type: ActionTypes.CREATE_CARD, payload: response.data  })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.CREATE_TRIP_ERROR, payload: error })
+    })
+  }
+}
+
+export function deleteCard(id, trip, day) {
+  return (dispatch) => {
+    axios.delete(`${ROOT_URL}/cards/${id}`).then((response) => {
+      dispatch(fetchCards(trip, day))
+    }).catch((error) => {
+      console.log(error)
+      dispatch({ type: ActionTypes.DELETE_CARD_ERROR, payload: error })
     })
   }
 }

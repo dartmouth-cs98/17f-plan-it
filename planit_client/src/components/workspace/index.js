@@ -7,252 +7,143 @@ import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards } from '../../actions/index.js';
+import { fetchTrip, fetchCards, createCard, deleteCard } from '../../actions/index.js';
 require('./index.scss')
 
-const DEFAULT_START = '9:00:00'
-const DEFAULT_END = '10:00:00'
+const DEFAULT_DURATION = 3600000
 const TRIP_ID = 1
-const ITINERARY = [
-	{
-		date: 'November 14',
-		startCard: 851093,
-		cards: [
-			{
-				id: 851093,
-				type: 'Attraction',
-				name: 'Thai Taiwanese Embassy',
-				description: 'Two become one',
-				startDatetime: 'November 14, 2017 9:45:00',
-				endDatetime: 'November 14, 2017 10:30:00',
-				next: 193048
-			},
-			{
-				id: 193048,
-				type: 'Travel', 
-				next: 148290
-			},
-			{
-				id: 148290,
-				type: 'Attraction',
-				name: 'Thai the Knot',
-				description: 'The perfect venue for weddings of all different kinds',
-				startDatetime: 'November 14, 2017 10:45:00',
-				endDatetime: 'November 14, 2017 11:45:00'
-			}
-		]
-	},
-	{
-		date: 'November 15',
-		startCard: 851093,
-		cards: [
-			{
-				id: 851093,
-				type: 'Attraction',
-				name: 'Thai Taiwanese Embassy',
-				description: 'Two become one',
-				startDatetime: 'November 14, 2017 9:45:00',
-				endDatetime: 'November 14, 2017 10:30:00',
-				next: 193048
-			},
-			{
-				id: 193048,
-				type: 'Travel', 
-				next: 148290
-			},
-			{
-				id: 148290,
-				type: 'Attraction',
-				name: 'Thai the Knot',
-				description: 'The perfect venue for weddings of all different kinds',
-				startDatetime: 'November 14, 2017 10:45:00',
-				endDatetime: 'November 14, 2017 11:45:00'
-			}
-		]
-	}
-]
+const DAY_NUMBER = 1
+const TRAVEL_TIME = 900000
 
 class Workspace extends Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			day: 1,
-			itinerary: ITINERARY[0],
-			selected: null
+			day: DAY_NUMBER,
+			selected: null,
+			cards: []
 		}
 
+		this.selectTime = this.selectTime.bind(this)
 		this.addCard = this.addCard.bind(this)
-		this.selectCard = this.selectCard.bind(this)
-		this.removeCard = this.removeCard.bind(this)
-		this.dayForward = this.dayForward.bind(this)
-		this.dayBackward = this.dayBackward.bind(this)
+		this.formatCards = this.formatCards.bind(this)
 	}
 
 	componentDidMount() {
 		this.props.fetchTrip(TRIP_ID)
-		this.props.fetchCards(TRIP_ID, 1)
+		this.props.fetchCards(TRIP_ID, DAY_NUMBER)
+	}
+
+	selectTime(freeTime) {
+		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
+			this.setState({ selected: null })
+		} else {
+			this.setState({ selected: freeTime })
+		}
 	}
 
 	addCard(card) {
-		if (this.state.itinerary.cards.length === 0) {
-			let newCard = {
-				id: card.id,
-				name: card.name,
-				type: 'Attraction',
-				description: card.description,
-				startDatetime: `${this.state.itinerary.date}, ${DEFAULT_START}`,
-				endDatetime: `${this.state.itinerary.date}, ${DEFAULT_END}`
-			}
+		const cards = this.formatCards()
 
-			this.setState({
-				itinerary: _.assign(this.state.itinerary, {
-					cards: [newCard],
-					startCard: newCard.id
-				})
-			})
-		} else if (!_.isNull(this.state.selected) && _.isUndefined(_.find(this.state.itinerary.cards, (item) => {
-			return card.id === item.id
-		}))) {
-			const prevTravel = _.find(this.state.itinerary.cards, (card) => {
-				return card.id === this.state.selected.next
-			}) || {
-				id: card.id - 1,
-				type: 'Travel'
-			}
-
-			const prevEnd = new Date(this.state.selected.endDatetime)
-			const startDate = new Date(prevEnd.getTime() + 15*60000)
-			const endDate = new Date(startDate.getTime() + 60*60000)
-
-			let toAdd = []
-
-			let newCard = {
-				id: card.id,
-				name: card.name,
-				type: 'Attraction',
-				description: card.description,
-				startDatetime: startDate.toString(),
-				endDatetime: endDate.toString()
-			}
-
-			if (!_.isUndefined(this.state.selected.next)) {
-				toAdd.push({
-					id: card.id + 1,
-					type: 'Travel',
-					next: prevTravel.next
-				})
-
-				_.assign(newCard, { next: card.id + 1 })
-			}
-
-			toAdd.push(_.assign(this.state.selected, { next: prevTravel.id }))
-			toAdd.push(_.assign(prevTravel, {	next: card.id }))
-			toAdd.push(newCard)
-
-			let newCards = _.filter(this.state.itinerary.cards, (card) => {
-				return card.id !== prevTravel.id && card.id !== this.state.selected.id
+		if (!_.isNull(this.state.selected)) {
+			const index = _.findIndex(cards, (card) => {
+				return this.state.selected.start_time === card.start_time && this.state.selected.end_time === card.end_time
 			})
 
-			newCards = newCards.concat(toAdd)
+			const duration = (new Date(this.state.selected.end_time)).getTime() - (new Date(this.state.selected.start_time)).getTime()
+			if (duration >= DEFAULT_DURATION + TRAVEL_TIME) {
+				const startTime = (new Date(this.state.selected.start_time)).getTime() + TRAVEL_TIME
 
-			this.setState({
-				itinerary: _.assign(this.state.itinerary, {
-					cards: newCards
-				}), 
-				selected: null
-			})
+				this.props.createCard([{
+					...card,
+					lat:123123.12,
+				  long:121231.12312,
+				  travel_duration: TRAVEL_TIME,
+				  start_time: (new Date(startTime)).toString(),
+				  end_time: (new Date(startTime + DEFAULT_DURATION)).toString(),
+				  trip_id: TRIP_ID,
+				  day_number: DAY_NUMBER
+				}])
+
+				this.props.fetchCards(TRIP_ID, 1)
+			} 
 		}
 	}
 
-	selectCard(card) {
-		this.setState({ selected: card })
-	}
-
-	removeCard(card) {
-		let prevTravel = _.find(this.state.itinerary.cards, (item) => {
-			return item.next === card.id
-		})
-
-		const nextTravel = _.find(this.state.itinerary.cards, (item) => {
-			return card.next === item.id
-		})
-
-		let toDelete = [card.id]
-		let prevCard
+	formatCards() {
+		let cardList = []
 		let startCard
+		let prevEnd
+		let startOfDay
 
-		if (!_.isUndefined(prevTravel)) {
-			prevCard = _.find(this.state.itinerary.cards, (item) => {
-				return item.next === prevTravel.id
-			})
+		_.each(this.props.cards, (card) => {
+			if (_.isUndefined(startCard)) {
+				startCard = card.id	
 
-			toDelete.push(prevCard.id)
+				const startTime = new Date(card.start_time)
+				startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
 
-			if (!_.isUndefined(nextTravel)) {
-				_.assign(prevTravel, { next: nextTravel.next })
+				// add free time at end of the day
+				if (startTime.getTime() > startOfDay.getTime()) {
+					const freeTime = {
+						type: 'free',
+						start_time: startOfDay.toString(),
+						end_time: startTime.toString()
+					}
+
+					cardList.push(freeTime)
+				}
+			} else {
+				const cardStart = new Date(card.start_time)
+
+				const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
+				const travel = {
+					type: 'travel',
+					start_time: travelStart.toString(),
+					end_time: card.start_time,
+					travelType: card.travelType,
+					destination: card.name
+				}
+
+				// add the free time and travel before a card
+				if (!_.isUndefined(prevEnd) && prevEnd.getTime() < travelStart.getTime()) {
+					const freeTime = {
+						type: 'free',
+						start_time: prevEnd.toString(),
+						end_time: travelStart.toString()
+					}
+
+					cardList.push(freeTime)
+				}
+
+				cardList.push(travel)
 			}
 
-			toDelete.push(prevTravel.id)
-		} else {
-			if (!_.isUndefined(nextTravel)) {
-				startCard = nextTravel.next
+			cardList.push(card)
+			prevEnd = new Date(card.end_time)
+		})
+
+		if (!_.isUndefined(startOfDay)) {
+			const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000))
+			if (prevEnd.getTime() < endOfDay.getTime()) {
+				const freeTime = {
+					type: 'free',
+					start_time: prevEnd.toString(),
+					end_time: endOfDay.toString()
+				}
+
+				cardList.push(freeTime)
 			}
 		}
 
-		if (!_.isUndefined(nextTravel)) {
-			console.log(nextTravel)
-			toDelete.push(nextTravel.id)
-		} else {
-			prevTravel = null
 
-			if (!_.isUndefined(prevCard)) {
-				_.assign(prevCard, { next: null })
-			}
-		}
-
-		let newCards = _.filter(this.state.itinerary.cards, (item) => {
-			return _.indexOf(toDelete, item.id) < 0
-		})
-
-		if (!_.isNil(prevTravel)) {
-			newCards.push(prevTravel)
-		}
-
-		if (!_.isUndefined(prevCard)) {
-			newCards.push(prevCard)
-		}
-
-		console.log(newCards)
-
-		this.setState({
-			itinerary: _.assign(this.state.itinerary, {
-				startCard: startCard || this.state.itinerary.startCard,
-				cards: newCards
-			}), 
-			selected: null
-		})
-		// TODO: hook up api call to remove card from itinerary
-	}
-
-	dayForward() {
-		const day = Math.min(this.state.day + 1, ITINERARY.length)
-		this.setState({ 
-			day,
-			itinerary: ITINERARY[day - 1]
-		})
-	}
-
-	dayBackward() {
-		const day = Math.max(this.state.day - 1, 1)
-
-		this.setState({ 
-			day,
-			itinerary: ITINERARY[day - 1]
-		})
+		return cardList
 	}
 
 	render() {
+		const cards = this.formatCards()
+
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
@@ -260,15 +151,14 @@ class Workspace extends Component {
 				<div className='planner'>
 					<Suggestions addCard={this.addCard}	/>
 					<Itinerary 
-						itinerary={this.state.itinerary}
-						cards={this.props.cards}
+						tripId={TRIP_ID}
+						cards={cards}
 						day={this.state.day}
-						selectCard={this.selectCard}
-						removeCard={this.removeCard}
+						selectTime={this.selectTime}
+						selected={this.state.selected}
+						removeCard={this.props.deleteCard}
 						dayForward={this.dayForward}
 						dayBackward={this.dayBackward}
-						backArrow={this.state.day > 1}
-						forwardArrow={this.state.day < ITINERARY.length}
 					/>
 					<Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
 				</div>
@@ -292,6 +182,12 @@ const mapDispatchToProps = (dispatch) => {
 		}, 
 		fetchCards: (id, day) => {
 			dispatch(fetchCards(id, day))
+		},
+		createCard: (cards) => {
+			dispatch(createCard(cards))
+		},
+		deleteCard: (id, trip, day) => {
+			dispatch(deleteCard(id, trip, day))
 		}
 	}
 }

@@ -6,87 +6,10 @@ import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import './index.scss'
 
-const TRAVEL_TIME = 900000
-
 export default class Itinerary extends Component {
 	constructor(props) {
 		super(props) 
 
-		this.formatCards = this.formatCards.bind(this)
-	}
-
-	componentDidUpdate() {
-		console.log(this.props.cards)
-		this.formatCards()
-	}
-
-	formatCards() {
-		let cardList = []
-		let startCard
-		let prevEnd
-		let startOfDay
-
-		_.each(this.props.cards, (card) => {
-			if (_.isUndefined(startCard)) {
-				startCard = card.id	
-
-				const startTime = new Date(card.start_time)
-				startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
-
-				// add free time at end of the day
-				if (startTime.getTime() > startOfDay.getTime()) {
-					const freeTime = {
-						type: 'free',
-						start_time: startOfDay.toString(),
-						end_time: startTime.toString()
-					}
-
-					cardList.push(freeTime)
-				}
-			} else {
-				const cardStart = new Date(card.start_time)
-
-				const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-				const travel = {
-					type: 'travel',
-					start_time: travelStart.toString(),
-					end_time: card.start_time,
-					travelType: card.travelType,
-					destination: card.name
-				}
-
-				// add the free time and travel before a card
-				if (!_.isUndefined(prevEnd) && prevEnd.getTime() < travelStart.getTime()) {
-					const freeTime = {
-						type: 'free',
-						start_time: prevEnd.toString(),
-						end_time: travelStart.toString()
-					}
-
-					cardList.push(freeTime)
-				}
-
-				cardList.push(travel)
-			}
-
-			cardList.push(card)
-			prevEnd = new Date(card.end_time)
-		})
-
-		if (!_.isUndefined(startOfDay)) {
-			const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000))
-			if (prevEnd.getTime() < endOfDay.getTime()) {
-				const freeTime = {
-					type: 'free',
-					start_time: prevEnd.toString(),
-					end_time: endOfDay.toString()
-				}
-
-				cardList.push(freeTime)
-			}
-		}
-
-		return cardList
 	}
 
 	renderBackButton() {
@@ -129,7 +52,7 @@ export default class Itinerary extends Component {
 				{this.renderBackButton()}
 				<FlatButton
 					className='itinerary-label'
-					label={`Day ${this.props.day}: ${this.props.itinerary.date}`}
+					label={`Day ${this.props.day}`}
 				/>
 				{this.renderForwardButton()}
 			</div>
@@ -137,12 +60,19 @@ export default class Itinerary extends Component {
 	}
 
 	renderList() {
-		const cards = this.formatCards()
-		console.log(cards)
+		console.log(this.props.cards, 'cards')
 
-		const toRender = _.map(cards, (card) => {
+		const toRender = _.map(this.props.cards, (card) => {
 			if (card.type === 'free') {
-				return <FreeTime duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()} />
+				const selected = _.isNull(this.props.selected) ? null : (new Date(this.props.selected.start_time)).getTime() === (new Date(card.start_time)).getTime()
+
+				return (
+					<FreeTime
+						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+						select={() => { this.props.selectTime(card)}}
+						selected={selected}
+					/>
+				)
 			} else if (card.type === 'travel') {
 				return <Travel destination={card.destination} />
 			} else {
@@ -151,11 +81,8 @@ export default class Itinerary extends Component {
 						key={card.id}
 						name={card.name}
 						description={card.description}
-						select={() => {
-							this.props.selectCard(card)
-						}}
 						remove={() => {
-							this.props.removeCard(card)
+							this.props.removeCard(card.id, this.props.tripId, this.props.day)
 						}}
 					/>
 				)
@@ -211,7 +138,8 @@ class FreeTime extends Component {
 
 		return (
 			<div 
-				className='free-time'
+				className={this.props.selected ? 'free-time-selected' : 'free-time'}
+				onClick={this.props.select}
 				style={{height: `${height}px`}}
 			>
 			</div>
