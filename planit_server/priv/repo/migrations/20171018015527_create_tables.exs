@@ -41,6 +41,7 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :description, :string
       add :photo_url, :string
       add :url, :string
+      add :place_id, :string
 
       add :travel_type, :string
       add :travel_duration, :integer

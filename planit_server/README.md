@@ -276,7 +276,9 @@ package = [
   day_number:1,
   trip_id:1,
   travel_duration:900,
-  travel_type:"bike"
+  travel_type:"bike",
+  description:"Best hotel in Hanover",
+  photo_url:""
   },
 { id: 0
   type:"restaurant",

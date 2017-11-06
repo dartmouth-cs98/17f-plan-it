@@ -115,7 +115,7 @@ defmodule PlanIt.UserController do
       trip_id: 1,
       description: "Finest restaurant",
       photo_url: "http://www.billrooneystudio.com/brimages/pine_wed_1a_001.jpg",
-      url: "https://www.yelp.com/biz/pine-restaurant-hanover-2",
+      url: "https://www.yelp.com/biz/pine-restaurant-hanover-2"
     })
 
     Repo.insert!(%Card{
