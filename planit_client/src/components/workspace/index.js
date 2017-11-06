@@ -7,7 +7,7 @@ import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards, insertCard, deleteCard } from '../../actions/index.js';
+import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard } from '../../actions/index.js';
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -163,6 +163,7 @@ class Workspace extends Component {
 						day={this.state.day}
 						selectTime={this.selectTime}
 						selected={this.state.selected}
+						updateCard={this.props.updateCard}
 						removeCard={this.props.deleteCard}
 						dayForward={this.dayForward}
 						dayBackward={this.dayBackward}
@@ -192,6 +193,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		insertCard: (cards, trip, id) => {
 			dispatch(insertCard(cards, trip, id))
+		},
+		updateCard: (cards, trip, id) => {
+			dispatch(updateCard(cards, trip, id))
 		},
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))

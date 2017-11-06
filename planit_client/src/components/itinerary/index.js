@@ -16,12 +16,15 @@ export default class Itinerary extends Component {
 		this.state = {
 			startTimeDialog: false,
 			editCard: null, 
-			shift: false
+			shift: false, 
+			newTime: null
 		}
 
 		this.openStartTimeDialog = this.openStartTimeDialog.bind(this)
 		this.closeDialog = this.closeDialog.bind(this)
 		this.toggleShift = this.toggleShift.bind(this)
+		this.selectTime = this.selectTime.bind(this)
+		this.updateStartTime = this.updateStartTime.bind(this)
 	}
 
 	openStartTimeDialog(card) {
@@ -41,6 +44,47 @@ export default class Itinerary extends Component {
 
 	toggleShift() {
 		this.setState({	shift: !this.state.shift })
+	}
+
+	selectTime(event, time) {
+		this.setState({ newTime: time })
+	}
+
+	updateStartTime() {
+		if (_.isNull(this.state.editCard) || _.isNull(this.state.newTime))
+			return
+
+		let updated = []
+		const index = _.findIndex(this.props.cards, (card) => {
+			return card.id === this.state.editCard.id
+		})
+
+		const shift = this.state.newTime.getTime() - (new Date(this.state.editCard.start_time)).getTime()
+		const duration = (new Date(this.state.editCard.end_time)).getTime() - (new Date(this.state.editCard.start_time)).getTime()
+
+		// if (!this.state.shift) {
+		if (shift > 0 && index < this.props.cards.length - 1) {
+			const next = this.props.cards[index + 1]
+			const newEndTime = this.state.newTime.getTime() + duration
+
+			// don't update if it would mess up a boundary afterwards
+			if (next.type !== 'free' || (new Date(next.end_time)).getTime() < newEndTime)
+				return
+		} else if (shift < 0 && index > 1) {
+			const prev = this.props.cards[index - 1]
+
+			// don't update if it would mess up a boundary before
+			if (prev.type !== 'free' || (new Date(prev.start_time)).getTime() > this.state.newTime.getTime())
+				return
+		}
+
+		updated.push(_.assign(this.state.editCard, {
+			start_time: this.state.newTime,
+			end_time: new Date(this.state.newTime.getTime() + duration)
+		}))
+
+		this.props.updateCard(updated, this.props.tripId, this.props.day)
+		// } 
 	}
 
 	renderBackButton() {
@@ -169,7 +213,7 @@ export default class Itinerary extends Component {
       <FlatButton
         label="Update"
         primary={true}
-        onClick={this.closeDialog}
+        onClick={this.updateStartTime}
       />
     ]
 
@@ -188,6 +232,7 @@ export default class Itinerary extends Component {
 	    	<TimePicker
 		      hintText="12hr Format"
 		      defaultTime={this.state.editCard ? new Date(this.state.editCard.start_time) : null}
+		      onChange={this.selectTime}
 		    />
 		     <Checkbox
           label="Shift later cards back"

@@ -101,6 +101,16 @@ export function insertCard(cards, trip, day) {
   }
 }
 
+export function updateCard(cards, trip, day) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/cards?trip_id=${trip}`, cards).then((response) => {
+      dispatch(fetchCards(trip, day))
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.UPDATE_CARD_ERROR, payload: error })
+    })
+  }
+}
+
 export function deleteCard(id, trip, day) {
   return (dispatch) => {
     axios.delete(`${ROOT_URL}/cards/${id}`).then((response) => {
