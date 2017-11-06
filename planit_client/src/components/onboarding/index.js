@@ -6,8 +6,10 @@ import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
 import { Map, List } from 'immutable'
 import Modal from 'react-modal'
-import { createTrip } from '../../actions/index.js'
+import { createTrip, createCard } from '../../actions/index.js'
 import cookie from 'react-cookies'
+import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete'
+import moment from 'moment'
 import './index.scss'
 
 function NextArrow(props) {
@@ -56,10 +58,36 @@ class Onboarding extends Component {
 		this.onLetsGo = this.onLetsGo.bind(this)
 		this.onCityChange = this.onCityChange.bind(this)
 		this.onCreateTrip = this.onCreateTrip.bind(this)
+		this.onHandleSelect = this.onHandleSelect.bind(this)
+		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
+	}
+
+	updatedItem(item, trip_id) {
+		if (item.get('start_date') !== null) {
+			item = item.set('start_date', item.get('start_date').toDate())
+		}
+		if (item.get('end_date') !== null) {
+			item = item.set('end_date', item.get('end_date').toDate())
+		}
+		return item.set('trip_id', trip_id)
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.trip_id !== null) {
+			this.state.cities.forEach((city) => {
+				this.props.createCard([this.updatedItem(city, nextProps.trip_id)])
+			})
+			this.state.hotels.forEach((hotel) => {
+				this.props.createCard([this.updatedItem(hotel, nextProps.trip_id)])
+			})
+			this.state.must_dos.forEach((must_do) => {
+				this.props.createCard([this.updatedItem(must_do, nextProps.trip_id)])
+			})
+			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
+		}
 	}
 
 	onCreateTrip() {
-		console.log(cookie.load('auth'))
 		this.props.createTrip({
 			name: this.state.trip_name,
 			user_id: cookie.load('auth')
@@ -78,8 +106,8 @@ class Onboarding extends Component {
 		this.setState( { landing_page: false } )
 	}
 
-	onCityChange(event) {
-		const first_city = this.state.cities.get(0).set('name', event.target.value)
+	onCityChange(name) {
+		const first_city = this.state.cities.get(0).set('name', name)
 		const state_array = this.state.cities.set(0, first_city)
 		this.setState({ cities: state_array})
 	}
@@ -88,18 +116,87 @@ class Onboarding extends Component {
 		this.setState({ trip_name: event.target.value })
 	}
 
-	onOtherNameChange(index, type, event) {
+	onOtherNameChange(index, type, name) {
 		if (type === 'hotel') {
-			const edited_hotel = this.state.hotels.get(index).set('name', event.target.value)
+			const edited_hotel = this.state.hotels.get(index).set('name', name)
 			const state_array = this.state.hotels.set(index, edited_hotel)
 			this.setState({ hotels: state_array})
 		} else if (type === 'city') {
-			const edited_city = this.state.cities.get(index).set('name', event.target.value)
+			const edited_city = this.state.cities.get(index).set('name', name)
 			const state_array = this.state.cities.set(index, edited_city)
 			this.setState({ cities: state_array})
 		} else {
-			const edited_mustdo = this.state.must_dos.get(index).set('name', event.target.value)
-			const state_array = this.state.hotels.set(index, edited_mustdo)
+			const edited_mustdo = this.state.must_dos.get(index).set('name', name)
+			const state_array = this.state.must_dos.set(index, edited_mustdo)
+			this.setState({ must_dos: state_array})
+		}
+	}
+
+	onHandleCitySelect(results, name) {
+		var lat = 0
+		var lng = 0
+		getLatLng(results).then(({ latitude, longitude }) => {
+			lat = latitude
+			lng = longitude
+		})
+		let address = results.formatted_address
+		let place_id = results.place_id
+
+		const first_city = this.state.cities.get(0).merge({
+			name: name,
+			lat: lat,
+			lng: lng,
+			place_id: place_id,
+			address: address, 
+			day_number: 1
+		})
+		const state_array = this.state.cities.set(0, first_city)
+		this.setState({ cities: state_array})
+	}
+
+	onHandleSelect(index, type, results, name) {
+		var lat = 0
+		var lng = 0
+		getLatLng(results).then(({ latitude, longitude }) => {
+			lat = latitude
+			lng = longitude
+		})
+		let address = results.formatted_address
+		let day_number = index + 1
+		let place_id = results.place_id
+
+		if (type === 'hotel') {
+			const edited_hotel = this.state.hotels.get(index).merge({
+				name: name,
+				address: address,
+				day_number: day_number,
+				lat: lat,
+				lng: lng,
+				place_id: place_id
+			})
+			const state_array = this.state.hotels.set(index, edited_hotel)
+			this.setState({ hotels: state_array})
+		} else if (type === 'city') {
+			const edited_city = this.state.cities.get(index).merge({
+				name: name,
+				address: address,
+				day_number: day_number,
+				lat: lat,
+				lng: lng,
+				place_id: place_id
+			})
+			const state_array = this.state.cities.set(index, edited_city)
+			this.setState({ cities: state_array})
+		} else {
+			const edited_mustdo = this.state.must_dos.get(index).merge({
+				name: name,
+				address: address,
+				day_number: day_number,
+				lat: lat,
+				lng: lng,
+				place_id: place_id
+			})
+			const state_array = this.state.must_dos.set(index, edited_mustdo)
 			this.setState({ must_dos: state_array})
 		}
 	}
@@ -124,7 +221,7 @@ class Onboarding extends Component {
 			if (end_date === null || new Date(end_date) >= new Date(start_date)) {
 				const edited_date = this.state.must_dos.get(index).set('start_date', start_date);
 				const state_array = this.state.must_dos.set(index, edited_date);
-				this.setState({ hotels: state_array })
+				this.setState({ must_dos: state_array })
 			}
 		}
 
@@ -156,7 +253,6 @@ class Onboarding extends Component {
 	}
 
 	onAddCity(event) {
-		console.log('pushed')
 		const state_array = this.state.cities.push(Map({ type: 'city', name: '', start_date: null, end_date: null}))
 		this.setState({ cities: state_array })
 	}
@@ -179,10 +275,14 @@ class Onboarding extends Component {
 						<OnboardingInput
 							index={index}
 							placeholder={'City'}
-							information={city}
+							name={city.get('name')}
+							input_type='city'
 							onOtherNameChange={this.onOtherNameChange}
 							onStartDateChange={this.onStartDateChange}
 							onEndDateChange={this.onEndDateChange}
+							onHandleSelect={this.onHandleSelect}
+							start_date={city.get('start_date')}
+							end_date={city.get('end_date')}
 						/>
 					</div>
 				)
@@ -198,10 +298,14 @@ class Onboarding extends Component {
 						<OnboardingInput
 							index={index}
 							placeholder={'Hotel'}
-							information={hotel}
+							name={hotel.get('name')}
+							input_type='hotel'
 							onOtherNameChange={this.onOtherNameChange}
 							onStartDateChange={this.onStartDateChange}
 							onEndDateChange={this.onEndDateChange}
+							onHandleSelect={this.onHandleSelect}
+							start_date={hotel.get('start_date')}
+							end_date={hotel.get('end_date')}
 						/>
 					</div>
 				)
@@ -216,11 +320,15 @@ class Onboarding extends Component {
 					<div key={index}>
 						<OnboardingInput
 							index={index}
-							placeholder={'Attraction'}
-							information={must_do}
+							placeholder={'Must Do'}
+							name={must_do.get('name')}
+							input_type='must_do'
 							onOtherNameChange={this.onOtherNameChange}
 							onStartDateChange={this.onStartDateChange}
 							onEndDateChange={this.onEndDateChange}
+							onHandleSelect={this.onHandleSelect}
+							start_date={must_do.get('start_date')}
+							end_date={must_do.get('end_date')}
 						/>
 					</div>
 				)
@@ -238,9 +346,7 @@ class Onboarding extends Component {
 		}
 		else {
 			return (
-				<Link to='/workspace'>
 					<div className='button_container start' onClick={this.onCreateTrip}>Start Trip</div>
-				</Link>
 			)
 		}
 	}
@@ -294,6 +400,41 @@ class Onboarding extends Component {
 		)
 	}
 
+	renderStartCity() {
+		const inputProps = {
+		    value: this.state.cities.get(0).get('name'),
+		    onChange: (name) => { this.onCityChange(name) },
+		    type: 'text',
+		    placeholder: 'Where does your adventure begin?',
+		    autoFocus: true,
+		}
+		const handleSelect = (address, placeId) => {
+			geocodeByPlaceId(placeId)
+			  .then(results => { this.onHandleCitySelect(results[0], address) })
+		}
+		const options = {
+			types: ['(cities)']
+		}
+		const AutocompleteItem = ({ formattedSuggestion }) => (
+	      <div className="suggestion_item">
+	        <i className='fa fa-map-marker suggestion_icon'/>
+	        <strong>{formattedSuggestion.mainText}</strong>{' '}
+	        <small className="text-muted">{formattedSuggestion.secondaryText}</small>
+	      </div>
+      	)
+
+		return (
+			<PlacesAutocomplete
+				inputProps = { inputProps }
+				onSelect = { handleSelect }
+				autoCompleteItem = { AutocompleteItem }
+				options = { options }
+				googleLogo = { false }
+				classNames = {{ root: 'start_input' }}
+			/>
+		)
+	}
+
 	render() {
 		const onboarding_settings = {
 	      dots: true,
@@ -311,9 +452,7 @@ class Onboarding extends Component {
 					<div className='landing_page'>
 						<NavBar background={'no_background'} page={'ONBOARDING'}/>
 						<div className='buttons centered'>
-							<input type='text' placeholder='Where does your adventure begin?' 
-								onChange={this.onCityChange}
-								className='landing_input'/>
+							{this.renderStartCity()}
 							<div className='button_box' onClick={this.onLetsGo}>Let's go</div>
 						</div>
 					</div>
@@ -345,4 +484,10 @@ class Onboarding extends Component {
 	}
 }
 
-export default withRouter(connect(null, { createTrip })(Onboarding));
+const mapStateToProps = (state) => {
+	return {
+		trip_id: state.trips.trip_id,
+	};
+};
+
+export default withRouter(connect(mapStateToProps, { createTrip, createCard })(Onboarding));

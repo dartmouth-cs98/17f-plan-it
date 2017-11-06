@@ -1,3 +1,11 @@
+.suggestion_item {
+	padding: 4px;
+	text-align: left;
+}
+
+.suggestion_icon {
+	margin-right: 8px;
+}
 
 .onboarding {
 	height: 90vh;
@@ -74,6 +82,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	width: 80vw;
 }
 
 .button_container {
@@ -140,7 +149,7 @@
 	width: 130px;
 	text-align: center;
 	cursor: pointer;
-	margin-left: 10px;
+	margin-left: 40px;
 	padding-top: 6px;
 	padding-bottom: 6px;
 	height: 100%;
@@ -157,6 +166,6 @@
 	transform: translate(-50%, -50%);
 }
 
-.landing_input {
+.start_input {
 	width: 60vw !important;
 }
