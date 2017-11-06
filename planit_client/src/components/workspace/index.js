@@ -64,9 +64,7 @@ class Workspace extends Component {
 				  end_time: (new Date(startTime + DEFAULT_DURATION)).toString(),
 				  trip_id: TRIP_ID,
 				  day_number: DAY_NUMBER
-				}])
-
-				this.props.fetchCards(TRIP_ID, 1)
+				}], TRIP_ID, DAY_NUMBER)
 			} 
 		}
 	}

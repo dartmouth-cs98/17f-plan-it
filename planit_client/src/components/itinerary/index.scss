@@ -26,6 +26,24 @@
 			min-width: 40px !important;
 		}
 	}
+
+	.itinerary-body {
+		display: flex;
+
+		.itinerary-list {
+			width: 100%;
+		}
+	}
+}
+
+.time-tick {
+	font-size: 12px;
+	text-align: right;
+}
+
+.time-scale {
+	min-width: 30px;
+	margin-right: 2px;
 }
 
 .travel-bar {

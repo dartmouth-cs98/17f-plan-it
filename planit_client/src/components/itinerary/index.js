@@ -60,8 +60,6 @@ export default class Itinerary extends Component {
 	}
 
 	renderList() {
-		console.log(this.props.cards, 'cards')
-
 		const toRender = _.map(this.props.cards, (card) => {
 			if (card.type === 'free') {
 				const selected = _.isNull(this.props.selected) ? null : (new Date(this.props.selected.start_time)).getTime() === (new Date(card.start_time)).getTime()
@@ -92,11 +90,51 @@ export default class Itinerary extends Component {
 		return toRender
 	}
 
+	renderTimeScale() {
+		const timeScale = scaleLinear()
+			.domain([0, 24 * 60 * 60 * 1000])
+			.range([0, 500])
+
+		const ticks = _.map(this.props.cards, (card) => {
+			const startTime = new Date(card.start_time)
+			const timeString = `${_.padStart(startTime.getHours(), 2, '0')}:${_.padStart(startTime.getMinutes(), 2, '0')}`
+			let height
+
+			if (card.type === 'free') {
+				height = timeScale((new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime())
+			} else if (card.type === 'travel') {
+				height = 64
+			} else {
+				height = 169
+			}
+
+			return (
+				<div 
+					className='time-tick'
+					style={{height}}
+				>
+					{timeString}
+				</div>
+			)
+		})
+
+		return (
+			<div className='time-scale'>
+				{ticks}
+			</div>
+		)
+	}
+
 	render() {
 		return (
 			<div id='itinerary-box'>
 				{this.renderHeader()}
-				{this.renderList()}
+				<div className='itinerary-body'>
+					<div className='itinerary-list'>
+						{this.renderList()}
+					</div>
+					{this.renderTimeScale()}
+				</div>
 			</div>
 		)
 	}
@@ -120,6 +158,9 @@ class Item extends Component {
 			    		label='Remove'
 			    		onClick={this.props.remove}
 		    		/>
+		    		<FlatButton
+		    			label='Change Start Time'
+	    			/>
 		    	</CardActions>
 			  </Card>
 		  </div>

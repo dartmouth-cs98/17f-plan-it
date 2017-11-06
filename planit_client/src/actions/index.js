@@ -90,10 +90,10 @@ export function fetchCards(id, day=null) {
   }
 }
 
-export function createCard(cards) {
+export function createCard(cards, trip, day) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
-      dispatch({ type: ActionTypes.CREATE_CARD, payload: response.data  })
+      dispatch(fetchCards(trip, day))
     }).catch((error) => {
       dispatch({ type: ActionTypes.CREATE_TRIP_ERROR, payload: error })
     })
