@@ -5,6 +5,7 @@ import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
 import { fetchTrips } from '../../actions/index.js';
+import cookie from 'react-cookies'
 import './index.scss'
 
 function NextArrow(props) {
@@ -33,7 +34,7 @@ function PrevArrow(props) {
 class Dashboard extends Component {
 
 	componentDidMount() {
-		this.props.fetchTrips(1)
+		this.props.fetchTrips(cookie.load('auth'))
 	}
 
 
@@ -42,12 +43,31 @@ class Dashboard extends Component {
 		console.log(this.props.allTrips)
 		return this.props.userTrips.map((trip) => {
 			return (
-				<Link to={`/workspace/:${trip.id}`}>
-					<Card onClick={() => this.onClickTrip(trip.id)}>
+				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+					<Card 
+						className='trip_card'>
 						<CardMedia className='card_img'>
 				      		<img src={image} alt='' />
 					    </CardMedia>
-					    <div className='card_title'>Thailand Trip</div>
+					    <div className='card_title'>{trip.name}</div>
+					</Card>
+				</Link>
+			)
+		})
+	}
+
+	renderFavoritedTrips() {
+		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
+		console.log(this.props.allTrips)
+		return this.props.favoritedTrips.map((trip) => {
+			return (
+				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+					<Card 
+						className='trip_card'>
+						<CardMedia className='card_img'>
+				      		<img src={image} alt='' />
+					    </CardMedia>
+					    <div className='card_title'>{trip.name}</div>
 					</Card>
 				</Link>
 			)
@@ -55,7 +75,7 @@ class Dashboard extends Component {
 	}
 
 	render() {
-		let settings = {
+		const dashboard_settings = {
 	      dots: true,
 	      infinite: false,
 	      speed: 500,
@@ -70,7 +90,7 @@ class Dashboard extends Component {
 				<NavBar background={'road_trip_background'}/>
 				<div>
 					<div className='title'>My Trips</div>
-					<Slider {...settings} className='slider'>
+					<Slider {...dashboard_settings} className='dashboard_slider'>
 						{this.renderTrips()}
 						<Link to='/'>
 							<Card className='trip_card add_card'>
@@ -79,8 +99,8 @@ class Dashboard extends Component {
 						</Link>
 					</Slider>
 					<div className='title'>Inspiration Board</div>
-					<Slider {...settings} className='slider'>
-						{this.renderTrips()}
+					<Slider {...dashboard_settings} className='dashboard_slider'>
+						{this.renderFavoritedTrips()}
 						<Link to='/explore'>
 							<Card className='trip_card add_card'>
 								<i className="fa fa-plus fa-5x plus_sign" aria-hidden="true"></i>
@@ -95,7 +115,8 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userTrips: state.trips.userTrips
+    userTrips: state.trips.userTrips,
+    favoritedTrips: state.trips.favoritedTrips
   };
 };
 

@@ -36,7 +36,7 @@ export default class Suggestions extends Component {
 					className='suggestions-filter'
 					icon={
 						<i
-							class='fa fa-filter'
+							className='fa fa-filter'
 							style={{color: '#FFFFFF'}}
 						/>
 					}
@@ -45,7 +45,7 @@ export default class Suggestions extends Component {
 					className='suggestions-menu'
 					icon={
 						<i
-							class='fa fa-bars'
+							className='fa fa-bars'
 							style={{color: '#FFFFFF'}}
 						/>
 					}

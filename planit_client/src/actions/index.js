@@ -12,10 +12,10 @@ export const ActionTypes = {
   FETCH_TRIPS_ERROR: 'FETCH_TRIPS_ERROR',
   FETCH_TRIP: 'FETCH_TRIP',
   FETCH_TRIP_ERROR: 'FETCH_TRIP_ERROR',
-  FETCH_FAVORITE_TRIP: 'FETCH_FAVORITE_TRIP',
-  FETCH_FAVORITE_TRIP_ERROR: 'FETCH_FAVORITE_TRIP_ERROR',
+  FETCH_FAVORITED_TRIPS: 'FETCH_FAVORITED_TRIPS',
+  FETCH_FAVORITED_TRIPS_ERROR: 'FETCH_FAVORITED_TRIPS_ERROR',
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
-  'FETCH_PUBLISHED_TRIPS_ERROR': 'FETCH_PUBLISHED_TRIPS_ERROR',
+  FETCH_PUBLISHED_TRIPS_ERROR: 'FETCH_PUBLISHED_TRIPS_ERROR',
   CREATE_TRIP_ERROR: 'CREATE_TRIP_ERROR',
   UPDATE_TRIP: 'UPDATE_TRIP',
   UPDATE_TRIP_ERROR: 'UPDATE_TRIP_ERROR',
@@ -30,6 +30,8 @@ export const ActionTypes = {
   AUTH_USER: 'AUTH_USER',
   DEAUTH_USER: 'DEAUTH_USER',
   AUTH_ERROR: 'AUTH_ERROR',
+  CREATE_USER: 'CREATE_USER',
+  CREATE_USER_ERROR: 'CREATE_USER_ERROR'
 }
 
 export function fetchTrips(id) {
@@ -63,7 +65,7 @@ export function createTrip(trip) {
   }
 }
 
-export function fetchPublishedTrips() {
+export function fetchPublishedTrips(id) {
   return (dispatch) => {
     axios.get(`${ROOT_URL}/trips?user_id=1`).then((response) => {
       dispatch({ type: ActionTypes.FETCH_PUBLISHED_TRIPS, payload: response.data })
@@ -107,5 +109,25 @@ export function deleteCard(id, trip, day) {
       dispatch({ type: ActionTypes.DELETE_CARD_ERROR, payload: error })
     })
   }
+}
+
+export function fetchFavoritedTrips(id) {
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/favorited?user_id=${id}`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_FAVORITED_TRIPS, payload: response.data });
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.FETCH_FAVORITED_TRIPS_ERROR, payload: error });
+    });
+  };
+}
+
+export function createUser(user) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/users`, user).then((response) => {
+        dispatch({ type: ActionTypes.CREATE_USER, payload: response.data });
+      }).catch((error) => {
+        dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
+      });
+  };
 }
 

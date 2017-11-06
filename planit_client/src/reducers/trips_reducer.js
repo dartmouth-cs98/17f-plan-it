@@ -43,11 +43,11 @@ const TripsReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         error: action.payload,
       }); 
-    case ActionTypes.FETCH_FAVORITE_TRIPS:
+    case ActionTypes.FETCH_FAVORITED_TRIPS:
       return Object.assign({}, state, {
         favoritedTrips: action.payload,
       }); 
-    case ActionTypes.FETCH_FAVORITE_TRIPS_ERROR:
+    case ActionTypes.FETCH_FAVORITED_TRIPS_ERROR:
       return Object.assign({}, state, {
         error: action.payload,
       }); 

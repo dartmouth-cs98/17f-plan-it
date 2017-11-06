@@ -232,7 +232,7 @@ package = [
   end_time:"2017-12-13 20:01:01",
   day_number:1,
   trip_id:1,
-  travel_duration:"10:10:10",
+  travel_duration:900,
   travel_type:"bike"
   },
 { type:"hotel",
@@ -246,7 +246,7 @@ package = [
   end_time:"2017-12-13 20:01:01",
   day_number:1,
   trip_id:1,
-  travel_duration:"10:10:10",
+  travel_duration:900,
   travel_type:"bike"
   }
 ]
@@ -275,8 +275,10 @@ package = [
   end_time:"2017-12-13 20:01:01",
   day_number:1,
   trip_id:1,
-  travel_duration:"10:10:10",
-  travel_type:"bike"
+  travel_duration:900,
+  travel_type:"bike",
+  description:"Best hotel in Hanover",
+  photo_url:""
   },
 { id: 0
   type:"restaurant",
@@ -290,7 +292,7 @@ package = [
   end_time:"2017-12-13 20:01:01",
   day_number:1,
   trip_id:1,
-  travel_duration:"00:05:30",
+  travel_duration:900,
   travel_type:"walking"
   }
 ]

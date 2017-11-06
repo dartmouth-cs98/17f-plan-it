@@ -4,6 +4,8 @@ planit_server/node_modules/*
 
 planit_server/config/dev.exs
 
+./planit_server/config/dev.exs
+
 # dependencies
 planit_client/node_modules
 

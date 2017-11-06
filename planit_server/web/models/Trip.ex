@@ -9,6 +9,7 @@ defmodule PlanIt.Trip do
 
     field :name, :string
     field :publish, :boolean
+    field :photo_url, :string
 
     has_many :card, PlanIt.Card
     has_many :favorited_trip, PlanIt.Trip
@@ -17,6 +18,6 @@ defmodule PlanIt.Trip do
   end
 
   def changeset(trip, params) do
-    trip |> cast(params, [:name, :user_id])
+    trip |> cast(params, [:name, :user_id, :photo_url])
   end
 end
