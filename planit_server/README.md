@@ -325,6 +325,14 @@ Returns 400 and an error message if not successful.
 Returns "ok" if delete is successful. 
 Returns 400 and an error message if the delete is not successful.
 
+## Yelp 
+#### Get businesses near a location (GET)
+```
+/api/v1/yelp?latitude=:lat&longitude=:long
+```
+
+Returns 20 businesses if get is successful.
+Returns some type of error message if get is not successful.
 
 # TESTING
 

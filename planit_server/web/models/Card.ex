@@ -29,7 +29,6 @@ defmodule PlanIt.Card do
   end
 
   def changeset(card, params) do
-    #validate format of lat and long
     card
     |> cast(params, [:type, :name, :city, :country, :address, :lat, :long, :start_time, :end_time, :day_number, :description, :photo_url, :url, :place_id, :travel_type, :travel_duration])
     |> cast(params, [:trip_id])
