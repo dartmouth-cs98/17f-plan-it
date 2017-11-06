@@ -32,7 +32,9 @@ export const ActionTypes = {
   DEAUTH_USER: 'DEAUTH_USER',
   AUTH_ERROR: 'AUTH_ERROR',
   CREATE_USER: 'CREATE_USER',
-  CREATE_USER_ERROR: 'CREATE_USER_ERROR'
+  CREATE_USER_ERROR: 'CREATE_USER_ERROR',
+  FETCH_SUGGESTIONS: 'FETCH_SUGGESTIONS',
+  FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR'
 }
 
 export function fetchTrips(id) {
@@ -150,6 +152,16 @@ export function createCard(cards) {
         dispatch({ type: ActionTypes.CREATE_CARD_ERROR, payload: error });
       });
   };
+}
+
+export function fetchSuggestions(lat, long) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/yelp?latitude=${lat}&longitude=${long}`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_SUGGESTIONS, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.FETCH_SUGGESTIONS_ERROR, payload: error })
+    })
+  }
 }
 
 
