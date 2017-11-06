@@ -101,9 +101,9 @@ export function insertCard(cards, trip, day) {
   }
 }
 
-export function updateCard(cards, trip, day) {
+export function updateCard(id, attributes, trip, day) {
   return (dispatch) => {
-    axios.post(`${ROOT_URL}/cards?trip_id=${trip}`, cards).then((response) => {
+    axios.put(`${ROOT_URL}/cards/${id}`, attributes).then((response) => {
       dispatch(fetchCards(trip, day))
     }).catch((error) => {
       dispatch({ type: ActionTypes.UPDATE_CARD_ERROR, payload: error })

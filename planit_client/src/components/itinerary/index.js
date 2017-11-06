@@ -51,8 +51,10 @@ export default class Itinerary extends Component {
 	}
 
 	updateStartTime() {
-		if (_.isNull(this.state.editCard) || _.isNull(this.state.newTime))
+		if (_.isNull(this.state.editCard) || _.isNull(this.state.newTime)) {
+			this.closeDialog()
 			return
+		}
 
 		let updated = []
 		const index = _.findIndex(this.props.cards, (card) => {
@@ -68,23 +70,34 @@ export default class Itinerary extends Component {
 			const newEndTime = this.state.newTime.getTime() + duration
 
 			// don't update if it would mess up a boundary afterwards
-			if (next.type !== 'free' || (new Date(next.end_time)).getTime() < newEndTime)
+			if (next.type !== 'free' || (new Date(next.end_time)).getTime() < newEndTime) {
+				this.closeDialog()
 				return
+			}
 		} else if (shift < 0 && index > 1) {
 			const prev = this.props.cards[index - 1]
 
 			// don't update if it would mess up a boundary before
-			if (prev.type !== 'free' || (new Date(prev.start_time)).getTime() > this.state.newTime.getTime())
+			if (prev.type !== 'free' || (new Date(prev.start_time)).getTime() > this.state.newTime.getTime()) {
+				this.closeDialog()
 				return
+			}
 		}
 
-		updated.push(_.assign(this.state.editCard, {
+		this.props.updateCard(this.state.editCard.id, {
 			start_time: this.state.newTime,
-			end_time: new Date(this.state.newTime.getTime() + duration)
-		}))
+			end_time: new Date(this.state.newTime.getTime() + duration)			
+		}, this.props.tripId, this.props.day)
 
-		this.props.updateCard(updated, this.props.tripId, this.props.day)
-		// } 
+		this.closeDialog()
+
+		// updated.push(_.assign(this.state.editCard, {
+			// start_time: this.state.newTime,
+			// end_time: new Date(this.state.newTime.getTime() + duration)
+		// }))
+
+		// this.props.updateCard(updated, this.props.tripId, this.props.day)
+		// // } 
 	}
 
 	renderBackButton() {
