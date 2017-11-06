@@ -29,6 +29,8 @@
 
 	.itinerary-body {
 		display: flex;
+		overflow-y: scroll;
+		height: 750px;
 
 		.itinerary-list {
 			width: 100%;

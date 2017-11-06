@@ -156,7 +156,7 @@ export function createCard(cards) {
 
 export function fetchSuggestions(lat, long) {
   return (dispatch) => {
-    axios.post(`${ROOT_URL}/yelp?latitude=${lat}&longitude=${long}`).then((response) => {
+    axios.get(`${ROOT_URL}/yelp?latitude=${lat}&longitude=${long}`).then((response) => {
       dispatch({ type: ActionTypes.FETCH_SUGGESTIONS, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.FETCH_SUGGESTIONS_ERROR, payload: error })

@@ -29,6 +29,12 @@
 	}
 }
 
+.suggestions-list {
+	height: 750px;
+	width: 350px;
+	overflow-y: scroll;
+}
+
 .card-wrapper {
 	margin: 5px;
 }
