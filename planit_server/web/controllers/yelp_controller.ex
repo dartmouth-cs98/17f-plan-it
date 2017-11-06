@@ -14,8 +14,6 @@ defmodule PlanIt.YelpController do
     json conn, "ok"
   end
 
-
-
   def get_token() do
     # id = Application.get_env(:yelp, :id)
     # secret = Application.get_env(:yelp, :secret)
@@ -43,12 +41,8 @@ defmodule PlanIt.YelpController do
     else
       db_token
     end
-
-
-
-
-
   end
+
   def topplaces(conn, %{"latitude" => lat, "longitude" => long} = params) do
 
     token = get_token()

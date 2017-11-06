@@ -53,7 +53,7 @@ class Explore extends Component {
 
 	render() {
 		const explore_settings = {
-	      dots: true,
+	      dots: false,
 	      infinite: false,
 	      speed: 500,
 	      slidesToShow: 4,
@@ -66,7 +66,7 @@ class Explore extends Component {
 			<div>
 				<NavBar background={'road_trip_background'}/>
 				<div>
-					<div className='title'>My Trips</div>
+					<div className='title'>Popular Trips</div>
 					<Slider {...explore_settings} className='explore_slider'>
 						{this.renderPublished()}
 					</Slider>

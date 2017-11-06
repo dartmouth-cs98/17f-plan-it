@@ -40,7 +40,6 @@ class Dashboard extends Component {
 
 	renderTrips() {
 		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
-		console.log(this.props.allTrips)
 		return this.props.userTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
@@ -76,7 +75,7 @@ class Dashboard extends Component {
 
 	render() {
 		const dashboard_settings = {
-	      dots: true,
+	      dots: false,
 	      infinite: false,
 	      speed: 500,
 	      slidesToShow: 4,

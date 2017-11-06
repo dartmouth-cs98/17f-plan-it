@@ -4,11 +4,11 @@
 import React, { Component } from 'react'
 import { compose, withProps } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
-require('./index.scss')
+import './index.scss'
 
 const POIMap = compose(
   withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places",
+    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAOhNUwMY9QAYojHd5Ar87X8ztMjNXNmn0&libraries=geometry,drawing, places",
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
@@ -39,15 +39,8 @@ export default class Map extends Component {
 		this.onInfoClose = this.onInfoClose.bind(this);
 		this.ChangeMapAndMarkerPosition = this.ChangeMapAndMarkerPosition.bind(this);
 		this.state = {
-			/*
-			isInfoOpen: false,
-	    isMarkerShown: false,
-			MarkerPosition: { lat: 43.704441, lng: -72.288694 },
-			center: { lat: 43.704441, lng: -72.288694 },
-			infoMessage: "Hello From Dartmouth!"
-			*/
 			isInfoOpen: this.props.isInfoOpen,
-	    isMarkerShown: this.props.isMarkerShown,
+	    	isMarkerShown: this.props.isMarkerShown,
 			MarkerPosition: this.props.MarkerPosition,
 			center: this.props.center,
 			infoMessage: this.props.infoMessage
@@ -65,12 +58,12 @@ export default class Map extends Component {
 
 	ChangeMapAndMarkerPosition = (LatLong, message) => {
 		this.setState({
-										isMarkerShown: true,
-										MarkerPosition: LatLong,
-										center: LatLong,
-										isInfoOpen: false,
-										infoMessage: message
-									});
+			isMarkerShown: true,
+			MarkerPosition: LatLong,
+			center: LatLong,
+			isInfoOpen: false,
+			infoMessage: message
+		});
 	}
 
 	render() {
