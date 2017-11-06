@@ -4,7 +4,9 @@ import _ from 'lodash'
 import {scaleLinear} from 'd3-scale'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import Dialog from 'material-ui/Dialog'
+import TimePicker from 'material-ui/TimePicker'
 import FlatButton from 'material-ui/FlatButton'
+import Checkbox from 'material-ui/Checkbox'
 import './index.scss'
 
 export default class Itinerary extends Component {
@@ -13,11 +15,13 @@ export default class Itinerary extends Component {
 
 		this.state = {
 			startTimeDialog: false,
-			editCard: null
+			editCard: null, 
+			shift: false
 		}
 
 		this.openStartTimeDialog = this.openStartTimeDialog.bind(this)
 		this.closeDialog = this.closeDialog.bind(this)
+		this.toggleShift = this.toggleShift.bind(this)
 	}
 
 	openStartTimeDialog(card) {
@@ -30,8 +34,13 @@ export default class Itinerary extends Component {
 	closeDialog() {
 		this.setState({
 			startTimeDialog: false,
+			shift: false,
 			editCard: null
 		})
+	}
+
+	toggleShift() {
+		this.setState({	shift: !this.state.shift })
 	}
 
 	renderBackButton() {
@@ -150,7 +159,7 @@ export default class Itinerary extends Component {
 		)
 	}
 
-	render() {
+	renderStartTimeDialog() {
 		const actions = [
       <FlatButton
         label="Cancel"
@@ -158,25 +167,42 @@ export default class Itinerary extends Component {
         onClick={this.closeDialog}
       />,
       <FlatButton
-        label="Submit"
+        label="Update"
         primary={true}
-        keyboardFocused={true}
         onClick={this.closeDialog}
-      />,
+      />
     ]
 
 		return (
+			<Dialog
+	      title={`Change start time for: ${this.state.editCard ? this.state.editCard.name : null}`}
+	      actions={actions}
+	      modal={false}
+	      contentStyle={{
+	      	width: '100%',
+	      	maxWidth: '350px'
+	      }}
+	      open={this.state.startTimeDialog}
+	      onRequestClose={this.closeDialog}
+	    >
+	    	<TimePicker
+		      hintText="12hr Format"
+		      defaultTime={this.state.editCard ? new Date(this.state.editCard.start_time) : null}
+		    />
+		     <Checkbox
+          label="Shift later cards back"
+          checked={this.state.shift}
+          onCheck={this.toggleShift.bind(this)}
+        />
+	    </Dialog>
+    )
+	}
+
+	render() {
+		return (
 			<div id='itinerary-box'>
 				{this.renderHeader()}
-				<Dialog
-          title="Dialog With Actions"
-          actions={actions}
-          modal={false}
-          open={this.state.startTimeDialog}
-          onRequestClose={this.closeDialog}
-        >
-          The actions in this window were passed in as an array of React objects.
-        </Dialog>
+				{this.renderStartTimeDialog()}
 				<div className='itinerary-body'>
 					<div className='itinerary-list'>
 						{this.renderList()}
