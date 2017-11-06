@@ -3,10 +3,37 @@ import $ from 'jquery'
 import _ from 'lodash'
 import {scaleLinear} from 'd3-scale'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
+import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import './index.scss'
 
 export default class Itinerary extends Component {
+	constructor(props) {
+		super(props) 
+
+		this.state = {
+			startTimeDialog: false,
+			editCard: null
+		}
+
+		this.openStartTimeDialog = this.openStartTimeDialog.bind(this)
+		this.closeDialog = this.closeDialog.bind(this)
+	}
+
+	openStartTimeDialog(card) {
+		this.setState({
+			startTimeDialog: true,
+			editCard: card
+		})
+	}
+
+	closeDialog() {
+		this.setState({
+			startTimeDialog: false,
+			editCard: null
+		})
+	}
+
 	renderBackButton() {
 		if (this.props.backArrow) {
 			return (
@@ -74,6 +101,9 @@ export default class Itinerary extends Component {
 						key={card.id}
 						name={card.name}
 						description={card.description}
+						editCard={() => {
+							this.openStartTimeDialog(card)
+						}}
 						remove={() => {
 							this.props.removeCard(card.id, this.props.tripId, this.props.day)
 						}}
@@ -121,9 +151,32 @@ export default class Itinerary extends Component {
 	}
 
 	render() {
+		const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.closeDialog}
+      />,
+      <FlatButton
+        label="Submit"
+        primary={true}
+        keyboardFocused={true}
+        onClick={this.closeDialog}
+      />,
+    ]
+
 		return (
 			<div id='itinerary-box'>
 				{this.renderHeader()}
+				<Dialog
+          title="Dialog With Actions"
+          actions={actions}
+          modal={false}
+          open={this.state.startTimeDialog}
+          onRequestClose={this.closeDialog}
+        >
+          The actions in this window were passed in as an array of React objects.
+        </Dialog>
 				<div className='itinerary-body'>
 					<div className='itinerary-list'>
 						{this.renderList()}
@@ -155,6 +208,7 @@ class Item extends Component {
 		    		/>
 		    		<FlatButton
 		    			label='Change Start Time'
+		    			onClick={this.props.editCard}
 	    			/>
 		    	</CardActions>
 			  </Card>
