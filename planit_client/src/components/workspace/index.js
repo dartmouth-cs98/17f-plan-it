@@ -31,8 +31,13 @@ class Workspace extends Component {
 	}
 
 	componentDidMount() {
-		this.props.fetchTrip(TRIP_ID)
-		this.props.fetchCards(TRIP_ID, DAY_NUMBER)
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+
+		this.setState({ tripId })
+
+		this.props.fetchTrip(tripId)
+		this.props.fetchCards(tripId, DAY_NUMBER)
 		this.props.fetchSuggestions()
 	}
 
@@ -77,8 +82,6 @@ class Workspace extends Component {
 				if (index > 0) {
 					startTime += TRAVEL_TIME
 				}
-
-				console.log(card)
 
 				this.props.insertCard([{
 					...card,
@@ -169,7 +172,6 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards()
-		console.log(this.props.suggestions)
 
 		return (
 			<div id='workspace'>
