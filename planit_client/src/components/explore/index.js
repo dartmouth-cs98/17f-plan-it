@@ -44,7 +44,7 @@ class Explore extends Component {
 						<CardMedia className='card_img'>
 				      		<img src={image} alt='' />
 					    </CardMedia>
-					    <div className='card_title'>Thailand Trip</div>
+					    <div className='card_title'>{trip.name}</div>
 					</Card>
 				</Link>
 			)
