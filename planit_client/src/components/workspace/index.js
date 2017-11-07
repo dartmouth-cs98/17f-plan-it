@@ -193,7 +193,7 @@ class Workspace extends Component {
 
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
-		// const tripDuration = (tripStart && tripEnd) ? 
+		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
 		return (
 			<div id='workspace'>
@@ -216,6 +216,7 @@ class Workspace extends Component {
 						removeCard={this.props.deleteCard}
 						dayForward={this.dayForward}
 						dayBackward={this.dayBackward}
+						numDays={tripDuration}
 					/>
 					<Map 
 						isInfoOpen={false} 
