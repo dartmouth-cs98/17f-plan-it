@@ -1,10 +1,11 @@
 
 #suggestions-box {
-	min-height: 750px;
+	height: 600px;
 	min-width: 350px;
 	margin-right: 5px;
 	display: inline-block;
 	background-color: #F2F2F2;
+	overflow-y: hidden;
 
 	.suggestions-header {
 		height: 35px;
@@ -27,6 +28,12 @@
 			min-width: 40px !important;
 		}
 	}
+}
+
+.suggestions-list {
+	height: 100%;
+	width: 350px;
+	overflow-y: scroll;
 }
 
 .card-wrapper {

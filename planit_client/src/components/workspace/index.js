@@ -7,7 +7,7 @@ import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard } from '../../actions/index.js';
+import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard, fetchSuggestions } from '../../actions/index.js';
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -33,9 +33,28 @@ class Workspace extends Component {
 	componentDidMount() {
 		this.props.fetchTrip(TRIP_ID)
 		this.props.fetchCards(TRIP_ID, DAY_NUMBER)
+		this.props.fetchSuggestions()
 	}
 
 	selectTime(freeTime) {
+		const cards = this.formatCards()
+		
+		if (cards.length > 0) {
+			const index = _.findIndex(cards, (card) => {
+				return freeTime.start_time === card.start_time && freeTime.end_time === card.end_time
+			})
+
+			if (index > 1) {
+				const prev = cards[index - 1]
+				// use location of previous activity to populate suggestions
+				this.props.fetchSuggestions(prev.lat, prev.long)
+			} else {
+				const next = cards[index + 1]
+				// use location of next activity to populate suggestions
+				this.props.fetchSuggestions(next.lat, next.long)
+			}
+		}
+
 		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
 			this.setState({ selected: null })
 		} else {
@@ -59,10 +78,10 @@ class Workspace extends Component {
 					startTime += TRAVEL_TIME
 				}
 
+				console.log(card)
+
 				this.props.insertCard([{
 					...card,
-					lat: 123123.12,
-				  long: 121231.12312,
 				  travel_duration: TRAVEL_TIME,
 				  start_time: (new Date(startTime)),
 				  end_time: (new Date(startTime + DEFAULT_DURATION)),
@@ -70,7 +89,7 @@ class Workspace extends Component {
 				  day_number: DAY_NUMBER
 				}], TRIP_ID, DAY_NUMBER)
 
-				// update the next card in the list
+				// update the travel next card in the list
 
 				this.setState({ selected: null })
 			} 
@@ -150,13 +169,17 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards()
+		console.log(this.props.suggestions)
 
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
 				<Toolbar />
 				<div className='planner'>
-					<Suggestions addCard={this.addCard}	/>
+					<Suggestions 
+						addCard={this.addCard}
+						suggestions={this.props.suggestions}
+					/>
 					<Itinerary 
 						tripId={TRIP_ID}
 						cards={cards}
@@ -179,7 +202,8 @@ const mapStateToProps = (state) => {
 	return {
 		trip: state.trip, 
 		trips: state.trips,
-		cards: state.cards.all
+		cards: state.cards.all, 
+		suggestions: state.cards.suggestions
 	}
 }
 
@@ -199,6 +223,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))
+		},
+		fetchSuggestions: (lat=43, long=-72) => {
+			dispatch(fetchSuggestions(lat, long))
 		}
 	}
 }
