@@ -191,6 +191,10 @@ class Workspace extends Component {
 	render() {
 		const cards = this.formatCards()
 
+		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
+		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
+		// const tripDuration = (tripStart && tripEnd) ? 
+
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>

@@ -92,14 +92,6 @@ export default class Itinerary extends Component {
 		}, this.props.tripId, this.props.day)
 
 		this.closeDialog()
-
-		// updated.push(_.assign(this.state.editCard, {
-			// start_time: this.state.newTime,
-			// end_time: new Date(this.state.newTime.getTime() + duration)
-		// }))
-
-		// this.props.updateCard(updated, this.props.tripId, this.props.day)
-		// // } 
 	}
 
 	renderBackButton() {
@@ -315,32 +307,6 @@ class Item extends Component {
 	    	</div>
     	</div>
   	)
-
-
-		// return (
-		// 	<div className='card-wrapper'>
-		// 		<Card>
-		// 	    <CardHeader
-		// 	      title={this.props.name}
-		// 	      actAsExpander={false}
-		// 	      showExpandableButton={false}
-		// 	    />
-		// 	    <CardText expandable={false}>
-		// 	      {this.props.description}
-		// 	    </CardText>
-		// 	    <CardActions>
-		// 	    	<FlatButton 
-		// 	    		label='Remove'
-		// 	    		onClick={this.props.remove}
-		//     		/>
-		//     		<FlatButton
-		//     			label='Change Start Time'
-		//     			onClick={this.props.editCard}
-	 //    			/>
-		//     	</CardActions>
-		// 	  </Card>
-		//   </div>
-  // 	)
 	}
 }
 
