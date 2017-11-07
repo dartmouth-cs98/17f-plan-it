@@ -356,7 +356,8 @@ class Onboarding extends Component {
 			<div>
 				<OnboardingInput placeholder={'Name your trip'}
 					onNameChange={this.onNameChange}
-					name={this.state.trip_name}/>
+					name={this.state.trip_name}
+				/>
 			</div>
 		)
 	}
@@ -464,19 +465,19 @@ class Onboarding extends Component {
 					<div className='onboarding'>
 						<NavBar background={'no_background'} page={'ONBOARDING'}/>
 						<Modal
-						    isOpen={this.state.modal_open}
-						    onRequestClose={this.onModalClose}
-						    className='card horizontal center no_outline'>
+					    isOpen={this.state.modal_open}
+					    onRequestClose={this.onModalClose}
+					    className='card horizontal center no_outline'
+				    >
 							<div class="card-content">
-					        	<p>Input at least one city with a start date</p>
-					        </div>
+			        	<p>Input at least one city with a start date</p>
+			        </div>
 						</Modal>
 						<Slider {...onboarding_settings} className='onboarding_slider'>
-					        <div>{this.name_slide()}</div>
-					        <div>{this.cities_slide()}</div>
-					        <div>{this.hotels_slide()}</div>
-					        <div>{this.mustdo_slide()}</div>
-				      	</Slider>
+			        <div>{this.name_slide()}</div>
+			        <div>{this.cities_slide()}</div>
+			        <div>{this.mustdo_slide()}</div>
+		      	</Slider>
 					</div>
 				</div>
 			)
