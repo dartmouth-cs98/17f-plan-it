@@ -22,9 +22,13 @@ class Workspace extends Component {
 		this.state = {
 			day: DAY_NUMBER,
 			selected: null,
+			pinLat: null,
+			pinLong: null,
 			cards: []
 		}
 
+		this.dayForward = this.dayForward.bind(this)
+		this.dayBackward = this.dayBackward.bind(this)
 		this.selectTime = this.selectTime.bind(this)
 		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
@@ -41,8 +45,37 @@ class Workspace extends Component {
 		this.props.fetchSuggestions()
 	}
 
+	dayForward() {
+		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
+		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
+		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
+
+
+		if (this.state.day < tripDuration) {
+			const newDay = this.state.day + 1
+			this.setState({ day: newDay })
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.fetchCards(tripId, newDay)
+			this.props.fetchSuggestions()
+		}
+	}
+
+	dayBackward() {
+		if (this.state.day > 1) {
+			const newDay = this.state.day - 1
+			this.setState({ day: newDay })
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.fetchCards(tripId, newDay)
+			this.props.fetchSuggestions()
+		}
+	}
+
 	selectTime(freeTime) {
 		const cards = this.formatCards()
+		let lat
+		let long
 		
 		if (cards.length > 0) {
 			const index = _.findIndex(cards, (card) => {
@@ -51,19 +84,33 @@ class Workspace extends Component {
 
 			if (index > 1) {
 				const prev = cards[index - 1]
+				lat = prev.lat
+				long = prev.long
 				// use location of previous activity to populate suggestions
 				this.props.fetchSuggestions(prev.lat, prev.long)
 			} else {
 				const next = cards[index + 1]
+				lat = next.lat
+				long = next.long
 				// use location of next activity to populate suggestions
 				this.props.fetchSuggestions(next.lat, next.long)
 			}
 		}
 
 		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
-			this.setState({ selected: null })
+			this.setState({ 
+				selected: null,
+				pinLat: null,
+				pinLong: null
+			})
 		} else {
-			this.setState({ selected: freeTime })
+			console.log(lat, long)
+
+			this.setState({ 
+				selected: freeTime,
+				pinLat: lat,
+				pinLong: long
+			})
 		}
 	}
 
@@ -83,14 +130,17 @@ class Workspace extends Component {
 					startTime += TRAVEL_TIME
 				}
 
+				const path = window.location.pathname.split(':')
+				const tripId = _.last(path)
+
 				this.props.insertCard([{
 					...card,
 				  travel_duration: TRAVEL_TIME,
 				  start_time: (new Date(startTime)),
 				  end_time: (new Date(startTime + DEFAULT_DURATION)),
-				  trip_id: TRIP_ID,
-				  day_number: DAY_NUMBER
-				}], TRIP_ID, DAY_NUMBER)
+				  trip_id: tripId,
+				  day_number: this.state.day
+				}], tripId, this.state.day)
 
 				// update the travel next card in the list
 
@@ -172,6 +222,11 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards()
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
+		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
+		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
 		return (
 			<div id='workspace'>
@@ -185,7 +240,7 @@ class Workspace extends Component {
 						suggestions={this.props.suggestions}
 					/>
 					<Itinerary 
-						tripId={TRIP_ID}
+						tripId={tripId}
 						cards={cards}
 						day={this.state.day}
 						selectTime={this.selectTime}
@@ -194,8 +249,14 @@ class Workspace extends Component {
 						removeCard={this.props.deleteCard}
 						dayForward={this.dayForward}
 						dayBackward={this.dayBackward}
+						numDays={tripDuration}
 					/>
-					<Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
+					<Map 
+						isInfoOpen={false} 
+						isMarkerShown={true} 
+						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }} 
+						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }} 
+						infoMessage="Hello From Dartmouth"/>
 				</div>
 			</div>
 		)

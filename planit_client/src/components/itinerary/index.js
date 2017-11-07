@@ -9,6 +9,8 @@ import FlatButton from 'material-ui/FlatButton'
 import Checkbox from 'material-ui/Checkbox'
 import './index.scss'
 
+const TIME_SCALE = 2000
+
 export default class Itinerary extends Component {
 	constructor(props) {
 		super(props) 
@@ -90,18 +92,10 @@ export default class Itinerary extends Component {
 		}, this.props.tripId, this.props.day)
 
 		this.closeDialog()
-
-		// updated.push(_.assign(this.state.editCard, {
-			// start_time: this.state.newTime,
-			// end_time: new Date(this.state.newTime.getTime() + duration)
-		// }))
-
-		// this.props.updateCard(updated, this.props.tripId, this.props.day)
-		// // } 
 	}
 
 	renderBackButton() {
-		if (this.props.backArrow) {
+		if (this.props.day > 1) {
 			return (
 				<FlatButton
 					className='left-button'
@@ -118,7 +112,7 @@ export default class Itinerary extends Component {
 	}
 
 	renderForwardButton() {
-		if (this.props.forwardArrow) {
+		if (this.props.day < this.props.numDays) {
 			return (
 				<FlatButton
 					className='right-button'
@@ -160,7 +154,10 @@ export default class Itinerary extends Component {
 					/>
 				)
 			} else if (card.type === 'travel') {
-				return <Travel destination={card.destination} />
+				return <Travel 
+					destination={card.destination}
+					duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+				/>
 			} else {
 				return (
 					<Item
@@ -185,7 +182,7 @@ export default class Itinerary extends Component {
 	renderTimeScale() {
 		const timeScale = scaleLinear()
 			.domain([0, 23])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		let ticks = []
 
@@ -293,7 +290,7 @@ class Item extends Component {
 
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		const height = timeScale(this.props.duration)
 
@@ -310,32 +307,6 @@ class Item extends Component {
 	    	</div>
     	</div>
   	)
-
-
-		// return (
-		// 	<div className='card-wrapper'>
-		// 		<Card>
-		// 	    <CardHeader
-		// 	      title={this.props.name}
-		// 	      actAsExpander={false}
-		// 	      showExpandableButton={false}
-		// 	    />
-		// 	    <CardText expandable={false}>
-		// 	      {this.props.description}
-		// 	    </CardText>
-		// 	    <CardActions>
-		// 	    	<FlatButton 
-		// 	    		label='Remove'
-		// 	    		onClick={this.props.remove}
-		//     		/>
-		//     		<FlatButton
-		//     			label='Change Start Time'
-		//     			onClick={this.props.editCard}
-	 //    			/>
-		//     	</CardActions>
-		// 	  </Card>
-		//   </div>
-  // 	)
 	}
 }
 
@@ -344,7 +315,7 @@ class FreeTime extends Component {
 		// scale to convert time units to positioning on itinerary
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		const height = timeScale(this.props.duration)
 
@@ -363,7 +334,7 @@ class Travel extends Component {
 	render() {
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		const height = timeScale(this.props.duration)
 
