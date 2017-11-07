@@ -42,7 +42,6 @@ class Workspace extends Component {
 
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
-		this.props.fetchSuggestions()
 	}
 
 	dayForward() {
