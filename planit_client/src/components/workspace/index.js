@@ -82,7 +82,7 @@ class Workspace extends Component {
 				return freeTime.start_time === card.start_time && freeTime.end_time === card.end_time
 			})
 
-			if (index > 1) {
+			if (index > 0) {
 				const prev = cards[index - 1]
 				lat = prev.lat
 				long = prev.long
@@ -282,8 +282,8 @@ const mapDispatchToProps = (dispatch) => {
 		insertCard: (cards, trip, id) => {
 			dispatch(insertCard(cards, trip, id))
 		},
-		updateCard: (cards, trip, id) => {
-			dispatch(updateCard(cards, trip, id))
+		updateCard: (cards, trip, id, day) => {
+			dispatch(updateCard(cards, trip, id, day))
 		},
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))

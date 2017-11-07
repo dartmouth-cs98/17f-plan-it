@@ -9,7 +9,7 @@ import FlatButton from 'material-ui/FlatButton'
 import Checkbox from 'material-ui/Checkbox'
 import './index.scss'
 
-const TIME_SCALE = 2000
+const TIME_SCALE = 2500
 
 export default class Itinerary extends Component {
 	constructor(props) {
@@ -85,6 +85,8 @@ export default class Itinerary extends Component {
 				return
 			}
 		}
+
+		console.log(this.props.tripId, this.props.day)
 
 		this.props.updateCard(this.state.editCard.id, {
 			start_time: this.state.newTime,
@@ -181,7 +183,7 @@ export default class Itinerary extends Component {
 
 	renderTimeScale() {
 		const timeScale = scaleLinear()
-			.domain([0, 23])
+			.domain([0, 24])
 			.range([0, TIME_SCALE])
 
 		let ticks = []
@@ -292,7 +294,8 @@ class Item extends Component {
 			.domain([0, 24 * 60 * 60 * 1000])
 			.range([0, TIME_SCALE])
 
-		const height = timeScale(this.props.duration)
+		// subtract 10 for padding
+		const height = timeScale(this.props.duration) - 10
 
 		return (
 			<div className='card-wrapper'>
@@ -336,7 +339,8 @@ class Travel extends Component {
 			.domain([0, 24 * 60 * 60 * 1000])
 			.range([0, TIME_SCALE])
 
-		const height = timeScale(this.props.duration)
+		// subtract 10 for margin
+		const height = timeScale(this.props.duration) - 10
 
 		return (
 			<div className='card-wrapper'>
@@ -350,17 +354,5 @@ class Travel extends Component {
 				</div>
 			</div>
 		)
-
-		// return (
-		// 	<div className='card-wrapper'>
-		// 		<Card>
-		// 	    <CardHeader
-		// 	      title={`Travel to: ${this.props.destination}`}
-		// 	      actAsExpander={false}
-		// 	      showExpandableButton={false}
-		// 	    />
-		// 	  </Card>
-		//   </div>
-		// )
 	}
 }
