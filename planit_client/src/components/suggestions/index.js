@@ -53,7 +53,7 @@ export default class Suggestions extends Component {
 		return (
 			<div className='suggestions-header'>
 				<label className='suggestions-title'>
-					Attractions
+					ATTRACTIONS
 				</label>
 			</div>
 		)

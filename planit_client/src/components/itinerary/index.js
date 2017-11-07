@@ -9,6 +9,8 @@ import FlatButton from 'material-ui/FlatButton'
 import Checkbox from 'material-ui/Checkbox'
 import './index.scss'
 
+const TIME_SCALE = 2000
+
 export default class Itinerary extends Component {
 	constructor(props) {
 		super(props) 
@@ -160,7 +162,10 @@ export default class Itinerary extends Component {
 					/>
 				)
 			} else if (card.type === 'travel') {
-				return <Travel destination={card.destination} />
+				return <Travel 
+					destination={card.destination}
+					duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+				/>
 			} else {
 				return (
 					<Item
@@ -185,7 +190,7 @@ export default class Itinerary extends Component {
 	renderTimeScale() {
 		const timeScale = scaleLinear()
 			.domain([0, 23])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		let ticks = []
 
@@ -293,7 +298,7 @@ class Item extends Component {
 
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		const height = timeScale(this.props.duration)
 
@@ -344,7 +349,7 @@ class FreeTime extends Component {
 		// scale to convert time units to positioning on itinerary
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		const height = timeScale(this.props.duration)
 
@@ -363,7 +368,7 @@ class Travel extends Component {
 	render() {
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 1000])
+			.range([0, TIME_SCALE])
 
 		const height = timeScale(this.props.duration)
 

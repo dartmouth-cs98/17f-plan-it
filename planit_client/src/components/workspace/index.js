@@ -22,6 +22,8 @@ class Workspace extends Component {
 		this.state = {
 			day: DAY_NUMBER,
 			selected: null,
+			pinLat: null,
+			pinLong: null,
 			cards: []
 		}
 
@@ -43,6 +45,8 @@ class Workspace extends Component {
 
 	selectTime(freeTime) {
 		const cards = this.formatCards()
+		let lat
+		let long
 		
 		if (cards.length > 0) {
 			const index = _.findIndex(cards, (card) => {
@@ -51,19 +55,33 @@ class Workspace extends Component {
 
 			if (index > 1) {
 				const prev = cards[index - 1]
+				lat = prev.lat
+				long = prev.long
 				// use location of previous activity to populate suggestions
 				this.props.fetchSuggestions(prev.lat, prev.long)
 			} else {
 				const next = cards[index + 1]
+				lat = next.lat
+				long = next.long
 				// use location of next activity to populate suggestions
 				this.props.fetchSuggestions(next.lat, next.long)
 			}
 		}
 
 		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
-			this.setState({ selected: null })
+			this.setState({ 
+				selected: null,
+				pinLat: null,
+				pinLong: null
+			})
 		} else {
-			this.setState({ selected: freeTime })
+			console.log(lat, long)
+
+			this.setState({ 
+				selected: freeTime,
+				pinLat: lat,
+				pinLong: long
+			})
 		}
 	}
 
@@ -195,7 +213,12 @@ class Workspace extends Component {
 						dayForward={this.dayForward}
 						dayBackward={this.dayBackward}
 					/>
-					<Map isInfoOpen={false} isMarkerShown={true} MarkerPosition={{ lat: 43.704441, lng: -72.288694 }} center={{ lat: 43.704441, lng: -72.288694 }} infoMessage="Hello From Dartmouth"/>
+					<Map 
+						isInfoOpen={false} 
+						isMarkerShown={true} 
+						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }} 
+						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }} 
+						infoMessage="Hello From Dartmouth"/>
 				</div>
 			</div>
 		)
