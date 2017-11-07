@@ -176,7 +176,9 @@ class Workspace extends Component {
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
-				<Toolbar />
+				<Toolbar 
+					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
+				/>
 				<div className='planner'>
 					<Suggestions 
 						addCard={this.addCard}
@@ -202,8 +204,7 @@ class Workspace extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		trip: state.trip, 
-		trips: state.trips,
+		trips: state.trips.trip, 
 		cards: state.cards.all, 
 		suggestions: state.cards.suggestions
 	}

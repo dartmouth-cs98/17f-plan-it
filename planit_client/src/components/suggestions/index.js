@@ -61,7 +61,6 @@ export default class Suggestions extends Component {
 
 	render() {
 		const cards = this.formatCards()
-		console.log(cards)
 
 		return (
 			<div id='suggestions-box'>
@@ -97,7 +96,9 @@ class CardList extends Component {
 	render() {
 		return (
 			<div className='suggestions-list'>
-				{this.renderCards()}
+				<div className='list-container'>
+					{this.renderCards()}
+				</div>
 			</div>
 		)
 	}
