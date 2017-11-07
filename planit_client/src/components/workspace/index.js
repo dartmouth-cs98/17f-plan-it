@@ -22,6 +22,8 @@ class Workspace extends Component {
 		this.state = {
 			day: DAY_NUMBER,
 			selected: null,
+			cityLat: null,
+			cityLong: null,
 			pinLat: null,
 			pinLong: null,
 			cards: []
@@ -99,8 +101,8 @@ class Workspace extends Component {
 		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
 			this.setState({ 
 				selected: null,
-				pinLat: null,
-				pinLong: null
+				pinLat: this.state.cityLat,
+				pinLong: this.state.cityLong
 			})
 		} else {
 			console.log(lat, long)
@@ -155,6 +157,12 @@ class Workspace extends Component {
 		let startOfDay
 
 		_.each(this.props.cards, (card) => {
+			if (card.type === 'city') {
+				console.log('city')
+				// set the base location
+				return
+			}
+
 			if (_.isUndefined(startCard)) {
 				startCard = card.id	
 
