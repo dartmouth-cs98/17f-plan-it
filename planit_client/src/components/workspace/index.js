@@ -27,6 +27,8 @@ class Workspace extends Component {
 			cards: []
 		}
 
+		this.dayForward = this.dayForward.bind(this)
+		this.dayBackward = this.dayBackward.bind(this)
 		this.selectTime = this.selectTime.bind(this)
 		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
@@ -41,6 +43,33 @@ class Workspace extends Component {
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 		this.props.fetchSuggestions()
+	}
+
+	dayForward() {
+		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
+		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
+		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
+
+
+		if (this.state.day < tripDuration) {
+			const newDay = this.state.day + 1
+			this.setState({ day: newDay })
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.fetchCards(tripId, newDay)
+			this.props.fetchSuggestions()
+		}
+	}
+
+	dayBackward() {
+		if (this.state.day > 1) {
+			const newDay = this.state.day - 1
+			this.setState({ day: newDay })
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.fetchCards(tripId, newDay)
+			this.props.fetchSuggestions()
+		}
 	}
 
 	selectTime(freeTime) {
@@ -101,14 +130,17 @@ class Workspace extends Component {
 					startTime += TRAVEL_TIME
 				}
 
+				const path = window.location.pathname.split(':')
+				const tripId = _.last(path)
+
 				this.props.insertCard([{
 					...card,
 				  travel_duration: TRAVEL_TIME,
 				  start_time: (new Date(startTime)),
 				  end_time: (new Date(startTime + DEFAULT_DURATION)),
-				  trip_id: TRIP_ID,
-				  day_number: DAY_NUMBER
-				}], TRIP_ID, DAY_NUMBER)
+				  trip_id: tripId,
+				  day_number: this.state.day
+				}], tripId, this.state.day)
 
 				// update the travel next card in the list
 
@@ -190,7 +222,8 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards()
-
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
@@ -207,7 +240,7 @@ class Workspace extends Component {
 						suggestions={this.props.suggestions}
 					/>
 					<Itinerary 
-						tripId={TRIP_ID}
+						tripId={tripId}
 						cards={cards}
 						day={this.state.day}
 						selectTime={this.selectTime}

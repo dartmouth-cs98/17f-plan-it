@@ -95,7 +95,7 @@ export default class Itinerary extends Component {
 	}
 
 	renderBackButton() {
-		if (this.props.backArrow) {
+		if (this.props.day > 1) {
 			return (
 				<FlatButton
 					className='left-button'
@@ -112,7 +112,7 @@ export default class Itinerary extends Component {
 	}
 
 	renderForwardButton() {
-		if (this.props.forwardArrow) {
+		if (this.props.day < this.props.numDays) {
 			return (
 				<FlatButton
 					className='right-button'
