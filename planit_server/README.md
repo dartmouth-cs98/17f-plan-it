@@ -326,13 +326,24 @@ Returns "ok" if delete is successful.
 Returns 400 and an error message if the delete is not successful.
 
 ## Yelp 
+
 #### Get businesses near a location (GET)
 ```
 /api/v1/yelp?latitude=:lat&longitude=:long
 ```
 
 Returns 20 businesses if get is successful.
-Returns some type of error message if get is not successful.
+Returns an error message if no businesses were found near the provided coordinates. Make sure that South latitudes and west longitudes are negative.
+
+#### Get certain categories of businesses near a location (GET)
+```
+/api/v1/yelp?latitude=:lat&longitude=:long&categories=:categories
+```
+
+The categories should be a string of categories, separated by commas, with no spaces in the string. For example, "bars,french" will filter by Bars and French (i.e. will return bars AND French restaurants). For a list of supported categories, see https://www.yelp.com/developers/documentation/v2/all\_category\_list.
+
+Returns 20 businesses if get is successful.
+Returns an error message if no businesses in those categories were found near the provided coordinates. 
 
 # TESTING
 
@@ -363,3 +374,9 @@ curl -X PUT -d '[
 
 ### Update a card
 curl -X PUT -d '{"lat":1123.123}' -H "Content-Type: application/json" http://localhost:4000/api/v1/cards/1
+
+### Get businesses near Hanover
+curl -X GET http://localhost:4000/api/v1/yelp?latitude=43.7022&longitude=-72.2896
+
+### Get chocolate- and donut-related businesses near Hanover
+curl -X GET http://localhost:4000/api/v1/yelp?latitude=43.7022&longitude=-72.2896&categories=chocolate,donuts

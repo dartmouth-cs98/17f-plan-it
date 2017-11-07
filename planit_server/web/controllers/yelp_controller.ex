@@ -43,6 +43,26 @@ defmodule PlanIt.YelpController do
     end
   end
 
+  def topplaces(conn, %{"latitude" => lat, "longitude" => long, "categories" => categories} = params) do
+
+    token = get_token()
+
+    request_url = "https://api.yelp.com/v3/businesses/search?latitude=#{lat}&longitude=#{long}&categories=#{categories}"
+    headers = ["Authorization": "#{token.token_type} #{token.access_token}"]
+
+    response = HTTPoison.get!(request_url, headers)
+
+    body = Poison.decode!(response.body)
+
+    businesses = Map.get(body, "businesses")
+
+    if businesses == [] do
+      json conn, "No businesses found near those coordinates."
+    end
+
+    json conn, businesses
+	end
+
   def topplaces(conn, %{"latitude" => lat, "longitude" => long} = params) do
 
     token = get_token()
@@ -57,8 +77,12 @@ defmodule PlanIt.YelpController do
 
     businesses = Map.get(body, "businesses")
 
+    if businesses == [] do
+      json conn, "No businesses found near those coordinates."
+    end
+
     json conn, businesses
-	end
+  end
 
 
 end
