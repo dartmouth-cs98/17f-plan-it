@@ -12,7 +12,6 @@ const POIMap = compose(
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
-
   }),
   withScriptjs,
   withGoogleMap
@@ -40,7 +39,7 @@ export default class Map extends Component {
 		this.ChangeMapAndMarkerPosition = this.ChangeMapAndMarkerPosition.bind(this);
 		this.state = {
 			isInfoOpen: this.props.isInfoOpen,
-	    	isMarkerShown: this.props.isMarkerShown,
+    	isMarkerShown: this.props.isMarkerShown,
 			MarkerPosition: this.props.MarkerPosition,
 			center: this.props.center,
 			infoMessage: this.props.infoMessage
@@ -67,11 +66,12 @@ export default class Map extends Component {
 	}
 
 	render() {
+		console.log(this.props.center)
+		console.log(this.props.MarkerPosition)
+
 		return (
 			<div id='map-container'>
-				<POIMap infoMessage={this.state.infoMessage} isInfoOpen={this.state.isInfoOpen} onInfoClose={this.onInfoClose} center={this.state.center} MarkerPosition ={this.state.MarkerPosition} isMarkerShown={this.state.isMarkerShown} onMarkerClick={this.handleMarkerClick}  />
-				<button onClick={() => this.ChangeMapAndMarkerPosition({ lat: 43.705382, lng: -72.294620 },"Hello From Tuck!")} type="button">Go to Tuck!</button>
-				<button onClick={() => this.ChangeMapAndMarkerPosition({ lat: 43.704441, lng: -72.288694 },"Hello From Dartmouth!")} type="button">Go to Dartmouth!</button>
+				<POIMap infoMessage={this.state.infoMessage} isInfoOpen={this.state.isInfoOpen} onInfoClose={this.onInfoClose} center={this.props.center} MarkerPosition={this.props.MarkerPosition} isMarkerShown={this.state.isMarkerShown} onMarkerClick={this.handleMarkerClick}  />
 			</div>
 		)
 	}
