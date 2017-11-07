@@ -90,7 +90,15 @@ class CardList extends Component {
 			)
 		})
 
-		return suggestions
+		if (suggestions.length > 0) {
+			return suggestions
+		} else {
+			return (
+				<div className='empty-suggestions'>
+					<label>Select a free time block to find nearby suggestions</label>
+				</div>
+			)
+		}
 	}
 
 	render() {
