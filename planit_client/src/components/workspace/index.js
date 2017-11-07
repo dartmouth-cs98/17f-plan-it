@@ -37,6 +37,24 @@ class Workspace extends Component {
 	}
 
 	selectTime(freeTime) {
+		const cards = this.formatCards()
+		
+		if (cards.length > 0) {
+			const index = _.findIndex(cards, (card) => {
+				return freeTime.start_time === card.start_time && freeTime.end_time === card.end_time
+			})
+
+			if (index > 1) {
+				const prev = cards[index - 1]
+				// use location of previous activity to populate suggestions
+				this.props.fetchSuggestions(prev.lat, prev.long)
+			} else {
+				const next = cards[index + 1]
+				// use location of next activity to populate suggestions
+				this.props.fetchSuggestions(next.lat, next.long)
+			}
+		}
+
 		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
 			this.setState({ selected: null })
 		} else {
@@ -59,6 +77,8 @@ class Workspace extends Component {
 				if (index > 0) {
 					startTime += TRAVEL_TIME
 				}
+
+				console.log(card)
 
 				this.props.insertCard([{
 					...card,
