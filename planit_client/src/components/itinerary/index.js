@@ -170,6 +170,7 @@ export default class Itinerary extends Component {
 						editCard={() => {
 							this.openStartTimeDialog(card)
 						}}
+						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 						remove={() => {
 							this.props.removeCard(card.id, this.props.tripId, this.props.day)
 						}}
@@ -183,31 +184,21 @@ export default class Itinerary extends Component {
 
 	renderTimeScale() {
 		const timeScale = scaleLinear()
-			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 500])
+			.domain([0, 23])
+			.range([0, 1000])
 
-		const ticks = _.map(this.props.cards, (card) => {
-			const startTime = new Date(card.start_time)
-			const timeString = `${_.padStart(startTime.getHours(), 2, '0')}:${_.padStart(startTime.getMinutes(), 2, '0')}`
-			let height
+		let ticks = []
 
-			if (card.type === 'free') {
-				height = timeScale((new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime())
-			} else if (card.type === 'travel') {
-				height = 64
-			} else {
-				height = 169
-			}
-
-			return (
-				<div 
+		for (let i = 0; i < 24; i++) {
+			ticks.push(
+				<div
 					className='time-tick'
-					style={{height}}
+					style={{height: timeScale(1)}}
 				>
-					{timeString}
+					{`${_.padStart(i, 2, '0')}:00`}
 				</div>
 			)
-		})
+		}
 
 		return (
 			<div className='time-scale'>
@@ -236,7 +227,6 @@ export default class Itinerary extends Component {
 	    // onCheck={this.toggleShift.bind(this)}
 	  // />
 
-
 		return (
 			<Dialog
 	      title={`Change start time for: ${this.state.editCard ? this.state.editCard.name : null}`}
@@ -263,11 +253,13 @@ export default class Itinerary extends Component {
 			<div id='itinerary-box'>
 				{this.renderHeader()}
 				{this.renderStartTimeDialog()}
-				<div className='itinerary-body'>
-					<div className='itinerary-list'>
-						{this.renderList()}
+				<div className='body-container'>
+					<div className='itinerary-body'>
+						<div className='itinerary-list'>
+							{this.renderList()}
+						</div>
+						{this.renderTimeScale()}
 					</div>
-					{this.renderTimeScale()}
 				</div>
 			</div>
 		)
@@ -276,30 +268,74 @@ export default class Itinerary extends Component {
 
 class Item extends Component {
 	render() {
+		const buttons = [
+			<FlatButton
+				className='remove-item'
+				icon={
+					<i
+						className='fa fa-trash-o'
+						style={{color: '#000000'}}
+					/>
+				}
+				onClick={this.props.remove}
+			/>,
+			<FlatButton
+				className='edit-starttime'
+				icon={
+					<i
+						className='fa fa-clock-o'
+						style={{color: '#000000'}}
+					/>
+				}
+				onClick={this.props.editCard}
+			/>
+		]
+
+		const timeScale = scaleLinear()
+			.domain([0, 24 * 60 * 60 * 1000])
+			.range([0, 1000])
+
+		const height = timeScale(this.props.duration)
+
 		return (
 			<div className='card-wrapper'>
-				<Card>
-			    <CardHeader
-			      title={this.props.name}
-			      actAsExpander={false}
-			      showExpandableButton={false}
-			    />
-			    <CardText expandable={false}>
-			      {this.props.description}
-			    </CardText>
-			    <CardActions>
-			    	<FlatButton 
-			    		label='Remove'
-			    		onClick={this.props.remove}
-		    		/>
-		    		<FlatButton
-		    			label='Change Start Time'
-		    			onClick={this.props.editCard}
-	    			/>
-		    	</CardActions>
-			  </Card>
-		  </div>
+				<div 
+					className='card item-card'
+					style={{height: `${height}px`}}
+				>
+					<label className='item-title'>
+						{this.props.name}
+					</label>
+					{buttons}
+	    	</div>
+    	</div>
   	)
+
+
+		// return (
+		// 	<div className='card-wrapper'>
+		// 		<Card>
+		// 	    <CardHeader
+		// 	      title={this.props.name}
+		// 	      actAsExpander={false}
+		// 	      showExpandableButton={false}
+		// 	    />
+		// 	    <CardText expandable={false}>
+		// 	      {this.props.description}
+		// 	    </CardText>
+		// 	    <CardActions>
+		// 	    	<FlatButton 
+		// 	    		label='Remove'
+		// 	    		onClick={this.props.remove}
+		//     		/>
+		//     		<FlatButton
+		//     			label='Change Start Time'
+		//     			onClick={this.props.editCard}
+	 //    			/>
+		//     	</CardActions>
+		// 	  </Card>
+		//   </div>
+  // 	)
 	}
 }
 
@@ -308,7 +344,7 @@ class FreeTime extends Component {
 		// scale to convert time units to positioning on itinerary
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, 500])
+			.range([0, 1000])
 
 		const height = timeScale(this.props.duration)
 
@@ -325,16 +361,35 @@ class FreeTime extends Component {
 
 class Travel extends Component {
 	render() {
+		const timeScale = scaleLinear()
+			.domain([0, 24 * 60 * 60 * 1000])
+			.range([0, 1000])
+
+		const height = timeScale(this.props.duration)
+
 		return (
 			<div className='card-wrapper'>
-				<Card>
-			    <CardHeader
-			      title={`Travel to: ${this.props.destination}`}
-			      actAsExpander={false}
-			      showExpandableButton={false}
-			    />
-			  </Card>
-		  </div>
+				<div 
+					className='card travel-card'
+					style={{height}}
+				>
+					<label className='travel-title'>
+						{`Travel to: ${this.props.destination}`}
+					</label>
+				</div>
+			</div>
 		)
+
+		// return (
+		// 	<div className='card-wrapper'>
+		// 		<Card>
+		// 	    <CardHeader
+		// 	      title={`Travel to: ${this.props.destination}`}
+		// 	      actAsExpander={false}
+		// 	      showExpandableButton={false}
+		// 	    />
+		// 	  </Card>
+		//   </div>
+		// )
 	}
 }

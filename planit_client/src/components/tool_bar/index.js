@@ -11,7 +11,7 @@ export default class Toolbar extends Component {
 							Avg Cost
 						</div>
 						<div className='tool-bar-text'>
-							$$$$
+							$$
 						</div>
 					</div>
 					<div id='tool-bar-travel-time-box' className='tool-bar-left-flex-item'>
@@ -25,7 +25,7 @@ export default class Toolbar extends Component {
 				</div>
 				<div id='tool-bar-center'>
 					<div id='toolbar-trip-title'>
-						Southeast Asia
+						{this.props.tripName}
 					</div>
 				</div>
 				<div id='tool-bar-right'>
