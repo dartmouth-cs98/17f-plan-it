@@ -20,8 +20,8 @@ defmodule PlanIt.Repo.Migrations.CreateTables do
       add :name, :string
       add :publish, :boolean
       add :photo_url, :string
-      add :start_date, :utc_datetime
-      add :end_date, :utc_datetime
+      add :start_time, :utc_datetime
+      add :end_time, :utc_datetime
 
       add :user_id, references(:user)
 

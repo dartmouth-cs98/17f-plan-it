@@ -10,8 +10,8 @@ defmodule PlanIt.Trip do
     field :name, :string
     field :publish, :boolean
     field :photo_url, :string
-    field :start_date, :utc_datetime
-    field :end_date, :utc_datetime
+    field :start_time, :utc_datetime
+    field :end_time, :utc_datetime
 
     has_many :card, PlanIt.Card
     has_many :favorited_trip, PlanIt.Trip
@@ -20,6 +20,6 @@ defmodule PlanIt.Trip do
   end
 
   def changeset(trip, params) do
-    trip |> cast(params, [:name, :publish, :photo_url, :start_date, :end_date, :user_id])
+    trip |> cast(params, [:name, :publish, :photo_url, :start_time, :end_time, :user_id])
   end
 end

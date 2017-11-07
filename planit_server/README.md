@@ -127,8 +127,8 @@ payload = {
   publish: true,
   photo_url: "http://exampleurl.com/akagjagj.JPG"
   user_id: 2,
-  start_date: "2017-12-12 00:00:00",
-  end_date: "2017-12-24 00:00:00"
+  start_time: "2017-12-12 00:00:00",
+  end_time: "2017-12-24 00:00:00"
 }
 ```
 
