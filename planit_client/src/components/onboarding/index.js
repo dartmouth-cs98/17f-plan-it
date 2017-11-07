@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
@@ -87,10 +88,13 @@ class Onboarding extends Component {
 		}
 	}
 
-	onCreateTrip() {
+	onCreateTrip(startDate, endDate) {
+
 		this.props.createTrip({
 			name: this.state.trip_name,
-			user_id: cookie.load('auth')
+			user_id: cookie.load('auth'),
+			start_time: startDate,
+			end_time: endDate
 		})
 	}
 
@@ -253,7 +257,25 @@ class Onboarding extends Component {
 	}
 
 	onAddCity(event) {
-		const state_array = this.state.cities.push(Map({ type: 'city', name: '', start_date: null, end_date: null}))
+		console.log(this.state.cities)
+		let latestDate
+		let incomplete = false
+		this.state.cities.map((city, index) => {
+			if (_.isNil(city.get('start_date')) || _.isNil(city.get('end_date'))) {
+				incomplete = true
+			}
+
+			if (_.isUndefined(latestDate) || new Date(city.get('end_date')) > new Date(latestDate)) {
+				latestDate = city.get('end_date')
+			}
+		})
+
+		if (incomplete) {
+			// need to let user know that they're missing a date input
+			return
+		}
+
+		const state_array = this.state.cities.push(Map({ type: 'city', name: '', start_date: _.isUndefined(latestDate) ? null : latestDate, end_date: null}))
 		this.setState({ cities: state_array })
 	}
 
@@ -337,7 +359,25 @@ class Onboarding extends Component {
 	}
 
 	renderStartTrip() {
-		if (this.state.cities.get(0).get('name') === '' || this.state.cities.get(0).get('start_date') === null) {
+		let ok = true
+		let startDate
+		let endDate
+
+		this.state.cities.map((city, index) => {
+			if (city.get('name') === '' || city.get('start_date') === null || city.get('end_date') === null) {
+				ok = false
+			}
+
+			if (_.isUndefined(startDate) || new Date(city.get('start_date')) < startDate) {
+				startDate = city.get('start_date')
+			} 
+
+			if (_.isUndefined(endDate) || new Date(city.get('end_date')) > endDate) {
+				endDate = city.get('end_date')
+			}
+		})
+
+		if (!ok) {
 			return (
 				<div className='button_container start_disabled' onClick={this.onModalOpen}>
 					Start Trip
@@ -346,7 +386,7 @@ class Onboarding extends Component {
 		}
 		else {
 			return (
-					<div className='button_container start' onClick={this.onCreateTrip}>Start Trip</div>
+				<div className='button_container start' onClick={() => { this.onCreateTrip(startDate, endDate)}}>Start Trip</div>
 			)
 		}
 	}
@@ -476,7 +516,6 @@ class Onboarding extends Component {
 						<Slider {...onboarding_settings} className='onboarding_slider'>
 			        <div>{this.name_slide()}</div>
 			        <div>{this.cities_slide()}</div>
-			        <div>{this.mustdo_slide()}</div>
 		      	</Slider>
 					</div>
 				</div>
