@@ -86,7 +86,9 @@ defmodule PlanIt.UserController do
       name: "Hanover Vacation",
       publish: true,
       photo_url: "https://www.dartmouth.edu/~library/bakerberry/images/bb5.jpg",
-      user_id: 1
+      user_id: 1,
+      start_time: DateTime.from_naive!(~N[2016-05-24 00:00:00], "Etc/UTC"),
+      end_time: DateTime.from_naive!(~N[2016-05-24 00:00:00], "Etc/UTC"),
     })
     Repo.insert!(%Trip{
       name: "Turlock Trip",

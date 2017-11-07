@@ -125,7 +125,10 @@ Returns an empty list if that trip id doesn't exist in the database.
 payload = {
   name: "Thailand Fun Adventure",
   publish: true,
-  user_id: 2
+  photo_url: "http://exampleurl.com/akagjagj.JPG"
+  user_id: 2,
+  start_time: "2017-12-12 00:00:00",
+  end_time: "2017-12-24 00:00:00"
 }
 ```
 
@@ -233,7 +236,10 @@ package = [
   day_number:1,
   trip_id:1,
   travel_duration:900,
-  travel_type:"bike"
+  travel_type:"bike",
+  description: "Hotel",
+  photo_url: "http://examplephotourl.com/picture.jpg",
+  url: "https://www.yelp.com/biz/pine-restaurant-hanover-2"
   },
 { type:"hotel",
   name:"Hanover Inn",
@@ -257,7 +263,7 @@ Returns 400 and "BAD" if the create is not successful. Nothing will be inserted 
 
 #### Update multiple cards (POST)
 
-Takes in a list of cards to update and/or insert into the database. Only one new card can be inserted into the database, and it must have an id of 0. Must provide a **list** of cards, even if you are only trying to insert/udate one card.
+Takes in a list of cards to update and/or insert into the database. Only one new card can be inserted into the database, and it must have an id of 0. Must provide a **list** of cards, even if you are only trying to insert/update one card.
 
 ```
 /api/v1/cards?trip_id=:id
@@ -300,7 +306,7 @@ package = [
 
 
 Returns a list of card objects if create is successful. You'll have to get the new id from this list.
-Returns "BAD" if the card is not successful.
+Returns "BAD" if the update/insert is not successful.
 
 #### Update a single card (PUT)
 ```
