@@ -79,6 +79,16 @@ class Workspace extends Component {
 		let long
 		
 		if (cards.length > 0) {
+			if (freeTime.type === 'day') {
+				this.props.fetchSuggestions(freeTime.lat, freeTime.long)
+				this.setState({
+					selected: freeTime,
+					pinLat: freeTime.lat,
+					pinLong: freeTime.long
+				})
+				return
+			}
+
 			const index = _.findIndex(cards, (card) => {
 				return freeTime.start_time === card.start_time && freeTime.end_time === card.end_time
 			})
@@ -155,10 +165,17 @@ class Workspace extends Component {
 		let startCard
 		let prevEnd
 		let startOfDay
+		let cityLat
+		let cityLong
+		let cityStart
+		let cityEnd
 
 		_.each(this.props.cards, (card) => {
 			if (card.type === 'city') {
-				console.log('city')
+				cityLat = card.lat
+				cityLong = card.long
+				cityStart = new Date(card.start_time)
+				cityEnd = new Date(card.end_time)
 				// set the base location
 				return
 			}
@@ -223,6 +240,18 @@ class Workspace extends Component {
 			}
 		}
 
+		if (cardList.length === 0 && !_.isNil(cityStart) && !_.isNil(cityEnd)) {
+			cityStart.setHours(0, 0, 0, 0)
+			cityEnd.setHours(0, 0, 0, 0)
+
+			cardList.push({
+				type: 'day', 
+				lat: cityLat,
+				long: cityLong,
+				start_time: cityStart.toString(),
+				end_time: cityEnd.toString()
+			})
+		}
 
 		return cardList
 	}

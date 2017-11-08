@@ -67,23 +67,28 @@ class Onboarding extends Component {
 		if (nextProps.trip_id !== null) {
 			let cityCards = []
 			let dayNumber = 1
-
-			console.log(this.state.cities)
+			let startDate = (new Date(this.state.cities[0].start_date)).getTime()
 
 			_.forEach(this.state.cities, (city) => {
 				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000))
 				for (let i = 1; i <= duration; i++) {
 					const cityCard = _.assign(city, {
-						end_time: new Date(city.end_date),
-						start_time: new Date(city.start_date),
 						trip_id: nextProps.trip_id,
 						type: 'city'
 					})
 
+					const endDate = startDate + (24 * 60 * 60 * 1000)
+
 					cityCards.push({
 						...cityCard,
-						day_number: dayNumber++
+						day_number: dayNumber++,
+						start_time: new Date(startDate),
+						end_time: new Date(endDate)
 					})
+
+					console.log(new Date(startDate), new Date(endDate))
+
+					startDate = endDate
 				}
 			})
 
@@ -145,79 +150,49 @@ class Onboarding extends Component {
 	}
 
 	onHandleCitySelect(results, name) {
-		let lat = 0
-		let long = 0
-		getLatLng(results).then(({ latitude, longitude }) => {
-			lat = latitude
-			long = longitude
-		})
-		let address = results.formatted_address
-		let place_id = results.place_id
+		getLatLng(results).then(({ lat, lng }) => {
+			console.log(lat, lng)
 
-		let newCities = this.state.cities
-		const first_city = _.assign(newCities[0], {
-			name,
-			lat, 
-			long, 
-			place_id,
-			address
-		})
+			let address = results.formatted_address
+			let place_id = results.place_id
 
-		// const state_array = this.state.cities.set(0, first_city)
-		newCities[0] = first_city
-		this.setState({ cities: newCities })
+			let newCities = this.state.cities
+			const first_city = _.assign(newCities[0], {
+				name,
+				lat, 
+				long: lng, 
+				place_id,
+				address
+			})
+
+			newCities[0] = first_city
+			this.setState({ cities: newCities })
+		})
 	}
 
 	onHandleSelect(index, type, results, name) {
-		console.log(index)
+		getLatLng(results).then(({ lat, lng }) => {
+			console.log(lat, lng)
 
-		var lat = 0
-		var long = 0
-		getLatLng(results).then(({ latitude, longitude }) => {
-			lat = latitude
-			long = longitude
+			if (type === 'city') {
+				let address = results.formatted_address
+				let day_number = index + 1
+				let place_id = results.place_id
+				let newCities = this.state.cities
+				const newCity = _.assign(this.state.cities[index], {
+					name, 
+					address,
+					day_number,
+					lat, 
+					long: lng,
+					place_id
+				})
+
+				newCities[index] = newCity
+
+				this.setState({ cities: newCities})
+			}
 		})
-		let address = results.formatted_address
-		let day_number = index + 1
-		let place_id = results.place_id
-
-		if (type === 'hotel') {
-			const edited_hotel = this.state.hotels.get(index).merge({
-				name: name,
-				address: address,
-				day_number: day_number,
-				lat: lat,
-				long: long,
-				place_id: place_id
-			})
-			const state_array = this.state.hotels.set(index, edited_hotel)
-			this.setState({ hotels: state_array})
-		} else if (type === 'city') {
-			let newCities = this.state.cities
-			const newCity = _.assign(this.state.cities[index], {
-				name, 
-				address,
-				day_number,
-				lat, 
-				long,
-				place_id
-			})
-
-			newCities[index] = newCity
-
-			this.setState({ cities: newCities})
-		} else {
-			const edited_mustdo = this.state.must_dos.get(index).merge({
-				name: name,
-				address: address,
-				day_number: day_number,
-				lat: lat,
-				long: long,
-				place_id: place_id
-			})
-			const state_array = this.state.must_dos.set(index, edited_mustdo)
-			this.setState({ must_dos: state_array})
-		}
 	}
 
 	onStartDateChange(index, type, start_date) {
