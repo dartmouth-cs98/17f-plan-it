@@ -54,7 +54,10 @@ class Workspace extends Component {
 
 		if (this.state.day < tripDuration) {
 			const newDay = this.state.day + 1
-			this.setState({ day: newDay })
+			this.setState({ 
+				day: newDay,
+				selected: null
+			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.fetchCards(tripId, newDay)
@@ -65,7 +68,10 @@ class Workspace extends Component {
 	dayBackward() {
 		if (this.state.day > 1) {
 			const newDay = this.state.day - 1
-			this.setState({ day: newDay })
+			this.setState({ 
+				day: newDay,
+				selected: null
+			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.fetchCards(tripId, newDay)
