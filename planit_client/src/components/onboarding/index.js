@@ -80,22 +80,24 @@ class Onboarding extends Component {
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.trip_id !== null) {
 			let cityCards = []
+			let dayNumber = 1
 
 			console.log(this.state.cities)
 
 			_.forEach(this.state.cities, (city) => {
 				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000))
-				console.log(city.start_date, city.end_date, duration)
-				console.log(duration)
-				for (let i = 0; i < duration; i++) {
-					// const startTime = new Date((new Date(city.get('start_time'))).getTime() + (i * 24 * 60 * 60 * 1000))
-					console.log(city)
-					cityCards.push(_.assign(city, {
+				for (let i = 1; i <= duration; i++) {
+					const cityCard = _.assign(city, {
 						end_time: new Date(city.end_date),
 						start_time: new Date(city.start_date),
 						trip_id: nextProps.trip_id,
-						day_number: i + 1
-					}))
+						type: 'city'
+					})
+
+					cityCards.push({
+						...cityCard,
+						day_number: dayNumber++
+					})
 				}
 			})
 
