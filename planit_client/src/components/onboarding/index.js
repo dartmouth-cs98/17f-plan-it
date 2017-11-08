@@ -41,11 +41,14 @@ class Onboarding extends Component {
 		this.state = {
 			landing_page: true,
 			trip_name: '',
-			cities: List([Map({ type: 'city', name: '', start_date: null, end_date: null})]),
+			cities: [],
 			hotels: List([Map({ type: 'hotel', name: '', start_date: null, end_date: null})]),
 			must_dos: List([Map({ type: 'must_do', name: '', start_date: null, end_date: null})]),
 			modal_open: false
 		}
+
+		// cities: List([Map({ type: 'city', name: '', start_date: null, end_date: null})]),
+
 
 		this.onAddCity = this.onAddCity.bind(this)
 		this.onAddHotel = this.onAddHotel.bind(this)
@@ -63,33 +66,52 @@ class Onboarding extends Component {
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 	}
 
-	updatedItem(item, trip_id) {
-		if (item.get('start_date') !== null) {
-			item = item.set('start_date', item.get('start_date').toDate())
-		}
-		if (item.get('end_date') !== null) {
-			item = item.set('end_date', item.get('end_date').toDate())
-		}
-		return item.set('trip_id', trip_id)
-	}
+	// updatedItem(item, trip_id, day_number) {
+	// 	if (item.get('start_date') !== null) {
+	// 		item = item.set('start_date', item.get('start_date').toDate())
+	// 	}
+	// 	if (item.get('end_date') !== null) {
+	// 		item = item.set('end_date', item.get('end_date').toDate())
+	// 	}
+	// 	item = item.set('trip_id', trip_id)
+	// 	return item.set('day_number', day_number)
+	// }
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.trip_id !== null) {
-			this.state.cities.forEach((city) => {
-				this.props.createCard([this.updatedItem(city, nextProps.trip_id)])
+			let cityCards = []
+
+			console.log(this.state.cities)
+
+			_.forEach(this.state.cities, (city) => {
+				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000))
+				console.log(city.start_date, city.end_date, duration)
+				console.log(duration)
+				for (let i = 0; i < duration; i++) {
+					// const startTime = new Date((new Date(city.get('start_time'))).getTime() + (i * 24 * 60 * 60 * 1000))
+					console.log(city)
+					cityCards.push(_.assign(city, {
+						end_time: new Date(city.end_date),
+						start_time: new Date(city.start_date),
+						trip_id: nextProps.trip_id,
+						day_number: i + 1
+					}))
+				}
 			})
-			this.state.hotels.forEach((hotel) => {
-				this.props.createCard([this.updatedItem(hotel, nextProps.trip_id)])
-			})
-			this.state.must_dos.forEach((must_do) => {
-				this.props.createCard([this.updatedItem(must_do, nextProps.trip_id)])
-			})
+
+			this.props.createCard(cityCards)
+
+			// this.state.hotels.forEach((hotel) => {
+			// 	this.props.createCard([this.updatedItem(hotel, nextProps.trip_id)])
+			// })
+			// this.state.must_dos.forEach((must_do) => {
+			// 	this.props.createCard([this.updatedItem(must_do, nextProps.trip_id)])
+			// })
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
 		}
 	}
 
 	onCreateTrip(startDate, endDate) {
-
 		this.props.createTrip({
 			name: this.state.trip_name,
 			user_id: cookie.load('auth'),
@@ -111,9 +133,13 @@ class Onboarding extends Component {
 	}
 
 	onCityChange(name) {
-		const first_city = this.state.cities.get(0).set('name', name)
-		const state_array = this.state.cities.set(0, first_city)
-		this.setState({ cities: state_array})
+		let newCities = this.state.cities
+		const first_city = _.assign(this.state.cities[0], { name })
+		newCities[0] = first_city
+
+		// const first_city = this.state.cities.get(0).set('name', name)
+		// const state_array = this.state.cities.set(0, first_city)
+		this.setState({ cities: newCities})
 	}
 
 	onNameChange(event) {
@@ -126,9 +152,14 @@ class Onboarding extends Component {
 			const state_array = this.state.hotels.set(index, edited_hotel)
 			this.setState({ hotels: state_array})
 		} else if (type === 'city') {
-			const edited_city = this.state.cities.get(index).set('name', name)
-			const state_array = this.state.cities.set(index, edited_city)
-			this.setState({ cities: state_array})
+			console.log(index)
+
+			let newCities = this.state.cities
+			const newCity = _.assign(newCities[index], {	name })
+			newCities[index] = newCity
+			// const edited_city = this.state.cities.get(index).set('name', name)
+			// const state_array = this.state.cities.set(index, edited_city)
+			this.setState({ cities: newCities })
 		} else {
 			const edited_mustdo = this.state.must_dos.get(index).set('name', name)
 			const state_array = this.state.must_dos.set(index, edited_mustdo)
@@ -137,33 +168,46 @@ class Onboarding extends Component {
 	}
 
 	onHandleCitySelect(results, name) {
-		var lat = 0
-		var lng = 0
+		let lat = 0
+		let long = 0
 		getLatLng(results).then(({ latitude, longitude }) => {
 			lat = latitude
-			lng = longitude
+			long = longitude
 		})
 		let address = results.formatted_address
 		let place_id = results.place_id
 
-		const first_city = this.state.cities.get(0).merge({
-			name: name,
-			lat: lat,
-			lng: lng,
-			place_id: place_id,
-			address: address, 
-			day_number: 1
+		// const first_city = this.state.cities.get(0).merge({
+		// 	name: name,
+		// 	lat: lat,
+		// 	long: long,
+		// 	place_id: place_id,
+		// 	address: address, 
+		// 	day_number: 1
+		// })
+
+		let newCities = this.state.cities
+		const first_city = _.assign(newCities[0], {
+			name,
+			lat, 
+			long, 
+			place_id,
+			address
 		})
-		const state_array = this.state.cities.set(0, first_city)
-		this.setState({ cities: state_array})
+
+		// const state_array = this.state.cities.set(0, first_city)
+		newCities[0] = first_city
+		this.setState({ cities: newCities })
 	}
 
 	onHandleSelect(index, type, results, name) {
+		console.log(index)
+
 		var lat = 0
-		var lng = 0
+		var long = 0
 		getLatLng(results).then(({ latitude, longitude }) => {
 			lat = latitude
-			lng = longitude
+			long = longitude
 		})
 		let address = results.formatted_address
 		let day_number = index + 1
@@ -175,29 +219,41 @@ class Onboarding extends Component {
 				address: address,
 				day_number: day_number,
 				lat: lat,
-				lng: lng,
+				long: long,
 				place_id: place_id
 			})
 			const state_array = this.state.hotels.set(index, edited_hotel)
 			this.setState({ hotels: state_array})
 		} else if (type === 'city') {
-			const edited_city = this.state.cities.get(index).merge({
-				name: name,
-				address: address,
-				day_number: day_number,
-				lat: lat,
-				lng: lng,
-				place_id: place_id
+			let newCities = this.state.cities
+			const newCity = _.assign(this.state.cities[index], {
+				name, 
+				address,
+				day_number,
+				lat, 
+				long,
+				place_id
 			})
-			const state_array = this.state.cities.set(index, edited_city)
-			this.setState({ cities: state_array})
+
+			newCities[index] = newCity
+
+			// const edited_city = this.state.cities.get(index).merge({
+			// 	name: name,
+			// 	address: address,
+			// 	day_number: day_number,
+			// 	lat: lat,
+			// 	long: long,
+			// 	place_id: place_id
+			// })
+			// const state_array = this.state.cities.set(index, edited_city)
+			this.setState({ cities: newCities})
 		} else {
 			const edited_mustdo = this.state.must_dos.get(index).merge({
 				name: name,
 				address: address,
 				day_number: day_number,
 				lat: lat,
-				lng: lng,
+				long: long,
 				place_id: place_id
 			})
 			const state_array = this.state.must_dos.set(index, edited_mustdo)
@@ -214,11 +270,15 @@ class Onboarding extends Component {
 				this.setState({ hotels: state_array })
 			}
 		} else if (type === 'city') {
-			const end_date = this.state.cities.get(index).get('end_date');
-			if (end_date === null || new Date(end_date) >= new Date(start_date)) {
-				const edited_date = this.state.cities.get(index).set('start_date', start_date);
-				const state_array = this.state.cities.set(index, edited_date);
-				this.setState({ cities: state_array })
+			// const end_date = this.state.cities.get(index).get('end_date');
+			const { end_date } = this.state.cities[index]
+			if (_.isNil(end_date) || new Date(end_date) >= new Date(start_date)) {
+				let newCities = this.state.cities
+				const newCity = _.assign(this.state.cities[index], { start_date })
+				newCities[index] = newCity
+				// const edited_date = this.state.cities.get(index).set('start_date', start_date);
+				// const state_array = this.state.cities.set(index, edited_date);
+				this.setState({ cities: newCities })
 			}
 		} else {
 			const end_date = this.state.must_dos.get(index).get('end_date');
@@ -240,11 +300,15 @@ class Onboarding extends Component {
 				this.setState({ hotels: state_array })
 			}
 		} else if (type === 'city') {
-			const start_date = this.state.cities.get(index).get('start_date')
-			if (start_date === null || new Date(end_date) >= new Date(start_date)) {
-				const edited_date = this.state.cities.get(index).set('end_date', end_date)
-				const state_array = this.state.cities.set(index, edited_date)
-				this.setState({ cities: state_array })
+			const { start_date } = this.state.cities[index]
+			// const start_date = this.state.cities.get(index).get('start_date')
+			if (_.isNil(start_date) || new Date(end_date) >= new Date(start_date)) {
+				let newCities = this.state.cities
+				const newCity = _.assign(this.state.cities[index], { end_date })
+				newCities[index] = newCity
+				// const edited_date = this.state.cities.get(index).set('end_date', end_date)
+				// const state_array = this.state.cities.set(index, edited_date)
+				this.setState({ cities: newCities })
 			}
 		} else {
 			const start_date = this.state.must_dos.get(index).get('start_date')
@@ -260,23 +324,40 @@ class Onboarding extends Component {
 		console.log(this.state.cities)
 		let latestDate
 		let incomplete = false
-		this.state.cities.map((city, index) => {
-			if (_.isNil(city.get('start_date')) || _.isNil(city.get('end_date'))) {
+		_.forEach(this.state.cities, (city) => {
+			if (_.isNil(city.start_date) || _.isNil(city.end_date)) {
 				incomplete = true
 			}
 
-			if (_.isUndefined(latestDate) || new Date(city.get('end_date')) > new Date(latestDate)) {
-				latestDate = city.get('end_date')
+			if (_.isUndefined(latestDate) || new Date(city.end_date) > new Date(latestDate)) {
+				latestDate = city.end_date
 			}
 		})
+
+		// this.state.cities.map((city, index) => {
+		// 	if (_.isNil(city.get('start_date')) || _.isNil(city.get('end_date'))) {
+		// 		incomplete = true
+		// 	}
+
+		// 	if (_.isUndefined(latestDate) || new Date(city.get('end_date')) > new Date(latestDate)) {
+		// 		latestDate = city.get('end_date')
+		// 	}
+		// })
 
 		if (incomplete) {
 			// need to let user know that they're missing a date input
 			return
 		}
 
-		const state_array = this.state.cities.push(Map({ type: 'city', name: '', start_date: _.isUndefined(latestDate) ? null : latestDate, end_date: null}))
-		this.setState({ cities: state_array })
+		let newCities = this.state.cities
+		newCities.push({
+			type: 'city',
+			name: '',
+			start_date: _.isUndefined(latestDate) ? null : latestDate,
+			end_date: null
+		})
+		// const state_array = this.state.cities.push(Map({ type: 'city', name: '', start_date: _.isUndefined(latestDate) ? null : latestDate, end_date: null}))
+		this.setState({ cities: newCities })
 	}
 
 	onAddHotel(event) {
@@ -291,20 +372,20 @@ class Onboarding extends Component {
 
 	renderCities() {
 		return (
-			this.state.cities.map((city, index) => {
+			_.map(this.state.cities, (city, index) => {
 				return (
 					<div key={index}>
 						<OnboardingInput
 							index={index}
 							placeholder={'City'}
-							name={city.get('name')}
+							name={city.name}
 							input_type='city'
 							onOtherNameChange={this.onOtherNameChange}
 							onStartDateChange={this.onStartDateChange}
 							onEndDateChange={this.onEndDateChange}
 							onHandleSelect={this.onHandleSelect}
-							start_date={city.get('start_date')}
-							end_date={city.get('end_date')}
+							start_date={city.start_date}
+							end_date={city.end_date}
 						/>
 					</div>
 				)
@@ -363,19 +444,33 @@ class Onboarding extends Component {
 		let startDate
 		let endDate
 
-		this.state.cities.map((city, index) => {
-			if (city.get('name') === '' || city.get('start_date') === null || city.get('end_date') === null) {
+		_.map(this.state.cities, (city) => {
+			if (city.name === '' || city.start_date === null || city.end_date === null) {
 				ok = false
 			}
 
-			if (_.isUndefined(startDate) || new Date(city.get('start_date')) < startDate) {
-				startDate = city.get('start_date')
-			} 
+			if (_.isUndefined(startDate) || new Date(city.start_date) < new Date(startDate)) {
+				startDate = city.start_date
+			}
 
-			if (_.isUndefined(endDate) || new Date(city.get('end_date')) > endDate) {
-				endDate = city.get('end_date')
+			if (_.isUndefined(endDate) || new Date(city.end_date) > new Date(endDate)) {
+				endDate = city.end_date
 			}
 		})
+
+		// this.state.cities.map((city, index) => {
+		// 	if (city.get('name') === '' || city.get('start_date') === null || city.get('end_date') === null) {
+		// 		ok = false
+		// 	}
+
+		// 	if (_.isUndefined(startDate) || new Date(city.get('start_date')) < startDate) {
+		// 		startDate = city.get('start_date')
+		// 	} 
+
+		// 	if (_.isUndefined(endDate) || new Date(city.get('end_date')) > endDate) {
+		// 		endDate = city.get('end_date')
+		// 	}
+		// })
 
 		if (!ok) {
 			return (
@@ -443,7 +538,7 @@ class Onboarding extends Component {
 
 	renderStartCity() {
 		const inputProps = {
-		    value: this.state.cities.get(0).get('name'),
+		    value: _.isUndefined(this.state.cities[0]) ? '' : this.state.cities[0].name,
 		    onChange: (name) => { this.onCityChange(name) },
 		    type: 'text',
 		    placeholder: 'Where does your adventure begin?',

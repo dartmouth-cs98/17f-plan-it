@@ -66,9 +66,6 @@ export default class Map extends Component {
 	}
 
 	render() {
-		console.log(this.props.center)
-		console.log(this.props.MarkerPosition)
-
 		return (
 			<div id='map-container'>
 				<POIMap infoMessage={this.state.infoMessage} isInfoOpen={this.state.isInfoOpen} onInfoClose={this.onInfoClose} center={this.props.center} MarkerPosition={this.props.MarkerPosition} isMarkerShown={this.state.isMarkerShown} onMarkerClick={this.handleMarkerClick}  />

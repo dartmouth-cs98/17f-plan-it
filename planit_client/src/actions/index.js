@@ -85,7 +85,6 @@ export function fetchCards(id, day=null) {
     if (day) { query += `&day=${day}` }
 
     axios.get(query).then((response) => {
-      console.log(response.data)
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
     }).catch((error) => {
       console.log(error)
