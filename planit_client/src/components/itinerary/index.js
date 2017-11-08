@@ -145,8 +145,17 @@ export default class Itinerary extends Component {
 
 	renderList() {
 		const toRender = _.map(this.props.cards, (card) => {
-			if (card.type === 'free') {
-				const selected = _.isNull(this.props.selected) ? null : (new Date(this.props.selected.start_time)).getTime() === (new Date(card.start_time)).getTime()
+			if (card.type === 'day') {
+				console.log(card.start_time, card.end_time)
+				return (
+					<FreeTime
+						duration={24 * 60 * 60 * 1000}
+						select={() => { this.props.selectTime(card) }}
+						selected={!_.isNull(this.props.selected)}
+					/>
+				)
+			} else if (card.type === 'free') {
+				const selected = _.isNull(this.props.selected) ? false : (new Date(this.props.selected.start_time)).getTime() === (new Date(card.start_time)).getTime()
 
 				return (
 					<FreeTime
