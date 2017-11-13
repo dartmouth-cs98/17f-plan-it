@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
-import { fetchTrips } from '../../actions/index.js';
+import { fetchTrips, fetchFavoritedTrips } from '../../actions/index.js';
 import cookie from 'react-cookies'
 import './index.scss'
 
@@ -35,6 +35,7 @@ class Dashboard extends Component {
 
 	componentDidMount() {
 		this.props.fetchTrips(cookie.load('auth'))
+		this.props.fetchFavoritedTrips(cookie.load('auth'))
 	}
 
 
@@ -57,7 +58,6 @@ class Dashboard extends Component {
 
 	renderFavoritedTrips() {
 		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
-		console.log(this.props.allTrips)
 		return this.props.favoritedTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
@@ -119,4 +119,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, { fetchTrips })(Dashboard));
+export default withRouter(connect(mapStateToProps, { fetchTrips, fetchFavoritedTrips })(Dashboard));

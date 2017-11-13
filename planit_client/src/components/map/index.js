@@ -114,7 +114,6 @@ export default class Map extends Component {
 	}
 
 	render() {
-    console.log(this.props.MarkerClusterArray)
 		return (
 			<div id='map-container'>
 				<POIMap center={this.props.center} markers={this.props.MarkerClusterArray || []}  />
