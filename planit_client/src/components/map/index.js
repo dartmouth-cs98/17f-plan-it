@@ -60,7 +60,9 @@ const POIMap = compose(
               <FlatButton
                 label='Add'
                 style={{marginLeft: '10px'}}
-                onClick={() => { 
+                onClick={() => {
+                  props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
+                  
                   props.addCard({
                     name: marker.name,
                     image_url: marker.image_url,
@@ -73,7 +75,7 @@ const POIMap = compose(
                     type: marker.categories[0].alias,
                     description: marker.categories[0].title
                   })
-                }}            
+                }}
               />
             </div>
       	  </InfoWindow>
@@ -89,8 +91,8 @@ export default class Map extends Component {
 	render() {
 		return (
 			<div id='map-container'>
-				<POIMap 
-          center={this.props.center} 
+				<POIMap
+          center={this.props.center}
           markers={this.props.MarkerClusterArray || []}
           addCard={this.props.addCard}
         />
