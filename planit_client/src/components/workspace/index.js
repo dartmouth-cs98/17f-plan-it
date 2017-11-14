@@ -59,7 +59,6 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-
 		if (this.state.day < tripDuration) {
 			const newDay = this.state.day + 1
 			this.setState({ 
@@ -277,7 +276,6 @@ class Workspace extends Component {
 	}
 
 	render() {
-		console.log(this.state)
 		const cards = this.formatCards()
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
