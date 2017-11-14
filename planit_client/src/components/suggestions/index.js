@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import _ from 'lodash'	
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
+import FlatButton from 'material-ui/FlatButton'
+import IconMenu from 'material-ui/IconMenu'
+import MenuItem from 'material-ui/MenuItem'
 import './index.scss'
 
 export default class Suggestions extends Component {
@@ -38,15 +40,6 @@ export default class Suggestions extends Component {
 						style={{color: '#FFFFFF'}}
 					/>
 				}
-			/>,
-			<FlatButton
-				className='suggestions-menu'
-				icon={
-					<i
-						className='fa fa-bars'
-						style={{color: '#FFFFFF'}}
-					/>
-				}
 			/>
 		]
 
@@ -55,6 +48,19 @@ export default class Suggestions extends Component {
 				<label className='suggestions-title'>
 					ATTRACTIONS
 				</label>
+				<IconMenu
+					iconButtonElement={<i className='fa fa-filter' style={{color: '#FFFFFF'}} />}
+					onChange={() => {}}
+					multiple={false}
+					style={{float: 'right', marginRight: '10px'}}
+				>
+			  	<MenuItem value="1" primaryText="All" />
+          <MenuItem value="2" primaryText="Restaurants" />
+          <MenuItem value="3" primaryText="Hotels" />
+          <MenuItem value="4" primaryText="Rentals" />
+          <MenuItem value="5" primaryText="Fitness" />
+          <MenuItem value="6" primaryText="Parks" />
+        </IconMenu>
 			</div>
 		)
 	}
