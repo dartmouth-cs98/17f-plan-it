@@ -7,7 +7,7 @@ import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
 import { Map, List } from 'immutable'
 import Modal from 'react-modal'
-import { createTrip, createCard } from '../../actions/index.js'
+import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
 import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete'
 import moment from 'moment'
@@ -93,7 +93,7 @@ class Onboarding extends Component {
 			})
 
 			this.props.createCard(cityCards)
-
+			this.props.fetchCards(nextProps.trip_id, 1)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
 		}
 	}
@@ -546,4 +546,18 @@ const mapStateToProps = (state) => {
 	};
 };
 
-export default withRouter(connect(mapStateToProps, { createTrip, createCard })(Onboarding));
+const mapDispatchToProps = (dispatch) => {
+	return {
+		createTrip: (name, user_id, start_time, end_time) => {
+			dispatch(createTrip(name, user_id, start_time, end_time))
+		}, 
+		createCard: (cityCards) => {
+			dispatch(createCard(cityCards))
+		}, 
+		fetchCards: (id, day) => {
+			dispatch(fetchCards(id, day))
+		}
+	}
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Onboarding));
