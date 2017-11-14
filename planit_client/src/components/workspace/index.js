@@ -274,6 +274,8 @@ class Workspace extends Component {
 				<NavBar background={'globe_background'}/>
 				<Toolbar
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
+					published={this.props.trips[0] ? this.props.trips[0].published : false}
+					tripId={tripId}
 				/>
 				<div className='planner'>
 					<Suggestions

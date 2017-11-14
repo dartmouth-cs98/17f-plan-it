@@ -36,7 +36,7 @@ class NavBar extends Component {
 			return (
 				<div className='options_logged_out'>
           <Link to='/explore'><div>Explore</div></Link>
-          <Link to='/'><div><this.buttonDecision /></div></Link>
+          <Link to='/'><div>{this.buttonDecision()}</div></Link>
 				</div>
 			)
 		}
@@ -102,6 +102,7 @@ class NavBar extends Component {
   }
 
   processLogout(props) {
+    cookie.remove('auth', { path: '/' })
     this.setState({ authenticated: false })
   }
 
