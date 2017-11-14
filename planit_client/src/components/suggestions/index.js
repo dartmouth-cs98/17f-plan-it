@@ -26,7 +26,6 @@ export default class Suggestions extends Component {
 				display_phone: suggestion.display_phone,
 				type: suggestion.categories[0].alias,
 				description: suggestion.categories[0].title,
-				isInfoOpen: false
 			}
 		})
 	}
