@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import _ from 'lodash'	
+import _ from 'lodash'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import IconMenu from 'material-ui/IconMenu'
@@ -25,7 +25,7 @@ export default class Suggestions extends Component {
 				phone: suggestion.phone,
 				display_phone: suggestion.display_phone,
 				type: suggestion.categories[0].alias,
-				description: suggestion.categories[0].title
+				description: suggestion.categories[0].title,
 			}
 		})
 	}
