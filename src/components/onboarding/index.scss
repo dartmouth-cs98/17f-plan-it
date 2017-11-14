@@ -1,0 +1,171 @@
+.suggestion_item {
+	padding: 4px;
+	text-align: left;
+}
+
+.suggestion_icon {
+	margin-right: 8px;
+}
+
+.onboarding {
+	height: 90vh;
+	background: url('../../img/road_trip.jpeg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 0;
+	border-bottom: 6px solid #B6D6E7;
+}
+
+.onboarding_slider {
+	height: 88%;
+	width: 80vw;
+	margin: auto
+}
+
+.name {
+	height: 90%;
+	width: 90%;
+	background-color: white;
+}
+
+.next_arrow {
+	background-color: #B6D6E7;
+	position: absolute;
+  	top: 50%;
+  	left: 100%;
+  	transform: translate(-50%, -50%);
+}
+
+.next_arrow:hover {
+	background-color: #B6D6E7;
+}
+
+.prev_arrow {
+	background-color: #B6D6E7;
+	position: fixed;
+  	top: 50%;
+  	transform: translate(-50%, -50%);
+}
+
+.prev_arrow:hover {
+	background-color: #B6D6E7;
+}
+
+.vertical_center {
+	vertical-align: middle;
+}
+
+.slide_title {
+	color: #828282;
+	font-family: 'Source Sans Pro';
+	font-size: 32px;
+	margin-bottom: 10px;
+}
+
+.slick-dots {
+	position: fixed;
+	bottom: 3%;
+	left: 0%;
+}
+
+.slide {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: center !important;
+	height: 70vh;
+}
+
+.scrollable {
+	overflow-y: auto;
+	overflow-x: auto;
+	height: 50vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 80vw;
+}
+
+.button_container {
+	border-radius: 75px !important;
+	color: white;
+	width: 130px;
+	text-align: center;
+	margin: 10px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 8px;
+	padding-right: 8px;
+	cursor: pointer;
+}
+
+.add {
+	border: 4px solid #B6D6E7 !important;
+	background-color: rgba(182,214,231, .9) !important;
+}
+
+.start {
+	border: 4px solid #6FCF97 !important;
+	background-color: rgba(111,207,151, .8) !important;
+}
+
+.start_disabled {
+	border: 4px solid rgba(111,207,151, .2) !important;
+	background-color: rgba(111,207,151, .25) !important;
+}
+
+.button_container:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+
+.center {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.no_outline:focus {
+	outline: none;
+}
+
+.landing_page {
+	height: 100vh;
+	background: url('../../img/globe.jpeg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 0;
+}
+
+.buttons {
+	display: flex;
+	justify-content: center;
+}
+
+.button_box {
+	border-radius: 75px;
+	background-color: rgba(182,214,231, .9);
+	border: 4px solid #B6D6E7; 
+	color: white;
+	width: 130px;
+	text-align: center;
+	cursor: pointer;
+	margin-left: 40px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	height: 100%;
+}
+
+.button_box:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+
+.centered {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.start_input {
+	width: 60vw !important;
+}
