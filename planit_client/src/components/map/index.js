@@ -20,11 +20,13 @@ const POIMap = compose(
       const clickedMarkers = markerClusterer.getMarkers()
     },
   }),
-  withStateHandlers(() => ({
+  withStateHandlers((props) => ({
     isOpen: -1,
+    localcenter: props.center
   }), {
-    onToggleOpen: ({ isOpen }) => (index) => ({
+    onToggleOpen: ({ isOpen, localcenter }) => (index, center) => ({
       isOpen: index,
+      localcenter: center
     })
   }),
   withScriptjs,
@@ -32,7 +34,7 @@ const POIMap = compose(
 )((props) =>
   <GoogleMap
     defaultZoom={15}
-    center={props.center}
+    center={props.localcenter}
   >
   <MarkerClusterer
     onClick={props.onMarkerClustererClick}
@@ -44,10 +46,10 @@ const POIMap = compose(
       <Marker
         key={marker.id}
         position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
-        onClick={() => props.onToggleOpen(index)}
+        onClick={() => props.onToggleOpen(index, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}
         >
         {props.isOpen === index &&
-          <InfoWindow onCloseClick={() => props.onToggleOpen(-1)}>
+          <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}>
             <p>{marker.name}</p>
       	  </InfoWindow>
         }
