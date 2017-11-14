@@ -2,8 +2,10 @@
 // Docs found here: https://tomchentw.github.io/react-google-maps
 
 import React, { Component } from 'react'
-import { compose, withProps } from "recompose"
+import { compose, withProps, withHandlers } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
+import fetch from "isomorphic-fetch"
+import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
 import './index.scss'
 
 const POIMap = compose(
@@ -13,6 +15,18 @@ const POIMap = compose(
     containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
+  withHandlers({
+    onMarkerClustererClick: () => (markerClusterer) => {
+      const clickedMarkers = markerClusterer.getMarkers()
+    },
+    onMarkerClick: () => (id) => {
+      // TODO: FUNCTION FOR MARKER CLICK TO SHOW INFO
+      console.log(id)
+    },
+    onInfoClose: (id) => (markerClusterer) => {
+      // TODO: FUNCTION FOR MARKER CLICK TO HIDE INFO
+    },
+  }),
   withScriptjs,
   withGoogleMap
 )((props) =>
@@ -20,14 +34,26 @@ const POIMap = compose(
     defaultZoom={15}
     center={props.center}
   >
-	<Marker
-		position={props.MarkerPosition}
-		onClick={props.onMarkerClick}
-	>
-		{props.isInfoOpen && <InfoWindow onCloseClick={props.onInfoClose}>
-			<p>{props.infoMessage}</p>
-		</InfoWindow>}
-	</Marker>
+  <MarkerClusterer
+    onClick={props.onMarkerClustererClick}
+    averageCenter
+    enableRetinaIcons
+    gridSize={60}
+  >
+    {props.markers.map(marker => (
+      <Marker
+        key={marker.id}
+        position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
+        onClick={() => props.onMarkerClick(marker.id)}
+        >
+        {marker.isInfoOpen &&
+          <InfoWindow onCloseClick={() => props.onInfoClose(marker.id)}>
+            <p>{marker.name}</p>
+      	  </InfoWindow>
+        }
+      </Marker>
+    ))}
+  </MarkerClusterer>
   </GoogleMap>
 );
 
@@ -42,10 +68,32 @@ export default class Map extends Component {
     	isMarkerShown: this.props.isMarkerShown,
 			MarkerPosition: this.props.MarkerPosition,
 			center: this.props.center,
-			infoMessage: this.props.infoMessage
+			infoMessage: this.props.infoMessage,
+      markers: []
 
 	  }
 	}
+
+  componentWillMount() {
+    this.setState({ markers: [] })
+  }
+
+  // TODO: Generate JSON object of all places in suggestions
+  componentDidMount() {
+    const url = [
+      // Length issue
+      `https://gist.githubusercontent.com`,
+      `/farrrr/dfda7dd7fccfec5474d3`,
+      `/raw/758852bbc1979f6c4522ab4e92d1c92cba8fb0dc/data.json`
+    ].join("")
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ markers: data.photos });
+      });
+
+  }
 
   handleMarkerClick = () => {
     this.setState({ isInfoOpen: true });
@@ -68,7 +116,7 @@ export default class Map extends Component {
 	render() {
 		return (
 			<div id='map-container'>
-				<POIMap infoMessage={this.state.infoMessage} isInfoOpen={this.state.isInfoOpen} onInfoClose={this.onInfoClose} center={this.props.center} MarkerPosition={this.props.MarkerPosition} isMarkerShown={this.state.isMarkerShown} onMarkerClick={this.handleMarkerClick}  />
+				<POIMap center={this.props.center} markers={this.props.MarkerClusterArray || []}  />
 			</div>
 		)
 	}

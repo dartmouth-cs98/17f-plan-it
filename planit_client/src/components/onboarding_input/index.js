@@ -77,7 +77,7 @@ class OnboardingInput extends Component {
 						date={this.props.start_date}
 						onDateChange={(start_date) => this.props.onStartDateChange(index, this.state.input_type, start_date)}
 						focused={this.state.start_focused}
-						onFocusChange={({ focused }) => { if (index == 0) { this.setState({ start_focused: focused }) }}}
+						onFocusChange={({ focused }) => { if (index === 0) { this.setState({ start_focused: focused }) }}}
 						withPortal={true}
 						hideKeyboardShortcutsPanel={true}
 					/>
