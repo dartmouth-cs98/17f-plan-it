@@ -12,10 +12,14 @@
 		line-height: 35px;
 		display: flex;
 
-		.itinerary-label {
-			color: #FFFFFF !important;
-			font-size: 14px !important;
+		.itinerary-title {
+			color: #FFFFFF;
+			margin-left: 10px;
+			font-size: 14px;
+			font-family: Roboto, sans-serif;
+			font-weight: 500;
 			width: 100%;
+			text-align: center;
 		}
 
 		.left-button {

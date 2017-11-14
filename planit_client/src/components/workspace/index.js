@@ -14,6 +14,14 @@ const DEFAULT_DURATION = 3600000
 const TRIP_ID = 1
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
+const CATEGORIES = [
+	null,
+	'food',
+	'hotels',
+	'rentals',
+	'fitness & instruction',
+	'parks'
+]
 
 class Workspace extends Component {
 	constructor(props) {
@@ -22,8 +30,7 @@ class Workspace extends Component {
 		this.state = {
 			day: DAY_NUMBER,
 			selected: null,
-			cityLat: null,
-			cityLong: null,
+			category: 0,
 			pinLat: null,
 			pinLong: null,
 			cards: []
@@ -31,6 +38,7 @@ class Workspace extends Component {
 
 		this.dayForward = this.dayForward.bind(this)
 		this.dayBackward = this.dayBackward.bind(this)
+		this.selectCategory = this.selectCategory.bind(this)
 		this.selectTime = this.selectTime.bind(this)
 		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
@@ -51,17 +59,16 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-
 		if (this.state.day < tripDuration) {
 			const newDay = this.state.day + 1
 			this.setState({ 
 				day: newDay,
-				selected: null
+				selected: null,
+				category: 0
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.fetchCards(tripId, newDay)
-			this.props.fetchSuggestions()
 		}
 	}
 
@@ -70,12 +77,22 @@ class Workspace extends Component {
 			const newDay = this.state.day - 1
 			this.setState({ 
 				day: newDay,
-				selected: null
+				selected: null,
+				category: 0
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.fetchCards(tripId, newDay)
-			this.props.fetchSuggestions()
+		}
+	}
+
+	selectCategory(event, val) {
+		if (0 <= val < CATEGORIES.length) {
+			this.setState({ category: val })
+			const { pinLat, pinLong } = this.state
+			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
+				this.props.fetchSuggestions(pinLat, pinLong, CATEGORIES[val])
+			}
 		}
 	}
 
@@ -83,10 +100,10 @@ class Workspace extends Component {
 		const cards = this.formatCards()
 		let lat
 		let long
-		
+
 		if (cards.length > 0) {
 			if (freeTime.type === 'day') {
-				this.props.fetchSuggestions(freeTime.lat, freeTime.long)
+				this.props.fetchSuggestions(freeTime.lat, freeTime.long, CATEGORIES[this.state.category])
 				this.setState({
 					selected: freeTime,
 					pinLat: freeTime.lat,
@@ -104,26 +121,24 @@ class Workspace extends Component {
 				lat = prev.lat
 				long = prev.long
 				// use location of previous activity to populate suggestions
-				this.props.fetchSuggestions(prev.lat, prev.long)
+				this.props.fetchSuggestions(prev.lat, prev.long, CATEGORIES[this.state.category])
 			} else {
 				const next = cards[index + 1]
 				lat = next.lat
 				long = next.long
 				// use location of next activity to populate suggestions
-				this.props.fetchSuggestions(next.lat, next.long)
+				this.props.fetchSuggestions(next.lat, next.long, CATEGORIES[this.state.category])
 			}
 		}
 
 		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
-			this.setState({ 
+			this.setState({
 				selected: null,
-				pinLat: this.state.cityLat,
-				pinLong: this.state.cityLong
+				pinLat: null,
+				pinLong: null
 			})
 		} else {
-			console.log(lat, long)
-
-			this.setState({ 
+			this.setState({
 				selected: freeTime,
 				pinLat: lat,
 				pinLong: long
@@ -159,10 +174,8 @@ class Workspace extends Component {
 				  day_number: this.state.day
 				}], tripId, this.state.day)
 
-				// update the travel next card in the list
-
 				this.setState({ selected: null })
-			} 
+			}
 		}
 	}
 
@@ -187,7 +200,7 @@ class Workspace extends Component {
 			}
 
 			if (_.isUndefined(startCard)) {
-				startCard = card.id	
+				startCard = card.id
 
 				const startTime = new Date(card.start_time)
 				startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
@@ -269,19 +282,23 @@ class Workspace extends Component {
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
-
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
-				<Toolbar 
+				<Toolbar
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
+					published={this.props.trips[0] ? this.props.trips[0].published : false}
+					tripId={tripId}
 				/>
 				<div className='planner'>
-					<Suggestions 
+					<Suggestions
 						addCard={this.addCard}
 						suggestions={this.props.suggestions}
+						category={this.state.category}
+						selectCategory={this.selectCategory}
 					/>
-					<Itinerary 
+
+					<Itinerary
 						tripId={tripId}
 						cards={cards}
 						day={this.state.day}
@@ -293,12 +310,15 @@ class Workspace extends Component {
 						dayBackward={this.dayBackward}
 						numDays={tripDuration}
 					/>
-					<Map 
-						isInfoOpen={false} 
-						isMarkerShown={true} 
-						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }} 
-						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }} 
-						infoMessage="Hello From Dartmouth"/>
+					<Map
+						isInfoOpen={false}
+						isMarkerShown={true}
+						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
+						MarkerClusterArray={this.props.suggestions}
+						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
+						infoMessage="Hello From Dartmouth"
+						addCard={this.addCard}
+					/>
 				</div>
 			</div>
 		)
@@ -307,8 +327,8 @@ class Workspace extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		trips: state.trips.trip, 
-		cards: state.cards.all, 
+		trips: state.trips.trip,
+		cards: state.cards.all,
 		suggestions: state.cards.suggestions
 	}
 }
@@ -317,7 +337,7 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		fetchTrip: (id) => {
 			dispatch(fetchTrip(id))
-		}, 
+		},
 		fetchCards: (id, day) => {
 			dispatch(fetchCards(id, day))
 		},
@@ -330,8 +350,8 @@ const mapDispatchToProps = (dispatch) => {
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))
 		},
-		fetchSuggestions: (lat=43, long=-72) => {
-			dispatch(fetchSuggestions(lat, long))
+		fetchSuggestions: (lat=43, long=-72, categories=null) => {
+			dispatch(fetchSuggestions(lat, long, categories))
 		}
 	}
 }

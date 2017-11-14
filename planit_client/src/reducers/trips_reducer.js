@@ -15,7 +15,7 @@ const TripsReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         userTrips: action.payload,
       });
-    case ActionTypes.FETCH_TRIPS_ERROR:
+    case ActionTypes.TRIP_ERROR:
       return Object.assign({}, state, {
         error: action.payload,
       });
@@ -23,41 +23,29 @@ const TripsReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         trip: action.payload,
       });
-    case ActionTypes.FETCH_TRIP_ERROR:
-      return Object.assign({}, state, {
-        error: action.payload,
-      });
     case ActionTypes.UPDATE_TRIP:
       return Object.assign({}, state, {
         trip: action.payload,
-      });
-    case ActionTypes.UPDATE_TRIP_ERROR:
-      return Object.assign({}, state, {
-        error: action.payload,
       });
     case ActionTypes.CREATE_TRIP:
       return Object.assign({}, state, {
         trip_id: action.payload,
       });
-    case ActionTypes.CREATE_TRIP_ERROR:
-      return Object.assign({}, state, {
-        error: action.payload,
-      }); 
     case ActionTypes.FETCH_FAVORITED_TRIPS:
       return Object.assign({}, state, {
         favoritedTrips: action.payload,
-      }); 
-    case ActionTypes.FETCH_FAVORITED_TRIPS_ERROR:
-      return Object.assign({}, state, {
-        error: action.payload,
       }); 
     case ActionTypes.FETCH_PUBLISHED_TRIPS:
       return Object.assign({}, state, {
         publishedTrips: action.payload,
       }); 
-    case ActionTypes.FETCH_PUBLISHED_TRIPS_ERROR:
+    case ActionTypes.FAVORITE_TRIP:
       return Object.assign({}, state, {
-          error: action.payload,
+          error: null,
+        }); 
+    case ActionTypes.UNFAVORITE_TRIP:
+      return Object.assign({}, state, {
+          error: null,
         }); 
     default:
       return state;

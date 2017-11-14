@@ -2,30 +2,37 @@
 // Docs found here: https://tomchentw.github.io/react-google-maps
 
 import React, { Component } from 'react'
-import { compose, withProps, withHandlers } from "recompose"
+import { compose, withProps, withHandlers, withStateHandlers, lifecycle } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
-import fetch from "isomorphic-fetch"
 import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
+import FlatButton from 'material-ui/FlatButton'
 import './index.scss'
 
 const POIMap = compose(
   withProps({
     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAOhNUwMY9QAYojHd5Ar87X8ztMjNXNmn0&libraries=geometry,drawing, places",
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
+    containerElement: <div style={{ height: `100%` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
   withHandlers({
     onMarkerClustererClick: () => (markerClusterer) => {
       const clickedMarkers = markerClusterer.getMarkers()
     },
-    onMarkerClick: () => (id) => {
-      // TODO: FUNCTION FOR MARKER CLICK TO SHOW INFO
-      console.log(id)
-    },
-    onInfoClose: (id) => (markerClusterer) => {
-      // TODO: FUNCTION FOR MARKER CLICK TO HIDE INFO
-    },
+  }),
+  withStateHandlers((props) => ({
+    isOpen: -1,
+    localcenter: props.center
+  }), {
+    onToggleOpen: ({ isOpen, localcenter }) => (index, center) => ({
+      isOpen: index,
+      localcenter: center
+    })
+  }),
+  lifecycle({
+      componentWillUnmount() {
+        this.props.onToggleOpen(-1, { lat:0, lng: 0 }) // <-- props is not defined
+      },
   }),
   withScriptjs,
   withGoogleMap
@@ -40,15 +47,35 @@ const POIMap = compose(
     enableRetinaIcons
     gridSize={60}
   >
-    {props.markers.map(marker => (
+    {props.markers.map((marker, index) => (
       <Marker
-        key={marker.photo_id}
-        position={{ lat: marker.latitude, lng: marker.longitude }}
-        onClick={() => props.onMarkerClick(marker.photo_id)}
+        key={marker.id}
+        position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
+        onClick={() => props.onToggleOpen(index, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}
         >
-        {marker.isInfoOpen &&
-          <InfoWindow onCloseClick={() => props.onInfoClose(marker.photo_id)}>
-            <p>{marker.infoMessage}</p>
+        {props.isOpen === index &&
+          <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}>
+            <div className='pin-label'>
+              <label className='pin-title'>{marker.name}</label>
+              <FlatButton
+                label='Add'
+                style={{marginLeft: '10px'}}
+                onClick={() => { 
+                  props.addCard({
+                    name: marker.name,
+                    image_url: marker.image_url,
+                    yelp_url: marker.url,
+                    price: marker.price,
+                    lat: marker.coordinates.latitude,
+                    long: marker.coordinates.longitude,
+                    phone: marker.phone,
+                    display_phone: marker.display_phone,
+                    type: marker.categories[0].alias,
+                    description: marker.categories[0].title
+                  })
+                }}            
+              />
+            </div>
       	  </InfoWindow>
         }
       </Marker>
@@ -58,64 +85,15 @@ const POIMap = compose(
 );
 
 export default class Map extends Component {
-	constructor(props) {
-	  super(props);
-	  this.handleMarkerClick = this.handleMarkerClick.bind(this);
-		this.onInfoClose = this.onInfoClose.bind(this);
-		this.ChangeMapAndMarkerPosition = this.ChangeMapAndMarkerPosition.bind(this);
-		this.state = {
-			isInfoOpen: this.props.isInfoOpen,
-    	isMarkerShown: this.props.isMarkerShown,
-			MarkerPosition: this.props.MarkerPosition,
-			center: this.props.center,
-			infoMessage: this.props.infoMessage,
-      markers: []
-
-	  }
-	}
-
-  componentWillMount() {
-    this.setState({ markers: [] })
-  }
-
-  // TODO: Generate JSON object of all places in suggestions
-  componentDidMount() {
-    const url = [
-      // Length issue
-      `https://gist.githubusercontent.com`,
-      `/farrrr/dfda7dd7fccfec5474d3`,
-      `/raw/758852bbc1979f6c4522ab4e92d1c92cba8fb0dc/data.json`
-    ].join("")
-
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        this.setState({ markers: data.photos });
-      });
-  }
-
-  handleMarkerClick = () => {
-    this.setState({ isInfoOpen: true });
-  }
-
-	onInfoClose = () => {
-    this.setState({ isInfoOpen: false });
-  }
-
-	ChangeMapAndMarkerPosition = (LatLong, message) => {
-		this.setState({
-			isMarkerShown: true,
-			MarkerPosition: LatLong,
-			center: LatLong,
-			isInfoOpen: false,
-			infoMessage: message
-		});
-	}
 
 	render() {
 		return (
 			<div id='map-container'>
-				<POIMap center={this.props.center} markers={this.state.markers}  />
+				<POIMap 
+          center={this.props.center} 
+          markers={this.props.MarkerClusterArray || []}
+          addCard={this.props.addCard}
+        />
 			</div>
 		)
 	}
