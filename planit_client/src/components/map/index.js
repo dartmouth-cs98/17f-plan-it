@@ -19,15 +19,6 @@ const POIMap = compose(
     onMarkerClustererClick: () => (markerClusterer) => {
       const clickedMarkers = markerClusterer.getMarkers()
     },
-    onMarkerClick: () => (markerArray, index) => {
-      // TODO: FUNCTION FOR MARKER CLICK TO SHOW INFO
-      console.log(index)
-      markerArray[index].isInfoOpen = true
-    },
-    onInfoClose: () => (markerArray, index) => {
-      // TODO: FUNCTION FOR MARKER CLICK TO HIDE INFO
-      markerArray[index].isInfoOpen = false
-    },
   }),
   withStateHandlers(() => ({
     isOpen: -1,
@@ -67,64 +58,8 @@ const POIMap = compose(
 );
 
 export default class Map extends Component {
-	constructor(props) {
-	  super(props);
-	  this.handleMarkerClick = this.handleMarkerClick.bind(this);
-		this.onInfoClose = this.onInfoClose.bind(this);
-		this.ChangeMapAndMarkerPosition = this.ChangeMapAndMarkerPosition.bind(this);
-		this.state = {
-			isInfoOpen: this.props.isInfoOpen,
-    	isMarkerShown: this.props.isMarkerShown,
-			MarkerPosition: this.props.MarkerPosition,
-			center: this.props.center,
-			infoMessage: this.props.infoMessage,
-      markers: []
-
-	  }
-	}
-
-  componentWillMount() {
-    this.setState({ markers: [] })
-  }
-
-  // TODO: Generate JSON object of all places in suggestions
-  componentDidMount() {
-    const url = [
-      // Length issue
-      `https://gist.githubusercontent.com`,
-      `/farrrr/dfda7dd7fccfec5474d3`,
-      `/raw/758852bbc1979f6c4522ab4e92d1c92cba8fb0dc/data.json`
-    ].join("")
-
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        this.setState({ markers: data.photos });
-      });
-
-  }
-
-  handleMarkerClick = () => {
-    this.setState({ isInfoOpen: true });
-  }
-
-	onInfoClose = () => {
-    this.setState({ isInfoOpen: false });
-    console.log("worked");
-  }
-
-	ChangeMapAndMarkerPosition = (LatLong, message) => {
-		this.setState({
-			isMarkerShown: true,
-			MarkerPosition: LatLong,
-			center: LatLong,
-			isInfoOpen: false,
-			infoMessage: message
-		});
-	}
 
 	render() {
-    console.log(this.props.MarkerClusterArray);
 		return (
 			<div id='map-container'>
 				<POIMap center={this.props.center} markers={this.props.MarkerClusterArray || []}  />
