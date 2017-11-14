@@ -42,13 +42,13 @@ const POIMap = compose(
   >
     {props.markers.map(marker => (
       <Marker
-        key={marker.photo_id}
-        position={{ lat: marker.latitude, lng: marker.longitude }}
-        onClick={() => props.onMarkerClick(marker.photo_id)}
+        key={marker.id}
+        position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
+        onClick={() => props.onMarkerClick(marker.id)}
         >
         {marker.isInfoOpen &&
-          <InfoWindow onCloseClick={() => props.onInfoClose(marker.photo_id)}>
-            <p>{marker.infoMessage}</p>
+          <InfoWindow onCloseClick={() => props.onInfoClose(marker.id)}>
+            <p>{marker.name}</p>
       	  </InfoWindow>
         }
       </Marker>
@@ -92,6 +92,7 @@ export default class Map extends Component {
       .then(data => {
         this.setState({ markers: data.photos });
       });
+
   }
 
   handleMarkerClick = () => {
@@ -113,9 +114,10 @@ export default class Map extends Component {
 	}
 
 	render() {
+    console.log(this.props.MarkerClusterArray)
 		return (
 			<div id='map-container'>
-				<POIMap center={this.props.center} markers={this.state.markers}  />
+				<POIMap center={this.props.center} markers={this.props.MarkerClusterArray || []}  />
 			</div>
 		)
 	}
