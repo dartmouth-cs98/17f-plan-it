@@ -51,7 +51,7 @@ const POIMap = compose(
       <Marker
         key={marker.id}
         position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
-        onClick={() => props.onToggleOpen(index, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}
+        onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}
         >
         {props.isOpen === index &&
           <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}>
@@ -61,6 +61,7 @@ const POIMap = compose(
                 label='Add'
                 style={{marginLeft: '10px'}}
                 onClick={() => { 
+                  props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
                   props.addCard({
                     name: marker.name,
                     image_url: marker.image_url,
