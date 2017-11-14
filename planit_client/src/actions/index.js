@@ -107,7 +107,6 @@ export function insertCard(cards, trip, day) {
 export function updateCard(id, attributes, trip, day) {
   return (dispatch) => {
     axios.put(`${ROOT_URL}/cards/${id}`, attributes).then((response) => {
-      console.log(trip, day)
       dispatch(fetchCards(trip, day))
     }).catch((error) => {
       dispatch({ type: ActionTypes.UPDATE_CARD_ERROR, payload: error })
@@ -156,9 +155,13 @@ export function createCard(cards) {
   };
 }
 
-export function fetchSuggestions(lat, long) {
+export function fetchSuggestions(lat, long, category=null) {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/yelp?latitude=${lat}&longitude=${long}`).then((response) => {
+    let query = `${ROOT_URL}/yelp?latitude=${lat}&longitude=${long}`
+
+    if (category) { query += `&categories=${category}` }
+
+    axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_SUGGESTIONS, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.FETCH_SUGGESTIONS_ERROR, payload: error })

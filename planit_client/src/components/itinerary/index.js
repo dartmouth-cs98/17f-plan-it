@@ -86,8 +86,6 @@ export default class Itinerary extends Component {
 			}
 		}
 
-		console.log(this.props.tripId, this.props.day)
-
 		this.props.updateCard(this.state.editCard.id, {
 			start_time: this.state.newTime,
 			end_time: new Date(this.state.newTime.getTime() + duration)			
@@ -146,7 +144,6 @@ export default class Itinerary extends Component {
 	renderList() {
 		const toRender = _.map(this.props.cards, (card) => {
 			if (card.type === 'day') {
-				console.log(card.start_time, card.end_time)
 				return (
 					<FreeTime
 						duration={24 * 60 * 60 * 1000}

@@ -31,18 +31,6 @@ export default class Suggestions extends Component {
 	}
 
 	renderHeader() {
-		const buttons = [
-			<FlatButton
-				className='suggestions-filter'
-				icon={
-					<i
-						className='fa fa-filter'
-						style={{color: '#FFFFFF'}}
-					/>
-				}
-			/>
-		]
-
 		return (
 			<div className='suggestions-header'>
 				<label className='suggestions-title'>
@@ -50,16 +38,17 @@ export default class Suggestions extends Component {
 				</label>
 				<IconMenu
 					iconButtonElement={<i className='fa fa-filter' style={{color: '#FFFFFF'}} />}
-					onChange={() => {}}
+					onChange={this.props.selectCategory}
+					value={this.props.category}
 					multiple={false}
-					style={{float: 'right', marginRight: '10px'}}
+					style={{float: 'right', marginRight: '10px', cursor: 'pointer'}}
 				>
-			  	<MenuItem value="1" primaryText="All" />
-          <MenuItem value="2" primaryText="Restaurants" />
-          <MenuItem value="3" primaryText="Hotels" />
-          <MenuItem value="4" primaryText="Rentals" />
-          <MenuItem value="5" primaryText="Fitness" />
-          <MenuItem value="6" primaryText="Parks" />
+			  	<MenuItem value="0" primaryText="All" />
+          <MenuItem value="1" primaryText="Food" />
+          <MenuItem value="2" primaryText="Hotels" />
+          <MenuItem value="3" primaryText="Rentals" />
+          <MenuItem value="4" primaryText="Fitness & Instruction" />
+          <MenuItem value="5" primaryText="Parks" />
         </IconMenu>
 			</div>
 		)
