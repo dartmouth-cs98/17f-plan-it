@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import { compose, withProps, withHandlers, withStateHandlers, lifecycle } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
+import FlatButton from 'material-ui/FlatButton'
 import './index.scss'
 
 const POIMap = compose(
@@ -38,7 +39,7 @@ const POIMap = compose(
 )((props) =>
   <GoogleMap
     defaultZoom={15}
-    center={props.localcenter}
+    center={props.center}
   >
   <MarkerClusterer
     onClick={props.onMarkerClustererClick}
@@ -54,7 +55,27 @@ const POIMap = compose(
         >
         {props.isOpen === index &&
           <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}>
-            <p>{marker.name}</p>
+            <div className='pin-label'>
+              <label className='pin-title'>{marker.name}</label>
+              <FlatButton
+                label='Add'
+                style={{marginLeft: '10px'}}
+                onClick={() => { 
+                  props.addCard({
+                    name: marker.name,
+                    image_url: marker.image_url,
+                    yelp_url: marker.url,
+                    price: marker.price,
+                    lat: marker.coordinates.latitude,
+                    long: marker.coordinates.longitude,
+                    phone: marker.phone,
+                    display_phone: marker.display_phone,
+                    type: marker.categories[0].alias,
+                    description: marker.categories[0].title
+                  })
+                }}            
+              />
+            </div>
       	  </InfoWindow>
         }
       </Marker>
@@ -68,7 +89,11 @@ export default class Map extends Component {
 	render() {
 		return (
 			<div id='map-container'>
-				<POIMap center={this.props.center} markers={this.props.MarkerClusterArray || []}  />
+				<POIMap 
+          center={this.props.center} 
+          markers={this.props.MarkerClusterArray || []}
+          addCard={this.props.addCard}
+        />
 			</div>
 		)
 	}

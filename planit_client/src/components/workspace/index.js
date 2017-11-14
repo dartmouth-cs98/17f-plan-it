@@ -277,6 +277,7 @@ class Workspace extends Component {
 	}
 
 	render() {
+		console.log(this.state)
 		const cards = this.formatCards()
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
@@ -317,7 +318,9 @@ class Workspace extends Component {
 						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
 						MarkerClusterArray={this.props.suggestions}
 						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
-						infoMessage="Hello From Dartmouth"/>
+						infoMessage="Hello From Dartmouth"
+						addCard={this.addCard}
+					/>
 				</div>
 			</div>
 		)
