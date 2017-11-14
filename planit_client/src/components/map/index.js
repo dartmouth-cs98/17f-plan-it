@@ -4,7 +4,6 @@
 import React, { Component } from 'react'
 import { compose, withProps, withHandlers, withStateHandlers } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
-import fetch from "isomorphic-fetch"
 import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
 import './index.scss'
 
