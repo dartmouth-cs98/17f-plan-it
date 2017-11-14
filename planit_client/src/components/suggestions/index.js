@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-import _ from 'lodash'
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import _ from 'lodash'	
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
+import FlatButton from 'material-ui/FlatButton'
+import IconMenu from 'material-ui/IconMenu'
+import MenuItem from 'material-ui/MenuItem'
 import './index.scss'
 
 export default class Suggestions extends Component {
@@ -29,32 +31,25 @@ export default class Suggestions extends Component {
 	}
 
 	renderHeader() {
-		const buttons = [
-			<FlatButton
-				className='suggestions-filter'
-				icon={
-					<i
-						className='fa fa-filter'
-						style={{color: '#FFFFFF'}}
-					/>
-				}
-			/>,
-			<FlatButton
-				className='suggestions-menu'
-				icon={
-					<i
-						className='fa fa-bars'
-						style={{color: '#FFFFFF'}}
-					/>
-				}
-			/>
-		]
-
 		return (
 			<div className='suggestions-header'>
 				<label className='suggestions-title'>
 					ATTRACTIONS
 				</label>
+				<IconMenu
+					iconButtonElement={<i className='fa fa-filter' style={{color: '#FFFFFF'}} />}
+					onChange={this.props.selectCategory}
+					value={this.props.category}
+					multiple={false}
+					style={{float: 'right', marginRight: '10px', cursor: 'pointer'}}
+				>
+			  	<MenuItem value="0" primaryText="All" />
+          <MenuItem value="1" primaryText="Food" />
+          <MenuItem value="2" primaryText="Hotels" />
+          <MenuItem value="3" primaryText="Rentals" />
+          <MenuItem value="4" primaryText="Fitness & Instruction" />
+          <MenuItem value="5" primaryText="Parks" />
+        </IconMenu>
 			</div>
 		)
 	}
