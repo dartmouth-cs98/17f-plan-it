@@ -59,7 +59,6 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-
 		if (this.state.day < tripDuration) {
 			const newDay = this.state.day + 1
 			this.setState({ 
@@ -317,7 +316,9 @@ class Workspace extends Component {
 						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
 						MarkerClusterArray={this.props.suggestions}
 						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
-						infoMessage="Hello From Dartmouth"/>
+						infoMessage="Hello From Dartmouth"
+						addCard={this.addCard}
+					/>
 				</div>
 			</div>
 		)

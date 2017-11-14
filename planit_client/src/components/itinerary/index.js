@@ -10,6 +10,20 @@ import Checkbox from 'material-ui/Checkbox'
 import './index.scss'
 
 const TIME_SCALE = 2500
+const MONTHS = [
+	'January', 
+	'February', 
+	'March', 
+	'April', 
+	'May', 
+	'June', 
+	'July',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December'
+]
 
 export default class Itinerary extends Component {
 	constructor(props) {
@@ -129,13 +143,19 @@ export default class Itinerary extends Component {
 	}
 
 	renderHeader() {
+		let dayLabel = `Day ${this.props.day}`
+
+		if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
+			const date = new Date(this.props.cards[0].start_time)
+			dayLabel += `: ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
+		}
+
 		return (
 			<div className='itinerary-header'>
 				{this.renderBackButton()}
-				<FlatButton
-					className='itinerary-label'
-					label={`Day ${this.props.day}`}
-				/>
+				<label className='itinerary-title'>
+					{dayLabel}
+				</label>
 				{this.renderForwardButton()}
 			</div>
 		)
@@ -225,12 +245,6 @@ export default class Itinerary extends Component {
         onClick={this.updateStartTime}
       />
     ]
-
-		// <Checkbox
-	    // label="Shift later cards back"
-	    // checked={this.state.shift}
-	    // onCheck={this.toggleShift.bind(this)}
-	  // />
 
 		return (
 			<Dialog
