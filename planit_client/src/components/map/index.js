@@ -73,6 +73,7 @@ const POIMap = compose(
                     type: marker.categories[0].alias,
                     description: marker.categories[0].title
                   })
+                  props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
                 }}            
               />
             </div>
