@@ -2,7 +2,7 @@
 // Docs found here: https://tomchentw.github.io/react-google-maps
 
 import React, { Component } from 'react'
-import { compose, withProps, withHandlers } from "recompose"
+import { compose, withProps, withHandlers, withStateHandlers } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 import fetch from "isomorphic-fetch"
 import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
@@ -19,13 +19,22 @@ const POIMap = compose(
     onMarkerClustererClick: () => (markerClusterer) => {
       const clickedMarkers = markerClusterer.getMarkers()
     },
-    onMarkerClick: () => (id) => {
+    onMarkerClick: () => (markerArray, index) => {
       // TODO: FUNCTION FOR MARKER CLICK TO SHOW INFO
-      console.log(id)
+      console.log(index)
+      markerArray[index].isInfoOpen = true
     },
-    onInfoClose: (id) => (markerClusterer) => {
+    onInfoClose: () => (markerArray, index) => {
       // TODO: FUNCTION FOR MARKER CLICK TO HIDE INFO
+      markerArray[index].isInfoOpen = false
     },
+  }),
+  withStateHandlers(() => ({
+    isOpen: -1,
+  }), {
+    onToggleOpen: ({ isOpen }) => (index) => ({
+      isOpen: index,
+    })
   }),
   withScriptjs,
   withGoogleMap
@@ -40,14 +49,14 @@ const POIMap = compose(
     enableRetinaIcons
     gridSize={60}
   >
-    {props.markers.map(marker => (
+    {props.markers.map((marker, index) => (
       <Marker
         key={marker.id}
         position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
-        onClick={() => props.onMarkerClick(marker.id)}
+        onClick={() => props.onToggleOpen(index)}
         >
-        {marker.isInfoOpen &&
-          <InfoWindow onCloseClick={() => props.onInfoClose(marker.id)}>
+        {props.isOpen === index &&
+          <InfoWindow onCloseClick={() => props.onToggleOpen(-1)}>
             <p>{marker.name}</p>
       	  </InfoWindow>
         }
@@ -101,6 +110,7 @@ export default class Map extends Component {
 
 	onInfoClose = () => {
     this.setState({ isInfoOpen: false });
+    console.log("worked");
   }
 
 	ChangeMapAndMarkerPosition = (LatLong, message) => {
@@ -114,6 +124,7 @@ export default class Map extends Component {
 	}
 
 	render() {
+    console.log(this.props.MarkerClusterArray);
 		return (
 			<div id='map-container'>
 				<POIMap center={this.props.center} markers={this.props.MarkerClusterArray || []}  />
