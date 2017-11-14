@@ -2,7 +2,7 @@
 // Docs found here: https://tomchentw.github.io/react-google-maps
 
 import React, { Component } from 'react'
-import { compose, withProps, withHandlers, withStateHandlers } from "recompose"
+import { compose, withProps, withHandlers, withStateHandlers, lifecycle } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
 import './index.scss'
@@ -11,7 +11,7 @@ const POIMap = compose(
   withProps({
     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAOhNUwMY9QAYojHd5Ar87X8ztMjNXNmn0&libraries=geometry,drawing, places",
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
+    containerElement: <div style={{ height: `100%` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
   withHandlers({
@@ -27,6 +27,11 @@ const POIMap = compose(
       isOpen: index,
       localcenter: center
     })
+  }),
+  lifecycle({
+      componentWillUnmount() {
+        this.props.onToggleOpen(-1, { lat:0, lng: 0 }) // <-- props is not defined
+      },
   }),
   withScriptjs,
   withGoogleMap
