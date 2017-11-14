@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import _ from 'lodash'	
+import _ from 'lodash'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import './index.scss'
@@ -14,15 +14,15 @@ export default class Suggestions extends Component {
 	formatCards() {
 		return _.map(this.props.suggestions, (suggestion) => {
 			return {
-				name: suggestion.name, 
-				image_url: suggestion.image_url, 
+				name: suggestion.name,
+				image_url: suggestion.image_url,
 				yelp_url: suggestion.url,
-				price: suggestion.price, 
+				price: suggestion.price,
 				lat: suggestion.coordinates.latitude,
 				long: suggestion.coordinates.longitude,
 				phone: suggestion.phone,
 				display_phone: suggestion.display_phone,
-				type: suggestion.categories[0].alias, 
+				type: suggestion.categories[0].alias,
 				description: suggestion.categories[0].title
 			}
 		})
@@ -65,7 +65,7 @@ export default class Suggestions extends Component {
 		return (
 			<div id='suggestions-box'>
 				{this.renderHeader()}
-				<CardList 
+				<CardList
 					cards={cards}
 					addCard={this.props.addCard}
 				/>
@@ -127,7 +127,7 @@ class Suggestion extends Component {
 			      {this.props.description}
 			    </CardText>
 			    <CardActions>
-			    	<FlatButton 
+			    	<FlatButton
 			    		label='Add'
 			    		onClick={this.props.addCard}
 		    		/>
