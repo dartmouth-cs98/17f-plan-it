@@ -1,13 +1,13 @@
 # Planit
 ## End of Term Summary
-##Jeffrey Gao, Helen He, Samuel Lee, Emily Lin, Robert Sayegh, Jiyun Sung  
+## Jeffrey Gao, Helen He, Samuel Lee, Emily Lin, Robert Sayegh, Jiyun Sung  
 CS 98 17F/18W
 
 ### What worked this term
 
-* Bringing our mockups to real life; the design of onboarding was aesthetically pleasing
-* API integrations (Google Places, Google Maps, Google Clusters, Yelp) were pretty smooth
-* Backend is stable
+* Bringing our mockups to real life; the design of onboarding was aesthetically pleasing.
+* API integrations (Google Places, Google Maps, Google Clusters, Yelp) were pretty smooth.
+* Backend is stable.
 
 ### What didn't work this term
 
@@ -23,8 +23,8 @@ We first gave the users our little spiel on use cases for the app, then let them
 
 Some common responses that we got:
 
-* Endless scroll for on-boarding was confusing
-* The "start trip" button for onboarding was too small and not immediately noticeable
+* Endless scroll for on-boarding was confusing.
+* The "start trip" button for onboarding was too small and not immediately noticeable.
 * The process of first clicking on a blank space and then clicking on "add" to add a new card was confusing. This will be alleviated by implementing drag-and-drop.
 * Adding custom cards would be nice.
 * Seeing the location of the card on the map when you click on it.
