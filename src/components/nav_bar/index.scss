@@ -1,0 +1,86 @@
+.nav_bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  font-family: 'Source Sans Pro';
+  align-items: center;
+}
+
+.options {
+  display: flex;
+  justify-content: space-around;
+  width: 35vw;
+  font-family: 'Roboto';
+  font-weight: 220;
+}
+
+.options_logged_out {
+  display: flex;
+  justify-content: space-around;
+  width: 25vw;
+  font-family: 'Roboto';
+  font-weight: 220;
+}
+
+.nav-button {
+  display: inherit;
+  background-color: inherit;
+  color: inherit;
+  width: inherit;
+  border: none !important;
+  background: none !important;
+}
+
+.nav-button:focus {
+  outline: inherit;
+  text-shadow: 0 0 10px grey;
+  background: none !important;
+}
+
+.nav-button:hover {
+  text-shadow: 0 0 10px grey;
+}
+
+.logo {
+  font-size: 30px;
+  font-family: 'Source Sans Pro';
+}
+
+.road_trip_background {
+  background: url('../../img/road_trip.jpeg');
+  background-position: 0 50%;
+  background-size: cover;
+  color: white;
+  color: white;
+}
+
+.road_trip_background a {
+  color: #4F4F4F;
+}
+
+.road_trip_background a:hover {
+  text-shadow: 0 0 10px grey;
+}
+
+.globe_background {
+  background: url('../../img/globe_compressed.jpg');
+  background-position: 0 50%;
+  background-size: cover;
+  color: white;
+}
+
+.globe_background a {
+  color: white;
+}
+
+.globe_background a:hover {
+  text-shadow: 0 0 10px grey;
+}
+
+.no_background a {
+  color: white;
+}
+
+.no_background a:hover {
+  text-shadow: 0 0 10px grey;
+}

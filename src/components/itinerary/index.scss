@@ -1,0 +1,103 @@
+#itinerary-box {
+	height: 100%;
+	min-width: 350px;
+	margin-right: 5px;
+	display: inline-block;
+	background-color: #F2F2F2;
+	overflow-y: hidden;
+
+	.itinerary-header {
+		height: 35px;
+		background-color: #66A9CD;
+		line-height: 35px;
+		display: flex;
+
+		.itinerary-title {
+			color: #FFFFFF;
+			margin-left: 10px;
+			font-size: 14px;
+			font-family: Roboto, sans-serif;
+			font-weight: 500;
+			width: 100%;
+			text-align: center;
+		}
+
+		.left-button {
+			min-width: 40px !important;
+		}
+
+		.right-button {
+			min-width: 40px !important;
+		}
+	}
+
+	.body-container {
+		height: 580px;
+
+		.itinerary-body {
+			display: flex;
+			height: 100%;
+			overflow-y: scroll;
+
+			.itinerary-list {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.card {
+	margin: 0px;
+}
+
+.item-card {
+	.item-title {
+		padding-left: 10px;
+		color: #000000;
+	}
+}
+
+.travel-card {
+	text-align: center;
+
+	.travel-title {
+		color: #000000;
+		font-size: 11px;
+		vertical-align: top;
+	}
+}
+
+.edit-starttime {
+	float: right;
+	min-width: 40px !important;
+}
+
+.remove-item {
+	float: right;
+	min-width: 40px !important;
+}
+
+.time-tick {
+	font-size: 12px;
+	text-align: right;
+}
+
+.time-scale {
+	min-width: 30px;
+	margin-right: 2px;
+}
+
+.travel-bar {
+	text-align: center;
+}
+
+.free-time:hover {
+	background-color: #D3F4FF;
+	cursor: pointer;
+}
+
+.free-time-selected {
+	border: 2px solid #66A9CD;
+	background-color: #D3F4FF;
+	cursor: pointer;
+}
