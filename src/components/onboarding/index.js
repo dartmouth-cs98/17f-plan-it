@@ -288,7 +288,7 @@ class Onboarding extends Component {
 			}
 		})
 
-		if (!ok) {
+		if (!ok || !cookie.load('auth')) {
 			return (
 				<div className='button_container start' onClick={this.onModalOpen}>
 					Start Trip
@@ -372,6 +372,8 @@ class Onboarding extends Component {
 	      prevArrow: <PrevArrow/>
     	};
 
+    	let err_msg = !cookie.load('auth')? "Please log in first" : "Input at least one city with a start date"
+
     	if (this.state.landing_page) {
     		return (
 				<div>
@@ -394,7 +396,7 @@ class Onboarding extends Component {
 				    onRequestClose={this.onModalClose}
 				    className='card horizontal center no_outline'>
 						<div className="card-content">
-		        			<p>Input at least one city with a start date</p>
+		        			<p>{err_msg}</p>
 		        		</div>
 					</Modal>
 					<Slider {...onboarding_settings} className='onboarding_slider'>
