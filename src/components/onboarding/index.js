@@ -270,7 +270,7 @@ class Onboarding extends Component {
 	}
 
 	renderStartTrip() {
-		let ok = false
+		let ok = true
 		let startDate
 		let endDate
 
@@ -393,7 +393,7 @@ class Onboarding extends Component {
 				    isOpen={this.state.modal_open}
 				    onRequestClose={this.onModalClose}
 				    className='card horizontal center no_outline'>
-						<div class="card-content">
+						<div className="card-content">
 		        			<p>Input at least one city with a start date</p>
 		        		</div>
 					</Modal>
