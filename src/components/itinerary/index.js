@@ -2,11 +2,9 @@ import React, { Component } from 'react'
 import $ from 'jquery'
 import _ from 'lodash'
 import {scaleLinear} from 'd3-scale'
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import Dialog from 'material-ui/Dialog'
 import TimePicker from 'material-ui/TimePicker'
 import FlatButton from 'material-ui/FlatButton'
-import Checkbox from 'material-ui/Checkbox'
 import './index.scss'
 
 const TIME_SCALE = 2500
@@ -72,7 +70,6 @@ export default class Itinerary extends Component {
 			return
 		}
 
-		let updated = []
 		const index = _.findIndex(this.props.cards, (card) => {
 			return card.id === this.state.editCard.id
 		})

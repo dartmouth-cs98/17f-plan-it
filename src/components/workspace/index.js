@@ -1,17 +1,16 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard, fetchSuggestions } from '../../actions/index.js';
+import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
-const TRIP_ID = 1
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
 const CATEGORIES = [
