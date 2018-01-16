@@ -30,7 +30,8 @@ const POIMap = compose(
     })
   }),
   lifecycle({
-      componentWillUnmount() {
+      componentDidCatch(error, info) {
+        console.log(error, info)
         this.props.onToggleOpen(-1, { lat:0, lng: 0 }) // <-- props is not defined
       },
   }),
@@ -60,7 +61,7 @@ const POIMap = compose(
               <FlatButton
                 label='Add'
                 style={{marginLeft: '10px'}}
-                onClick={() => { 
+                onClick={() => {
                   props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
                   props.addCard({
                     name: marker.name,
