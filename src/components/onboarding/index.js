@@ -308,7 +308,7 @@ class Onboarding extends Component {
 				<div className='slide_title'>Where are you going?</div>
 				<div className='scrollable'>
 					{this.renderCities()}
-					<div className='button_container add' onClick={this.onAddCity}>Add</div>
+					<div className='button_container add' onClick={this.onAddCity}>Add City</div>
 					{this.renderStartTrip()}
 				</div>
 			</div>
