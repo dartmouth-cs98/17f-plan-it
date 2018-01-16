@@ -270,7 +270,7 @@ class Onboarding extends Component {
 	}
 
 	renderStartTrip() {
-		let ok = true
+		let ok = false
 		let startDate
 		let endDate
 
@@ -290,7 +290,7 @@ class Onboarding extends Component {
 
 		if (!ok) {
 			return (
-				<div className='button_container start_disabled' onClick={this.onModalOpen}>
+				<div className='button_container start' onClick={this.onModalOpen}>
 					Start Trip
 				</div>
 			)
@@ -302,17 +302,6 @@ class Onboarding extends Component {
 		}
 	}
 
-	name_slide() {
-		return (
-			<div>
-				<OnboardingInput placeholder={'Name your trip'}
-					onNameChange={this.onNameChange}
-					name={this.state.trip_name}
-				/>
-			</div>
-		)
-	}
-
 	cities_slide() {
 		return (
 			<div className='slide'>
@@ -320,8 +309,19 @@ class Onboarding extends Component {
 				<div className='scrollable'>
 					{this.renderCities()}
 					<div className='button_container add' onClick={this.onAddCity}>Add</div>
+					{this.renderStartTrip()}
 				</div>
-				{this.renderStartTrip()}
+			</div>
+		)
+	}
+
+	names_slide() {
+		return (
+			<div className='name_wrapper'>
+				<OnboardingInput placeholder={'Name your trip'}
+					onNameChange={this.onNameChange}
+					name={this.state.trip_name}
+				/>
 			</div>
 		)
 	}
@@ -364,7 +364,7 @@ class Onboarding extends Component {
 	render() {
 		const onboarding_settings = {
 	      dots: true,
-	      infinite: true,
+	      infinite: false,
 	      speed: 500,
 	      slidesToShow: 1,
 	      slidesToScroll: 1,
@@ -398,8 +398,8 @@ class Onboarding extends Component {
 		        		</div>
 					</Modal>
 					<Slider {...onboarding_settings} className='onboarding_slider'>
-				        <div>{this.name_slide()}</div>
-				        <div>{this.cities_slide()}</div>
+						<div>{this.names_slide()}</div>
+						<div>{this.cities_slide()}</div>
 	      			</Slider>
 				</div>
 				</div>
