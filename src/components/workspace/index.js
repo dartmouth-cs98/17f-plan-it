@@ -52,6 +52,7 @@ class Workspace extends Component {
 
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
+		console.log(this.props)
 	}
 
 	dayForward() {
@@ -61,7 +62,7 @@ class Workspace extends Component {
 
 		if (this.state.day < tripDuration) {
 			const newDay = this.state.day + 1
-			this.setState({ 
+			this.setState({
 				day: newDay,
 				selected: null,
 				category: 0
@@ -75,7 +76,7 @@ class Workspace extends Component {
 	dayBackward() {
 		if (this.state.day > 1) {
 			const newDay = this.state.day - 1
-			this.setState({ 
+			this.setState({
 				day: newDay,
 				selected: null,
 				category: 0
@@ -264,7 +265,7 @@ class Workspace extends Component {
 			cityEnd.setHours(0, 0, 0, 0)
 
 			cardList.push({
-				type: 'day', 
+				type: 'day',
 				lat: cityLat,
 				long: cityLong,
 				start_time: cityStart.toString(),
@@ -313,10 +314,8 @@ class Workspace extends Component {
 					<Map
 						isInfoOpen={false}
 						isMarkerShown={true}
-						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
 						MarkerClusterArray={this.props.suggestions}
-						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
-						infoMessage="Hello From Dartmouth"
+						center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
 						addCard={this.addCard}
 					/>
 				</div>
