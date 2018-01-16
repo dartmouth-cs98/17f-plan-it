@@ -60,14 +60,8 @@ const POIMap = compose(
               <FlatButton
                 label='Add'
                 style={{marginLeft: '10px'}}
-<<<<<<< HEAD:planit_client/src/components/map/index.js
-                onClick={() => {
-                  props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
-                  
-=======
                 onClick={() => { 
                   props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
->>>>>>> develop:src/components/map/index.js
                   props.addCard({
                     name: marker.name,
                     image_url: marker.image_url,
