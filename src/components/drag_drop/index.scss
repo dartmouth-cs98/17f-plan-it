@@ -1,0 +1,12 @@
+.workspace {
+	flex-direction: row;
+
+	.suggestions {
+		display: inline-block;
+		margin-right: 20px;
+	}
+
+	.itinerary {
+		display: inline-block;
+	}
+}
