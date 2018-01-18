@@ -20,7 +20,7 @@ export class DownloadTrip extends Component {
   }
 
   async download() {
-    await this.props.fetchTrip(this.props.tripId)
+    await this.props.fetchTrip(this.props.tripId) //updates the super store of information (redux)
     await this.props.fetchCards(this.props.tripId)
 
     const content = this.format()
@@ -34,6 +34,7 @@ export class DownloadTrip extends Component {
     // Then seperate them by day
     // Then put them into the unordered list
     const cards = this.props.cards.map((c) => this.formatCard(c))
+
     const tripName = this.props.trip[0].name
 
     const content =
@@ -56,6 +57,7 @@ export class DownloadTrip extends Component {
       `City: ${card.city}`,
       card.description,
     ]
+
     return attributes
   }
 
@@ -70,7 +72,7 @@ export class DownloadTrip extends Component {
     return (
     <div>
       <button onClick={this.download}>
-      button2
+        Download
       </button>
     </div>
     )
