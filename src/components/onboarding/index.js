@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
-import { Map, List } from 'immutable'
 import Modal from 'react-modal'
 import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
@@ -288,7 +287,7 @@ class Onboarding extends Component {
 			}
 		})
 
-		if (!ok) {
+		if (!ok || !cookie.load('auth')) {
 			return (
 				<div className='button_container start' onClick={this.onModalOpen}>
 					Start Trip
@@ -372,6 +371,8 @@ class Onboarding extends Component {
 	      prevArrow: <PrevArrow/>
     	};
 
+    	let err_msg = !cookie.load('auth')? "Please log in first" : "Input at least one city with a start date"
+
     	if (this.state.landing_page) {
     		return (
 				<div>
@@ -394,7 +395,7 @@ class Onboarding extends Component {
 				    onRequestClose={this.onModalClose}
 				    className='card horizontal center no_outline'>
 						<div className="card-content">
-		        			<p>Input at least one city with a start date</p>
+		        			<p>{err_msg}</p>
 		        		</div>
 					</Modal>
 					<Slider {...onboarding_settings} className='onboarding_slider'>

@@ -38,6 +38,9 @@ class Dashboard extends Component {
 		this.props.fetchFavoritedTrips(cookie.load('auth'))
 	}
 
+	reloadPage() {
+		window.location.reload()
+	}
 
 	renderTrips() {
 		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
@@ -91,7 +94,7 @@ class Dashboard extends Component {
 					<div className='title'>My Trips</div>
 					<Slider {...dashboard_settings} className='dashboard_slider'>
 						{this.renderTrips()}
-						<Link to='/'>
+						<Link to='/' onClick={this.reloadPage}>
 							<Card className='trip_card add_card'>
 								<i className="fa fa-plus fa-5x plus_sign" aria-hidden="true"></i>
 							</Card>
