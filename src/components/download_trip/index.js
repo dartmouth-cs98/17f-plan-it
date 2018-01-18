@@ -35,12 +35,16 @@ export class DownloadTrip extends Component {
     // Then put them into the unordered list
     const cards = this.props.cards.map((c) => this.formatCard(c))
 
-    const tripName = this.props.trip[0].name
+    const trip_name = this.props.trip[0].name
+    const start_date = this.formatTime(this.props.trip[0].start_time)
+    var end_date = this.formatTime(this.props.trip[0].end_time)
 
     const content =
       {
         content: [
-          {text: tripName, style: 'header'},
+          {text: trip_name, style: 'header'},
+          {text: start_date + ' - ' + end_date, style: 'subheader'},
+
           {
             ul: cards
           }
@@ -52,7 +56,7 @@ export class DownloadTrip extends Component {
   //returns a list of the attributes of the card in string form
   formatCard(card) {
     const attributes = [
-      `Start Time: ${card.start_time}`,
+      `Start Time: ${this.formatTime(card.start_time)}`,
       `Address: ${card.address}`,
       `City: ${card.city}`,
       card.description,
@@ -62,17 +66,21 @@ export class DownloadTrip extends Component {
   }
 
   //change the time format to something readable
-  formatTime(card) {
+  formatTime(date) {
+    var utc_date = new Date(date)
+    var month = utc_date.getUTCMonth()+1 
+    var day = utc_date.getUTCDay()+1
+    var year = utc_date.getUTCFullYear()
 
+    return month + '/' + day + '/' + year
 
   }
-
 
   render() {
     return (
     <div>
       <button onClick={this.download}>
-        Download
+        Download as PDF
       </button>
     </div>
     )
