@@ -50,6 +50,7 @@ class OnboardingInput extends Component {
 			<PlacesAutocomplete
 				inputProps = { inputProps }
 				onSelect = { handleSelect }
+				onEnterKeyDown = { handleSelect }
 				autoCompleteItem = { AutocompleteItem }
 				options = {{ types }}
 				classNames = {{ input: 'other_input' }}
