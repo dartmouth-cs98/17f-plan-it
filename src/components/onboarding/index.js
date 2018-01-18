@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
-import { Map, List } from 'immutable'
 import Modal from 'react-modal'
 import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
