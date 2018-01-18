@@ -31,11 +31,7 @@ const grid = 8
 const getItemStyle = (isDragging, draggableStyle) => ({
 	// some basic styles to make the items look a bit nicer
 	userSelect: 'none',
-	padding: grid * 2,
 	margin: `0 0 ${grid}px 0`,
-
-	// change background colour if dragging
-	background: isDragging ? 'lightgreen' : 'grey',
 
 	// styles we need to apply on draggables
 	...draggableStyle,
@@ -129,7 +125,7 @@ class Dragger extends Component {
 													provided.draggableProps.style,
 												)}
 											>
-												{item.content}
+												{this.renderCard(item.content)}
 											</div>
 											{provided.placeholder}
 										</div>
@@ -166,7 +162,7 @@ class Dragger extends Component {
 													provided.draggableProps.style,
 												)}
 											>
-												{item.content}
+												{this.renderCard(item.content)}
 											</div>
 											{provided.placeholder}
 										</div>
@@ -177,6 +173,21 @@ class Dragger extends Component {
 						</div>
 					)}
 				</Droppable>
+			</div>
+		)
+	}
+
+	renderCard(content) {
+		return (
+			<div className='card-wrapper'>
+				<div 
+					className='card item-card'
+					style={{height: `60px`}}
+				>
+					<label className='item-title'>
+					{content}
+					</label>
+				</div>
 			</div>
 		)
 	}
