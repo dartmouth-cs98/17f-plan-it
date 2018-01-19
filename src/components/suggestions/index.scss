@@ -39,7 +39,7 @@
 }
 
 .suggestions-list {
-	height: 580px;
+	height: calc(100% - 35px);
 
 	.list-container {
 		height: 100%;

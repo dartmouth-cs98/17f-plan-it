@@ -32,7 +32,7 @@
 	}
 
 	.body-container {
-		height: 580px;
+		height: calc(100% - 35px);
 
 		.itinerary-body {
 			display: flex;
