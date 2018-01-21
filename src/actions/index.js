@@ -91,9 +91,7 @@ export function fetchPublishedTrips(id) {
 export function fetchCards(id, day=null) {
   return (dispatch) => {
     let query = `${ROOT_URL}/cards?trip_id=${id}`
-
     if (day) { query += `&day=${day}` }
-
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
     }).catch((error) => {

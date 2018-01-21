@@ -291,7 +291,7 @@ class Workspace extends Component {
 					published={this.props.trips[0] ? this.props.trips[0].published : false}
 					tripId={tripId}
 				/>
-				<DownloadTrip />
+				<DownloadTrip tripId={tripId}/>
 				<div className='planner'>
 					<Suggestions
 						addCard={this.addCard}
