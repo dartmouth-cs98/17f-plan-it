@@ -58,6 +58,8 @@ class Dragger extends Component {
 			return
 		} else if (result.destination.droppableId !== result.source.droppableId) {
 			if (result.destination.droppableId === 'suggestions-droppable') {
+				// handle removing an item from the itinerary
+
 				const itinerary = Array.from(this.state.itinerary)
 				const [item] = itinerary.splice(result.source.index, 1)
 				const suggestions = add(
@@ -71,6 +73,8 @@ class Dragger extends Component {
 					suggestions
 				})
 			} else {
+				// handle adding an item to the itinerary by dragging
+
 				const suggestions = Array.from(this.state.suggestions)
 				const [item] = suggestions.splice(result.source.index, 1)
 				const itinerary = add(
@@ -93,6 +97,8 @@ class Dragger extends Component {
 
 			this.setState({	suggestions	})
 		} else {
+			// handle reordering items in the itinerary
+
 			const itinerary = reorder(
 				this.state.itinerary,
 				result.source.index, 

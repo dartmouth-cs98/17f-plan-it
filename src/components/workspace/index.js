@@ -6,6 +6,7 @@ import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
 import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
@@ -41,6 +42,7 @@ class Workspace extends Component {
 		this.selectTime = this.selectTime.bind(this)
 		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
+		this.onDragEnd = this.onDragEnd.bind(this)
 	}
 
 	componentDidMount() {
@@ -274,6 +276,27 @@ class Workspace extends Component {
 		return cardList
 	}
 
+	onDragEnd(result) {
+		// dropped outside the list
+		if (!result.destination) {
+			return
+		} else if (result.destination.droppableId !== result.source.droppableId) {
+			if (result.destination.droppableId === 'suggestions-droppable') {
+				// handle removing an item from the itinerary
+
+			} else {
+				// handle adding an item to the itinerary by dragging
+
+			}
+		} else if (result.destination.droppableId === 'suggestions-droppable') {
+			// reorder suggestions
+
+		} else {
+			// handle reordering items in the itinerary
+
+		}
+	}
+
 	render() {
 		const cards = this.formatCards()
 		const path = window.location.pathname.split(':')
@@ -289,36 +312,38 @@ class Workspace extends Component {
 					published={this.props.trips[0] ? this.props.trips[0].published : false}
 					tripId={tripId}
 				/>
-				<div className='planner'>
-					<Suggestions
-						addCard={this.addCard}
-						suggestions={this.props.suggestions}
-						category={this.state.category}
-						selectCategory={this.selectCategory}
-					/>
+				<DragDropContext onDragEnd={this.onDragEnd}>
+					<div className='planner'>
+						<Suggestions
+							addCard={this.addCard}
+							suggestions={this.props.suggestions}
+							category={this.state.category}
+							selectCategory={this.selectCategory}
+						/>
 
-					<Itinerary
-						tripId={tripId}
-						cards={cards}
-						day={this.state.day}
-						selectTime={this.selectTime}
-						selected={this.state.selected}
-						updateCard={this.props.updateCard}
-						removeCard={this.props.deleteCard}
-						dayForward={this.dayForward}
-						dayBackward={this.dayBackward}
-						numDays={tripDuration}
-					/>
-					<Map
-						isInfoOpen={false}
-						isMarkerShown={true}
-						MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
-						MarkerClusterArray={this.props.suggestions}
-						center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
-						infoMessage="Hello From Dartmouth"
-						addCard={this.addCard}
-					/>
-				</div>
+						<Itinerary
+							tripId={tripId}
+							cards={cards}
+							day={this.state.day}
+							selectTime={this.selectTime}
+							selected={this.state.selected}
+							updateCard={this.props.updateCard}
+							removeCard={this.props.deleteCard}
+							dayForward={this.dayForward}
+							dayBackward={this.dayBackward}
+							numDays={tripDuration}
+						/>
+						<Map
+							isInfoOpen={false}
+							isMarkerShown={true}
+							MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
+							MarkerClusterArray={this.props.suggestions}
+							center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
+							infoMessage="Hello From Dartmouth"
+							addCard={this.addCard}
+						/>
+					</div>
+				</DragDropContext>
 			</div>
 		)
 	}

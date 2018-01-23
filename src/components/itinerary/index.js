@@ -5,6 +5,7 @@ import {scaleLinear} from 'd3-scale'
 import Dialog from 'material-ui/Dialog'
 import TimePicker from 'material-ui/TimePicker'
 import FlatButton from 'material-ui/FlatButton'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import './index.scss'
 
 const TIME_SCALE = 2500
@@ -22,6 +23,20 @@ const MONTHS = [
 	'November',
 	'December'
 ]
+
+const grid = 8
+const getItemStyle = (isDragging, draggableStyle) => ({
+	// some basic styles to make the items look a bit nicer
+	userSelect: 'none',
+	margin: `0 0 ${grid}px 0`,
+
+	// styles we need to apply on draggables
+	...draggableStyle,
+})
+const getListStyle = isDraggingOver => ({
+	background: isDraggingOver ? 'lightblue' : '#F2F2F2',
+	padding: grid,
+})
 
 export default class Itinerary extends Component {
 	constructor(props) {
@@ -159,44 +174,79 @@ export default class Itinerary extends Component {
 	}
 
 	renderList() {
+		let index = 0
 		const toRender = _.map(this.props.cards, (card) => {
 			if (card.type === 'day') {
-				return (
-					<FreeTime
-						duration={24 * 60 * 60 * 1000}
-						select={() => { this.props.selectTime(card) }}
-						selected={!_.isNull(this.props.selected)}
-					/>
-				)
+				// return (
+				// 	<FreeTime
+				// 		duration={24 * 60 * 60 * 1000}
+				// 		select={() => { this.props.selectTime(card) }}
+				// 		selected={!_.isNull(this.props.selected)}
+				// 	/>
+				// )
 			} else if (card.type === 'free') {
-				const selected = _.isNull(this.props.selected) ? false : (new Date(this.props.selected.start_time)).getTime() === (new Date(card.start_time)).getTime()
+				// const selected = _.isNull(this.props.selected) ? false : (new Date(this.props.selected.start_time)).getTime() === (new Date(card.start_time)).getTime()
+
+				// return (
+				// 	<FreeTime
+				// 		duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+				// 		select={() => { this.props.selectTime(card)}}
+				// 		selected={selected}
+				// 	/>
+				// )
+			} else if (card.type === 'travel') {
+				// return <Travel 
+				// 	destination={card.destination}
+				// 	duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+				// />
+			} else {
+				index++
+
+				/*
+				<Item
+					key={card.id}
+					name={card.name}
+					description={card.description}
+					editCard={() => {
+						this.openStartTimeDialog(card)
+					}}
+					duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+					remove={() => {
+						this.props.removeCard(card.id, this.props.tripId, this.props.day)
+					}}
+				/>
+				*/
 
 				return (
-					<FreeTime
-						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-						select={() => { this.props.selectTime(card)}}
-						selected={selected}
-					/>
-				)
-			} else if (card.type === 'travel') {
-				return <Travel 
-					destination={card.destination}
-					duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-				/>
-			} else {
-				return (
-					<Item
-						key={card.id}
-						name={card.name}
-						description={card.description}
-						editCard={() => {
-							this.openStartTimeDialog(card)
-						}}
-						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-						remove={() => {
-							this.props.removeCard(card.id, this.props.tripId, this.props.day)
-						}}
-					/>
+					<Draggable key={card.id} draggableId={card.id} index={index}>
+						{(provided, snapshot) => (
+							<div>
+								<div
+									ref={provided.innerRef}
+									{...provided.draggableProps}
+									{...provided.dragHandleProps}
+									style={getItemStyle(
+										snapshot.isDragging,
+										provided.draggableProps.style,
+									)}
+								>
+									<Item
+										key={card.id}
+										name={card.name}
+										description={card.description}
+										editCard={() => {
+											this.openStartTimeDialog(card)
+										}}
+										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+										remove={() => {
+											this.props.removeCard(card.id, this.props.tripId, this.props.day)
+										}}
+									/>
+								</div>
+								{provided.placeholder}
+							</div>
+						)}
+					</Draggable>
 				)
 			}
 		})
@@ -272,9 +322,18 @@ export default class Itinerary extends Component {
 				<div className='body-container'>
 					<div className='itinerary-body'>
 						<div className='itinerary-list'>
-							{this.renderList()}
+							<Droppable droppableId='suggestions-droppable'>
+								{(provided, snapshot) => (
+									<div
+										ref={provided.innerRef}
+										style={getListStyle(snapshot.isDraggingOver)}
+									>
+										{this.renderList()}
+										{provided.placeholder}
+									</div>
+								)}
+							</Droppable>
 						</div>
-						{this.renderTimeScale()}
 					</div>
 				</div>
 			</div>
