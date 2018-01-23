@@ -23,7 +23,6 @@ class NavBar extends Component {
 	}
 
   reloadPage() {
-    console.log('this has been called')
     window.location.reload()
   }
 
@@ -79,6 +78,7 @@ class NavBar extends Component {
       cookie.save('auth', this.props.user_id, { path: '/' })
     } else {
       cookie.remove('auth', { path: '/' })
+      this.reloadPage()
     }
   }
 

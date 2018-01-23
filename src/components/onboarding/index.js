@@ -41,7 +41,8 @@ class Onboarding extends Component {
 			landing_page: true,
 			trip_name: '',
 			cities: [],
-			modal_open: false
+			modal_open: false, 
+			err_msg: ''
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -102,8 +103,8 @@ class Onboarding extends Component {
 		})
 	}
 
-	onModalOpen(event) {
-		this.setState( { modal_open: true } )
+	onModalOpen(error) {
+		this.setState( { modal_open: true, err_msg: error } )
 	}
 
 	onModalClose(event) {
@@ -111,7 +112,11 @@ class Onboarding extends Component {
 	}
 
 	onLetsGo(event) {
-		this.setState( { landing_page: false } )
+		if (!cookie.load('auth')) {
+			this.onModalOpen('Please log in')
+		} else {
+			this.setState( { landing_page: false } )
+		}
 	}
 
 	onCityChange(name) {
@@ -214,7 +219,6 @@ class Onboarding extends Component {
 	}
 
 	onAddCity(event) {
-		console.log(this.state.cities)
 		let latestDate
 		let incomplete = false
 
@@ -269,13 +273,24 @@ class Onboarding extends Component {
 	}
 
 	renderStartTrip() {
-		let ok = true
+		let ok = false
 		let startDate
 		let endDate
+		let err_msg
+
+		if (!cookie.load('auth')) {
+			err_msg = 'Please log in'
+			window.location.reload()
+		}
 
 		_.map(this.state.cities, (city) => {
-			if (city.name === '' || city.start_date === null || city.end_date === null) {
-				ok = false
+
+			if (city.name && !city.start_date) {
+				err_msg = `${city.name} has no start date`
+			}
+
+			if (city.name && city.start_date) {
+				ok = true
 			}
 
 			if (_.isUndefined(startDate) || new Date(city.start_date) < new Date(startDate)) {
@@ -287,14 +302,17 @@ class Onboarding extends Component {
 			}
 		})
 
-		if (!ok || !cookie.load('auth')) {
+		if (!ok) {
+			err_msg = 'Please enter at least one city with a start date'
+		}
+
+		if (!_.isUndefined(err_msg) || !ok) {
 			return (
-				<div className='button_container start' onClick={this.onModalOpen}>
+				<div className='button_container start' onClick={() => this.onModalOpen(err_msg)}>
 					Start Trip
 				</div>
 			)
-		}
-		else {
+		} else {
 			return (
 				<div className='button_container start' onClick={() => { this.onCreateTrip(startDate, endDate)}}>Start Trip</div>
 			)
@@ -371,13 +389,19 @@ class Onboarding extends Component {
 	      prevArrow: <PrevArrow/>
     	};
 
-    	let err_msg = !cookie.load('auth')? "Please log in first" : "Input at least one city with a start date"
-
     	if (this.state.landing_page) {
     		return (
 				<div>
 					<div className='landing_page'>
 						<NavBar background={'no_background'} page={'ONBOARDING'}/>
+						<Modal
+						    isOpen={this.state.modal_open}
+						    onRequestClose={this.onModalClose}
+						    className='card horizontal center no_outline'>
+							<div className="card-content">
+			        			<p>{this.state.err_msg}</p>
+			        		</div>
+						</Modal>
 						<div className='buttons centered'>
 							{this.renderStartCity()}
 							<div className='button_box' onClick={this.onLetsGo}>Let's go</div>
@@ -391,11 +415,11 @@ class Onboarding extends Component {
 				<div className='onboarding'>
 					<NavBar background={'no_background'} page={'ONBOARDING'}/>
 					<Modal
-				    isOpen={this.state.modal_open}
-				    onRequestClose={this.onModalClose}
-				    className='card horizontal center no_outline'>
+					    isOpen={this.state.modal_open}
+					    onRequestClose={this.onModalClose}
+					    className='card horizontal center no_outline'>
 						<div className="card-content">
-		        			<p>{err_msg}</p>
+		        			<p>{this.state.err_msg}</p>
 		        		</div>
 					</Modal>
 					<Slider {...onboarding_settings} className='onboarding_slider'>
