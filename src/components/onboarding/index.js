@@ -219,7 +219,6 @@ class Onboarding extends Component {
 	}
 
 	onAddCity(event) {
-		console.log(this.state.cities)
 		let latestDate
 		let incomplete = false
 
@@ -278,6 +277,11 @@ class Onboarding extends Component {
 		let startDate
 		let endDate
 		let err_msg
+
+		if (!cookie.load('auth')) {
+			err_msg = 'Please log in'
+			window.location.reload()
+		}
 
 		_.map(this.state.cities, (city) => {
 
