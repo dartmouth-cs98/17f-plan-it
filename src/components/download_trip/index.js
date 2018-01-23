@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { fetchTrip, fetchCards } from '../../actions/index.js'
+import { fetchTrip, fetchCards } from '../../actions'
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 
@@ -23,6 +23,7 @@ export class DownloadTrip extends Component {
     await this.props.fetchTrip(this.props.tripId) //updates the super store of information (redux)
     await this.props.fetchCards(this.props.tripId)
 
+
     const content = this.format()
 
     pdfMake.createPdf(content).download();
@@ -31,17 +32,14 @@ export class DownloadTrip extends Component {
 
   format() {
 
-    console.log("props", this.props)
-
     const trip_name = this.props.trip[0].name
     const start_date = this.formatDate(this.props.trip[0].start_time)
     const end_date = this.formatDate(this.props.trip[0].end_time)
 
-    // Get all cards for this trip
-    // const cards = this.props.fetchCards(this.props.tripId)
-
     // Create array of arrays
     const days = [[]]
+
+    console.log("cards", this.props.cards)
 
     // Get the first day
     let current_date = this.props.trip[0].start_time
@@ -49,6 +47,7 @@ export class DownloadTrip extends Component {
 
       // Get the current day
       const current_card = this.props.cards[i]
+      console.log("card_trip", current_card)
 
       if (this.getDateDiff(current_date, current_card.start_time) > 0) {
         let days_diff = this.getDateDiff(current_date, current_card.start_time)
@@ -73,7 +72,9 @@ export class DownloadTrip extends Component {
       }
 
       for(let day_num = 0; day_num < days.length; day_num++) {
-        const header = {text: `Day ${day_num + 1} \n\n`, style: 'subheader'}
+        let day = this.addDay(this.props.trip[0].start_time, day_num)
+        let date = this.formatDate(day)
+        const header = {text: `Day ${day_num + 1} - ${date} \n\n`, style: 'subheader'}
         const day_cards = days[day_num]
         day_cards.unshift(header)
 
@@ -107,7 +108,7 @@ export class DownloadTrip extends Component {
   formatDate(date) {
     var utc_date = new Date(date)
     var month = utc_date.getUTCMonth()+1 
-    var day = utc_date.getUTCDay()+1
+    var day = utc_date.getUTCDate()
     var year = utc_date.getUTCFullYear()
 
     return month + '/' + day + '/' + year
@@ -136,8 +137,8 @@ export class DownloadTrip extends Component {
   getDateDiff(datetime1, datetime2) {
     let date1 = new Date(datetime1)
     let date2 = new Date(datetime2)
-    let utc1 = Date.UTC(date1.getUTCFullYear(), date1.getUTCMonth(), date1.getUTCDay())
-    let utc2 = Date.UTC(date2.getUTCFullYear(), date2.getUTCMonth(), date2.getUTCDay())
+    let utc1 = Date.UTC(date1.getUTCFullYear(), date1.getUTCMonth(), date1.getUTCDate())
+    let utc2 = Date.UTC(date2.getUTCFullYear(), date2.getUTCMonth(), date2.getUTCDate())
 
     return Math.floor((utc2 - utc1) / (1000*60*60*24))
   }
@@ -172,7 +173,6 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(fetchTrip(id))
     },
     fetchCards: (id) => {
-      console.log("hello")
       dispatch(fetchCards(id))
     }
   }
