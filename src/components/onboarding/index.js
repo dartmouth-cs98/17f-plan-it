@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
+import Immutable from 'immutable'
 import Modal from 'react-modal'
 import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
@@ -57,6 +58,7 @@ class Onboarding extends Component {
 		this.onCreateTrip = this.onCreateTrip.bind(this)
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
+		this.onDeleteCity = this.onDeleteCity.bind(this)
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -241,7 +243,6 @@ class Onboarding extends Component {
 		const nextDate = new Date((new Date(latestDate)).getTime() + (24 * 60 * 60 * 1000))
 		let newCities = this.state.cities
 		newCities.push({
-			type: 'city',
 			name: '',
 			start_date: _.isUndefined(latestDate) ? null : moment(nextDate),
 			end_date: null
@@ -249,11 +250,29 @@ class Onboarding extends Component {
 		this.setState({ cities: newCities })
 	}
 
+	onDeleteCity(index) {
+		if (index === 0) {
+			return
+		}
+
+		let newCities = this.state.cities.slice(0)
+
+		if (this.state.cities.length - 1 !== index) {
+			let deleted_start_date = newCities[index].start_date
+			console.log(deleted_start_date)
+			newCities[index + 1].start_date = deleted_start_date
+		}
+
+		newCities.splice(index, 1)
+		this.setState({ cities: newCities})
+	}
+
 	renderCities() {
 		return (
 			_.map(this.state.cities, (city, index) => {
+				let delete_classes = index === 0? 'fa fa-trash-o fa-2x delete_disabled' : 'fa fa-trash-o fa-2x delete'
 				return (
-					<div key={index}>
+					<div className='city_input' key={index}>
 						<OnboardingInput
 							index={index}
 							placeholder={'City'}
@@ -266,6 +285,7 @@ class Onboarding extends Component {
 							start_date={city.start_date}
 							end_date={city.end_date}
 						/>
+						<i className={delete_classes} aria-hidden='true' onClick={() => this.onDeleteCity(index)}></i>
 					</div>
 				)
 			})
