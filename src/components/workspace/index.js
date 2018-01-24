@@ -8,7 +8,7 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -200,47 +200,18 @@ class Workspace extends Component {
 				return
 			}
 
-			if (_.isUndefined(startCard)) {
-				startCard = card.id
+			const cardStart = new Date(card.start_time)
 
-				const startTime = new Date(card.start_time)
-				startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
-
-				// add free time at end of the day
-				if (startTime.getTime() > startOfDay.getTime()) {
-					const freeTime = {
-						type: 'free',
-						start_time: startOfDay.toString(),
-						end_time: startTime.toString()
-					}
-
-					cardList.push(freeTime)
-				}
-			} else {
-				const cardStart = new Date(card.start_time)
-
-				const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-				const travel = {
-					type: 'travel',
-					start_time: travelStart.toString(),
-					end_time: card.start_time,
-					travelType: card.travelType,
-					destination: card.name
-				}
-
-				// add the free time and travel before a card
-				if (!_.isUndefined(prevEnd) && prevEnd.getTime() < travelStart.getTime()) {
-					const freeTime = {
-						type: 'free',
-						start_time: prevEnd.toString(),
-						end_time: travelStart.toString()
-					}
-
-					cardList.push(freeTime)
-				}
-
-				cardList.push(travel)
+			const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
+			const travel = {
+				type: 'travel',
+				start_time: travelStart.toString(),
+				end_time: card.start_time,
+				travelType: card.travelType,
+				destination: card.name
 			}
+
+			cardList.push(travel)
 
 			cardList.push(card)
 
@@ -294,6 +265,49 @@ class Workspace extends Component {
 		} else {
 			// handle reordering items in the itinerary
 
+			const itinerary = Array.from(this.props.cards)
+
+			// get the start time of the item you're trying to replace
+			const start = result.destination.index > result.source.index ? 
+				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
+
+			// get the info of the object your dragging
+			const [removed] = itinerary.splice(result.source.index, 1)
+			const duration = (new Date(removed.end_time)).getTime() - (new Date(removed.start_time)).getTime()
+
+			// update the start and end times of the item being dragged
+			const item = _.assignIn({}, removed, { 
+				'start_time': start, 
+				'end_time': new Date(start.getTime() + duration)	
+			})
+
+			itinerary.splice(result.destination.index, 0, item)
+
+			let endIndex
+
+			// indices show range of cards that need to update their times
+			if (result.destination.index > result.source.index) {
+				endIndex = itinerary.length
+			} else {
+				endIndex = result.source.index
+			}
+
+			for (let i = result.destination.index + 1; i < endIndex; i++) {
+				const card = itinerary[i]
+
+				// shift each card back by the duration of the card removed
+				_.assign(card, {
+					'start_time': new Date((new Date(card.start_time)).getTime() + duration),
+					'end_time': new Date((new Date(card.end_time)).getTime() + duration)
+				})
+			}
+		
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.updateCards(itinerary, tripId, this.state.day)
+			console.log(itinerary)
+
+			// TODO
 		}
 	}
 
@@ -370,6 +384,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		updateCard: (cards, trip, id, day) => {
 			dispatch(updateCard(cards, trip, id, day))
+		},
+		updateCards: (cards, trip, day) => {
+			dispatch(updateCards(cards, trip, day))
 		},
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))

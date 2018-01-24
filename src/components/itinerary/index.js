@@ -184,41 +184,14 @@ export default class Itinerary extends Component {
 				// 		selected={!_.isNull(this.props.selected)}
 				// 	/>
 				// )
-			} else if (card.type === 'free') {
-				// const selected = _.isNull(this.props.selected) ? false : (new Date(this.props.selected.start_time)).getTime() === (new Date(card.start_time)).getTime()
-
-				// return (
-				// 	<FreeTime
-				// 		duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-				// 		select={() => { this.props.selectTime(card)}}
-				// 		selected={selected}
-				// 	/>
-				// )
 			} else if (card.type === 'travel') {
 				// return <Travel 
 				// 	destination={card.destination}
 				// 	duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 				// />
 			} else {
-				index++
-
-				/*
-				<Item
-					key={card.id}
-					name={card.name}
-					description={card.description}
-					editCard={() => {
-						this.openStartTimeDialog(card)
-					}}
-					duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-					remove={() => {
-						this.props.removeCard(card.id, this.props.tripId, this.props.day)
-					}}
-				/>
-				*/
-
 				return (
-					<Draggable key={card.id} draggableId={card.id} index={index}>
+					<Draggable key={card.id} draggableId={card.id} index={index++}>
 						{(provided, snapshot) => (
 							<div>
 								<div
@@ -237,6 +210,8 @@ export default class Itinerary extends Component {
 										editCard={() => {
 											this.openStartTimeDialog(card)
 										}}
+										startTime={card.start_time}
+										endTime={card.end_time}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 										remove={() => {
 											this.props.removeCard(card.id, this.props.tripId, this.props.day)
@@ -322,7 +297,7 @@ export default class Itinerary extends Component {
 				<div className='body-container'>
 					<div className='itinerary-body'>
 						<div className='itinerary-list'>
-							<Droppable droppableId='suggestions-droppable'>
+							<Droppable droppableId='itinerary-droppable'>
 								{(provided, snapshot) => (
 									<div
 										ref={provided.innerRef}
@@ -384,28 +359,14 @@ class Item extends Component {
 					</label>
 					{buttons}
 	    	</div>
+				<label>
+					{`${new Date(this.props.startTime)}`}
+				</label>
+				<label>
+					{`${new Date(this.props.endTime)}`}
+				</label>
     	</div>
   	)
-	}
-}
-
-class FreeTime extends Component {
-	render() {
-		// scale to convert time units to positioning on itinerary
-		const timeScale = scaleLinear()
-			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, TIME_SCALE])
-
-		const height = timeScale(this.props.duration)
-
-		return (
-			<div 
-				className={this.props.selected ? 'free-time-selected' : 'free-time'}
-				onClick={this.props.select}
-				style={{height: `${height}px`}}
-			>
-			</div>
-		)
 	}
 }
 

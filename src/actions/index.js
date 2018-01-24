@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-// const ROOT_URL = 'http://localhost:4000/api/v1'
-const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
+const ROOT_URL = 'http://localhost:4000/api/v1'
+// const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 // const ROOT_URL = 'https://lab6-elin.herokuapp.com/api'
 // const ROOT_URL = 'https://cs52-blog.herokuapp.com/api'
@@ -27,6 +27,8 @@ export const ActionTypes = {
   DELETE_CARD_ERROR: 'DELETE_CARD_ERROR',
   UPDATE_CARD: 'UPDATE_CARD',
   UPDATE_CARD_ERROR: 'UPDATE_CARD_ERROR',
+  UPDATE_CARDS: 'UPDATE_CARDS',
+  UPDATE_CARDS_ERROR: 'UPDATE_CARDS_ERROR',
 
   AUTH_USER: 'AUTH_USER',
   DEAUTH_USER: 'DEAUTH_USER',
@@ -123,6 +125,18 @@ export function updateCard(id, attributes, trip, day) {
   }
 }
 
+export function updateCards(cards, trip, day) {
+  return (dispatch) => {
+    console.log(cards)
+
+    axios.post(`${ROOT_URL}/cards/?trip_id=${trip}`, cards).then((response) => {
+      dispatch(fetchCards(trip, day))
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.UPDATE_CARDS_ERROR, payload: error })
+    })
+  }
+}
+
 export function deleteCard(id, trip, day) {
   return (dispatch) => {
     axios.delete(`${ROOT_URL}/cards/${id}`).then((response) => {
@@ -177,6 +191,7 @@ export function createUser(user) {
 
 export function createCard(cards) {
   return (dispatch) => {
+    console.log(cards)
     axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
         dispatch({ type: ActionTypes.CREATE_CARD, payload: response.data });
       }).catch((error) => {

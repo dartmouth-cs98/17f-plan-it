@@ -32,6 +32,14 @@ const CardsReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         error: action.payload,
       });
+    case ActionTypes.UPDATE_CARDS:
+      return Object.assign({}, state, {
+        card: action.payload,
+      });
+    case ActionTypes.UPDATE_CARDS_ERROR:
+      return Object.assign({}, state, {
+        error: action.payload,
+      });
     case ActionTypes.CREATE_CARD:
       return Object.assign({}, state, {
         card: action.payload,
