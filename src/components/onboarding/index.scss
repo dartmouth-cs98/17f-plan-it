@@ -169,3 +169,23 @@
 .start_input {
 	width: 60vw !important;
 }
+
+.delete {
+	color: white;
+	margin: 10px;
+}
+
+.delete:hover {
+	cursor: pointer;
+	text-shadow: 0 0 10px grey;
+}
+
+.delete_disabled {
+	color: #ffffff4d;
+	margin: 10px;
+}
+
+.city_input {
+	display: flex;
+	align-items: center;
+}
