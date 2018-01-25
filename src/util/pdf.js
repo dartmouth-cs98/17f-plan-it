@@ -35,14 +35,18 @@ export function format(trip, cards) {
     // Create array of arrays
     const days = [[]]
 
-
     // Get the first day
     let current_date = trip[0].start_time
+
+    // Format cards into array 
     for(let i = 0; i < cards.length; i++) {
 
-      // Get the current day
+      // Get a card and check that it's not a location card
       const current_card = cards[i]
-      console.log("card_trip", current_card)
+      if (isLocationCard(current_card.start_time, current_card.end_time)) {
+        continue;
+      }
+      
 
       if (getDateDiff(current_date, current_card.start_time) > 0) {
         let days_diff = getDateDiff(current_date, current_card.start_time)
@@ -71,7 +75,8 @@ export function format(trip, cards) {
         let date = formatDate(day)
         const header = {text: `Day ${day_num + 1} - ${date} \n\n`, style: 'subheader'}
         const day_cards = days[day_num]
-        day_cards.unshift(header)
+
+        content.content.push(header)
 
         const day_content = {
           type: 'none',
@@ -106,7 +111,7 @@ function formatDate(date) {
   var day = utc_date.getUTCDate()
   var year = utc_date.getUTCFullYear()
 
-  return month + '/' + day + '/' + year
+  return ('0' + month).slice(-2) + '/' + ('0' + day).slice(-2) + '/' + year
 
 }
 // Change time to HH:MM AM/PM format
@@ -140,5 +145,17 @@ function getDateDiff(datetime1, datetime2) {
   let utc2 = Date.UTC(date2.getUTCFullYear(), date2.getUTCMonth(), date2.getUTCDate())
 
   return Math.floor((utc2 - utc1) / (1000*60*60*24))
+}
+
+
+function isLocationCard(datetime1, datetime2) {
+
+  let date1 = new Date(datetime1)
+  let date2 = new Date(datetime2)
+  
+  if (date1.getUTCHours() == date2.getUTCHours() && date1.getUTCMinutes() == date2.getUTCMinutes()) {
+    return true
+  }
+  return false
 }
 

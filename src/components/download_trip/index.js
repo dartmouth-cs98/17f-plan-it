@@ -15,8 +15,6 @@ export class DownloadTrip extends Component {
   async download() {
     await download(this.props.tripId);
   }
-  // Gets the difference in days between two dates
-
 
   render() {
     return (
