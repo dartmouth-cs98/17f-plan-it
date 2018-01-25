@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const ROOT_URL = 'http://localhost:4000/api/v1'
+export const ROOT_URL = 'http://localhost:4000/api/v1'
 // const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 // const ROOT_URL = 'https://lab6-elin.herokuapp.com/api'
@@ -15,7 +15,7 @@ export const ActionTypes = {
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
   CREATE_TRIP: 'CREATE_TRIP',
   UPDATE_TRIP: 'UPDATE_TRIP',
-  FAVORITE_TRIP: 'FAVORITE_TRIP', 
+  FAVORITE_TRIP: 'FAVORITE_TRIP',
   UNFAVORITE_TRIP: 'UNFAVORITE_TRIP',
   TRIP_ERROR: 'TRIP_ERROR',
 
@@ -88,6 +88,7 @@ export function fetchPublishedTrips(id) {
   }
 }
 
+
 export function fetchCards(id, day=null) {
   return (dispatch) => {
     let query = `${ROOT_URL}/cards?trip_id=${id}`
@@ -100,6 +101,7 @@ export function fetchCards(id, day=null) {
     })
   }
 }
+
 
 export function insertCard(cards, trip, day) {
   return (dispatch) => {
