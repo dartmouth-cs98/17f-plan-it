@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 
-// const ROOT_URL = 'http://localhost:4000/api/v1'
-const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
+const ROOT_URL = 'http://localhost:4000/api/v1'
+// const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 
 // keys for actiontypes
@@ -13,7 +13,7 @@ export const ActionTypes = {
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
   CREATE_TRIP: 'CREATE_TRIP',
   UPDATE_TRIP: 'UPDATE_TRIP',
-  FAVORITE_TRIP: 'FAVORITE_TRIP', 
+  FAVORITE_TRIP: 'FAVORITE_TRIP',
   UNFAVORITE_TRIP: 'UNFAVORITE_TRIP',
   TRIP_ERROR: 'TRIP_ERROR',
 

@@ -22,6 +22,8 @@ const POIMap = compose(
   }),
   withStateHandlers((props) => ({
     isOpen: -1,
+    showSuggestions: props.showSug,
+    showItinerary: props.showIt,
     localcenter: props.center
   }), {
     onToggleOpen: ({ isOpen, localcenter }) => (index, center) => ({
@@ -33,6 +35,9 @@ const POIMap = compose(
       componentDidCatch(error, info) {
         console.log(error, info)
         this.props.onToggleOpen(-1, { lat:0, lng: 0 }) // <-- props is not defined
+      },
+      componentWillReceiveProps(){
+        console.log(this.props)
       },
   }),
   withScriptjs,
@@ -48,7 +53,7 @@ const POIMap = compose(
     enableRetinaIcons
     gridSize={60}
   >
-    {props.markers.map((marker, index) => (
+    {props.showSug && props.markers.map((marker, index) => (
       <Marker
         key={marker.id}
         position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
@@ -88,13 +93,51 @@ const POIMap = compose(
 
 export default class Map extends Component {
 
+  constructor(props) {
+		super(props)
+
+		this.state = {
+      ShowIt: true,
+      ShowSug: true,
+
+		}
+
+		this.toggleSug = this.toggleSug.bind(this)
+    this.toggleIt = this.toggleIt.bind(this)
+	}
+
+  toggleSug(){
+    this.setState({
+      ShowSug: !this.state.ShowSug
+    })
+  }
+
+  toggleIt(){
+    this.setState({
+      ShowIt: !this.state.ShowIt
+    })
+  }
+
 	render() {
 		return (
+
 			<div id='map-container'>
+        <div className='suggestions-header'>
+          <FlatButton
+            label='Toggle Suggestion Pins'
+            onClick={this.toggleSug}
+          />
+          <FlatButton
+            label='Toggle Itinerary Pins'
+            onClick={this.toggleIt}
+          />
+  			</div>
 				<POIMap
           center={this.props.center}
           markers={this.props.MarkerClusterArray || []}
           addCard={this.props.addCard}
+          showSug={this.state.ShowSug}
+          showIt={this.state.ShowIt}
         />
 			</div>
 		)
