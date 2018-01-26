@@ -2,6 +2,7 @@ import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import axios from 'axios'
 import bluebird from 'bluebird'
+
 import { ROOT_URL } from "../actions"
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -38,7 +39,7 @@ export function format(trip, cards) {
     // Get the first day
     let current_date = trip[0].start_time
 
-    // Format cards into array 
+    // Format cards into array
     for(let i = 0; i < cards.length; i++) {
 
       // Get a card and check that it's not a location card
@@ -46,7 +47,7 @@ export function format(trip, cards) {
       if (isLocationCard(current_card.start_time, current_card.end_time)) {
         continue;
       }
-      
+
 
       if (getDateDiff(current_date, current_card.start_time) > 0) {
         let days_diff = getDateDiff(current_date, current_card.start_time)
@@ -123,7 +124,7 @@ function formatTime(dateTime) {
     am_pm = 'PM'
     hour = hour - 12
   }
-  if (hour == 0) {
+  if (hour === 0) {
     hour = 12
   }
   var min =date_time.getUTCMinutes()
@@ -152,8 +153,8 @@ function isLocationCard(datetime1, datetime2) {
 
   let date1 = new Date(datetime1)
   let date2 = new Date(datetime2)
-  
-  if (date1.getUTCHours() == date2.getUTCHours() && date1.getUTCMinutes() == date2.getUTCMinutes()) {
+
+  if (date1.getUTCHours() === date2.getUTCHours() && date1.getUTCMinutes() === date2.getUTCMinutes()) {
     return true
   }
   return false
