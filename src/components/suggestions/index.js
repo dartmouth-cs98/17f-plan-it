@@ -4,7 +4,23 @@ import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import IconMenu from 'material-ui/IconMenu'
 import MenuItem from 'material-ui/MenuItem'
+import { Droppable, Draggable } from 'react-beautiful-dnd'
+import Item from '../item/index.js'
 import './index.scss'
+
+const grid = 8
+const getItemStyle = (isDragging, draggableStyle) => ({
+	// some basic styles to make the items look a bit nicer
+	userSelect: 'none',
+	margin: `0 0 ${grid}px 0`,
+
+	// styles we need to apply on draggables
+	...draggableStyle,
+})
+const getListStyle = isDraggingOver => ({
+	background: isDraggingOver ? 'lightblue' : '#F2F2F2',
+	padding: grid,
+})
 
 export default class Suggestions extends Component {
 	constructor(props) {
@@ -54,53 +70,64 @@ export default class Suggestions extends Component {
 		)
 	}
 
-	render() {
+	renderList() {
+		let index = 0
 		const cards = this.formatCards()
 
-		return (
-			<div id='suggestions-box'>
-				{this.renderHeader()}
-				<CardList
-					cards={cards}
-					addCard={this.props.addCard}
-				/>
-			</div>
-		)
-	}
-}
-
-class CardList extends Component {
-	renderCards() {
-		const suggestions = this.props.cards.map((card) => {
+		const suggestions = _.map(cards, (card) => {
 			return (
-				<Suggestion
-					key={card.id}
-					name={card.name}
-					address={card.address}
-					description={card.description}
-					addCard={() => {
-						this.props.addCard(card)
-					}}
-				/>
+				<Draggable key={card.id} draggableId={card.id} index={index++}>
+					{(provided, snapshot) => (
+						<div>
+							<div
+								ref={provided.innerRef}
+								{...provided.draggableProps}
+								{...provided.dragHandleProps}
+								style={getItemStyle(
+									snapshot.isDragging,
+									provided.draggableProps.style,
+								)}
+							>
+								<Suggestion
+									key={card.id}
+									name={card.name}
+									address={card.address}
+									description={card.description}
+									addCard={() => {
+										this.props.addCard(card)
+									}}
+								/>
+							</div>
+							{provided.placeholder}
+						</div>
+					)}
+				</Draggable>
 			)
 		})
 
-		if (suggestions.length > 0) {
-			return suggestions
-		} else {
-			return (
-				<div className='empty-suggestions'>
-					<label>Select a free time block to find nearby suggestions</label>
-				</div>
-			)
-		}
+		return suggestions
 	}
 
 	render() {
 		return (
-			<div className='suggestions-list'>
-				<div className='list-container'>
-					{this.renderCards()}
+			<div id='suggestions-box'>
+				{this.renderHeader()}
+				<div className='suggestions-container'>
+					<div className='suggestions-body'>
+						<div className='suggestions-list'>
+							<Droppable droppableId='suggestions-droppable'>
+							{(provided, snapshot) => (
+								<div
+									ref={provided.innerRef}
+									style={getListStyle(snapshot.isDraggingOver)}
+								>
+									{this.renderList()}
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
+						</div>
+					</div>
 				</div>
 			</div>
 		)

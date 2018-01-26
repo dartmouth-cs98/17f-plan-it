@@ -39,7 +39,7 @@ class Workspace extends Component {
 		this.dayForward = this.dayForward.bind(this)
 		this.dayBackward = this.dayBackward.bind(this)
 		this.selectCategory = this.selectCategory.bind(this)
-		this.selectTime = this.selectTime.bind(this)
+		this.searchSuggestions = this.searchSuggestions.bind(this)
 		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
@@ -97,54 +97,12 @@ class Workspace extends Component {
 		}
 	}
 
-	selectTime(freeTime) {
-		const cards = this.formatCards()
-		let lat
-		let long
-
-		if (cards.length > 0) {
-			if (freeTime.type === 'day') {
-				this.props.fetchSuggestions(freeTime.lat, freeTime.long, CATEGORIES[this.state.category])
-				this.setState({
-					selected: freeTime,
-					pinLat: freeTime.lat,
-					pinLong: freeTime.long
-				})
-				return
-			}
-
-			const index = _.findIndex(cards, (card) => {
-				return freeTime.start_time === card.start_time && freeTime.end_time === card.end_time
-			})
-
-			if (index > 0) {
-				const prev = cards[index - 1]
-				lat = prev.lat
-				long = prev.long
-				// use location of previous activity to populate suggestions
-				this.props.fetchSuggestions(prev.lat, prev.long, CATEGORIES[this.state.category])
-			} else {
-				const next = cards[index + 1]
-				lat = next.lat
-				long = next.long
-				// use location of next activity to populate suggestions
-				this.props.fetchSuggestions(next.lat, next.long, CATEGORIES[this.state.category])
-			}
-		}
-
-		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
-			this.setState({
-				selected: null,
-				pinLat: null,
-				pinLong: null
-			})
-		} else {
-			this.setState({
-				selected: freeTime,
-				pinLat: lat,
-				pinLong: long
-			})
-		}
+	searchSuggestions(card) {
+		this.props.fetchSuggestions(card.lat, card.long, CATEGORIES[this.state.category])
+		this.setState({
+			pinLat: card.lat,
+			pinLong: card.long
+		})
 	}
 
 	addCard(card) {
@@ -264,7 +222,6 @@ class Workspace extends Component {
 
 		} else {
 			// handle reordering items in the itinerary
-
 			const itinerary = Array.from(this.props.cards)
 
 			// get the start time of the item you're trying to replace
@@ -305,9 +262,6 @@ class Workspace extends Component {
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.updateCards(itinerary, tripId, this.state.day)
-			console.log(itinerary)
-
-			// TODO
 		}
 	}
 
@@ -339,7 +293,7 @@ class Workspace extends Component {
 							tripId={tripId}
 							cards={cards}
 							day={this.state.day}
-							selectTime={this.selectTime}
+							searchSuggestions={this.searchSuggestions}
 							selected={this.state.selected}
 							updateCard={this.props.updateCard}
 							removeCard={this.props.deleteCard}

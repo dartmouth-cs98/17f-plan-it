@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import $ from 'jquery'
 import _ from 'lodash'
-import {scaleLinear} from 'd3-scale'
 import Dialog from 'material-ui/Dialog'
 import TimePicker from 'material-ui/TimePicker'
 import FlatButton from 'material-ui/FlatButton'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { scaleLinear } from 'd3-scale'
+import { Droppable, Draggable } from 'react-beautiful-dnd'
+import Item from '../item/index.js'
 import './index.scss'
 
 const TIME_SCALE = 2500
@@ -210,6 +211,10 @@ export default class Itinerary extends Component {
 										editCard={() => {
 											this.openStartTimeDialog(card)
 										}}
+										search={() => {
+											this.props.searchSuggestions(card)
+										}}
+										timeScale={TIME_SCALE}
 										startTime={card.start_time}
 										endTime={card.end_time}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
@@ -227,31 +232,6 @@ export default class Itinerary extends Component {
 		})
 
 		return toRender
-	}
-
-	renderTimeScale() {
-		const timeScale = scaleLinear()
-			.domain([0, 24])
-			.range([0, TIME_SCALE])
-
-		let ticks = []
-
-		for (let i = 0; i < 24; i++) {
-			ticks.push(
-				<div
-					className='time-tick'
-					style={{height: timeScale(1)}}
-				>
-					{`${_.padStart(i, 2, '0')}:00`}
-				</div>
-			)
-		}
-
-		return (
-			<div className='time-scale'>
-				{ticks}
-			</div>
-		)
 	}
 
 	renderStartTimeDialog() {
@@ -313,60 +293,6 @@ export default class Itinerary extends Component {
 				</div>
 			</div>
 		)
-	}
-}
-
-class Item extends Component {
-	render() {
-		const buttons = [
-			<FlatButton
-				className='remove-item'
-				icon={
-					<i
-						className='fa fa-trash-o'
-						style={{color: '#000000'}}
-					/>
-				}
-				onClick={this.props.remove}
-			/>,
-			<FlatButton
-				className='edit-starttime'
-				icon={
-					<i
-						className='fa fa-clock-o'
-						style={{color: '#000000'}}
-					/>
-				}
-				onClick={this.props.editCard}
-			/>
-		]
-
-		const timeScale = scaleLinear()
-			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, TIME_SCALE])
-
-		// subtract 10 for padding
-		const height = timeScale(this.props.duration) - 10
-
-		return (
-			<div className='card-wrapper'>
-				<div 
-					className='card item-card'
-					style={{height: `${height}px`}}
-				>
-					<label className='item-title'>
-						{this.props.name}
-					</label>
-					{buttons}
-	    	</div>
-				<label>
-					{`${new Date(this.props.startTime)}`}
-				</label>
-				<label>
-					{`${new Date(this.props.endTime)}`}
-				</label>
-    	</div>
-  	)
 	}
 }
 

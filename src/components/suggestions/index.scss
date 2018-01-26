@@ -38,13 +38,17 @@
 	margin-top: 50px;
 }
 
-.suggestions-list {
+.suggestions-container {
 	height: calc(100% - 35px);
 
-	.list-container {
+	.suggestions-body {
+		display: flex;
 		height: 100%;
-		width: 350px;
 		overflow-y: scroll;
+
+			.suggestions-list {
+				width: 100%;
+			}
 	}
 }
 

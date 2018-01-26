@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const ROOT_URL = 'http://localhost:4000/api/v1'
-// const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
+// const ROOT_URL = 'http://localhost:4000/api/v1'
+const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 // const ROOT_URL = 'https://lab6-elin.herokuapp.com/api'
 // const ROOT_URL = 'https://cs52-blog.herokuapp.com/api'
@@ -129,7 +129,7 @@ export function updateCards(cards, trip, day) {
   return (dispatch) => {
     console.log(cards)
 
-    axios.post(`${ROOT_URL}/cards/?trip_id=${trip}`, cards).then((response) => {
+    axios.post(`${ROOT_URL}/cards?trip_id=${trip}`, Array.from(cards)).then((response) => {
       dispatch(fetchCards(trip, day))
     }).catch((error) => {
       dispatch({ type: ActionTypes.UPDATE_CARDS_ERROR, payload: error })
