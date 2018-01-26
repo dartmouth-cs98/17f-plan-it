@@ -5,6 +5,7 @@ import axios from 'axios'
 const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 
+
 // keys for actiontypes
 export const ActionTypes = {
   FETCH_TRIPS: 'FETCH_TRIPS',
@@ -13,7 +14,7 @@ export const ActionTypes = {
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
   CREATE_TRIP: 'CREATE_TRIP',
   UPDATE_TRIP: 'UPDATE_TRIP',
-  FAVORITE_TRIP: 'FAVORITE_TRIP', 
+  FAVORITE_TRIP: 'FAVORITE_TRIP',
   UNFAVORITE_TRIP: 'UNFAVORITE_TRIP',
   TRIP_ERROR: 'TRIP_ERROR',
 
@@ -86,12 +87,11 @@ export function fetchPublishedTrips(id) {
   }
 }
 
+
 export function fetchCards(id, day=null) {
   return (dispatch) => {
     let query = `${ROOT_URL}/cards?trip_id=${id}`
-
     if (day) { query += `&day=${day}` }
-
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
     }).catch((error) => {
@@ -100,6 +100,7 @@ export function fetchCards(id, day=null) {
     })
   }
 }
+
 
 export function insertCard(cards, trip, day) {
   return (dispatch) => {

@@ -7,6 +7,7 @@ import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
+import DownloadTrip from '../download_trip/index.js'
 import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard, fetchSuggestions } from '../../actions/index.js';
 require('./index.scss')
 
@@ -291,6 +292,7 @@ class Workspace extends Component {
 					published={this.props.trips[0] ? this.props.trips[0].published : false}
 					tripId={tripId}
 				/>
+				<DownloadTrip tripId={tripId}/>
 				<div className='planner'>
 					<Suggestions
 						addCard={this.addCard}
@@ -298,7 +300,6 @@ class Workspace extends Component {
 						category={this.state.category}
 						selectCategory={this.selectCategory}
 					/>
-
 					<Itinerary
 						tripId={tripId}
 						cards={cards}
