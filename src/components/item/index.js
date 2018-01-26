@@ -5,7 +5,7 @@ import './index.scss'
 
 export default class Item extends Component {
 	render() {
-		const buttons = [
+		const buttons = this.props.buttons ? [
 			<FlatButton
 				className='item-icon'
 				icon={
@@ -36,7 +36,7 @@ export default class Item extends Component {
 				}
 				onClick={this.props.search}
 			/>
-		]
+		] : []
 
 		const timeScale = scaleLinear()
 			.domain([0, 24 * 60 * 60 * 1000])

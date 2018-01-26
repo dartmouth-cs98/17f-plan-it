@@ -221,6 +221,7 @@ export default class Itinerary extends Component {
 										remove={() => {
 											this.props.removeCard(card.id, this.props.tripId, this.props.day)
 										}}
+										buttons={true}
 									/>
 								</div>
 								{provided.placeholder}

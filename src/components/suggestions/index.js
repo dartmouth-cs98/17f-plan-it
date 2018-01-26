@@ -8,6 +8,8 @@ import { Droppable, Draggable } from 'react-beautiful-dnd'
 import Item from '../item/index.js'
 import './index.scss'
 
+const TIME_SCALE = 2500
+const DURATION = 3600000
 const grid = 8
 const getItemStyle = (isDragging, draggableStyle) => ({
 	// some basic styles to make the items look a bit nicer
@@ -75,8 +77,9 @@ export default class Suggestions extends Component {
 		const cards = this.formatCards()
 
 		const suggestions = _.map(cards, (card) => {
+			// keys and id's have a 'sugg' prefix to differentiate from itinerary items
 			return (
-				<Draggable key={card.id} draggableId={card.id} index={index++}>
+				<Draggable key={`sugg${index}`} draggableId={`sugg${index}`} index={index++}>
 					{(provided, snapshot) => (
 						<div>
 							<div
@@ -88,14 +91,15 @@ export default class Suggestions extends Component {
 									provided.draggableProps.style,
 								)}
 							>
-								<Suggestion
+								<Item
 									key={card.id}
 									name={card.name}
-									address={card.address}
 									description={card.description}
-									addCard={() => {
-										this.props.addCard(card)
-									}}
+									timeScale={TIME_SCALE}
+									startTime={card.start_time}
+									endTime={card.end_time}
+									duration={DURATION}
+									buttons={false}
 								/>
 							</div>
 							{provided.placeholder}
