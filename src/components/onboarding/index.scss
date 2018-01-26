@@ -9,7 +9,7 @@
 
 .onboarding {
 	height: 90vh;
-	background: url('../../img/road_trip.jpeg');
+	background: url('../../img/road_trip_compressed.jpg');
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: 50% 0;
@@ -22,10 +22,10 @@
 	margin: auto
 }
 
-.name {
-	height: 90%;
-	width: 90%;
-	background-color: white;
+.name_wrapper {
+	height: 70vh;
+	line-height: 30vh;
+	text-align: center;
 }
 
 .next_arrow {
@@ -99,12 +99,12 @@
 }
 
 .add {
-	border: 4px solid #B6D6E7 !important;
+	border: 4px solid #496575 !important;
 	background-color: rgba(182,214,231, .9) !important;
 }
 
 .start {
-	border: 4px solid #6FCF97 !important;
+	border: 4px solid #347336 !important;
 	background-color: rgba(111,207,151, .8) !important;
 }
 
@@ -130,7 +130,7 @@
 
 .landing_page {
 	height: 100vh;
-	background: url('../../img/globe.jpeg');
+	background: url('../../img/globe_compressed.jpg');
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: 50% 0;
@@ -168,4 +168,24 @@
 
 .start_input {
 	width: 60vw !important;
+}
+
+.delete {
+	color: white;
+	margin: 10px;
+}
+
+.delete:hover {
+	cursor: pointer;
+	text-shadow: 0 0 10px grey;
+}
+
+.delete_disabled {
+	color: #ffffff4d;
+	margin: 10px;
+}
+
+.city_input {
+	display: flex;
+	align-items: center;
 }

@@ -22,12 +22,16 @@ class NavBar extends Component {
     this.buttonDecision = this.buttonDecision.bind(this)
 	}
 
+  reloadPage() {
+    window.location.reload()
+  }
+
 	renderOptions() {
 		if (this.state.authenticated) {
 			return (
 				<div className='options'>
 					<Link to='/explore'><div>Explore</div></Link>
-					<Link to='/'><div>New Trip</div></Link>
+					<Link to='/' onClick={this.reloadPage}><div>New Trip</div></Link>
 					<Link to='/dashboard'><div>Dashboard</div></Link>
 					<Link to='/'><div><this.buttonDecision /></div></Link>
 				</div>
@@ -74,6 +78,7 @@ class NavBar extends Component {
       cookie.save('auth', this.props.user_id, { path: '/' })
     } else {
       cookie.remove('auth', { path: '/' })
+      this.reloadPage()
     }
   }
 
@@ -110,7 +115,7 @@ class NavBar extends Component {
 		return (
       <div>
 				<div className={`${this.state.background} nav_bar`}>
-					<Link to='/'><div className='logo'>planit</div></Link>
+					<Link to='/' onClick={this.reloadPage}><div className='logo'>planit</div></Link>
 						{this.renderOptions()}
 				</div>
       </div>

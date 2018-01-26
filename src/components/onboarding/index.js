@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
-import { Map, List } from 'immutable'
+import Immutable from 'immutable'
 import Modal from 'react-modal'
 import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
@@ -42,14 +42,11 @@ class Onboarding extends Component {
 			landing_page: true,
 			trip_name: '',
 			cities: [],
-			hotels: List([Map({ type: 'hotel', name: '', start_date: null, end_date: null})]),
-			must_dos: List([Map({ type: 'must_do', name: '', start_date: null, end_date: null})]),
-			modal_open: false
+			modal_open: false, 
+			err_msg: ''
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
-		this.onAddHotel = this.onAddHotel.bind(this)
-		this.onAddMustDo = this.onAddMustDo.bind(this)
 		this.onNameChange = this.onNameChange.bind(this)
 		this.onOtherNameChange = this.onOtherNameChange.bind(this)
 		this.onStartDateChange = this.onStartDateChange.bind(this)
@@ -61,6 +58,7 @@ class Onboarding extends Component {
 		this.onCreateTrip = this.onCreateTrip.bind(this)
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
+		this.onDeleteCity = this.onDeleteCity.bind(this)
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -107,8 +105,8 @@ class Onboarding extends Component {
 		})
 	}
 
-	onModalOpen(event) {
-		this.setState( { modal_open: true } )
+	onModalOpen(error) {
+		this.setState( { modal_open: true, err_msg: error } )
 	}
 
 	onModalClose(event) {
@@ -116,7 +114,11 @@ class Onboarding extends Component {
 	}
 
 	onLetsGo(event) {
-		this.setState( { landing_page: false } )
+		if (!cookie.load('auth')) {
+			this.onModalOpen('Please log in')
+		} else {
+			this.setState( { landing_page: false } )
+		}
 	}
 
 	onCityChange(name) {
@@ -131,22 +133,10 @@ class Onboarding extends Component {
 	}
 
 	onOtherNameChange(index, type, name) {
-		if (type === 'hotel') {
-			const edited_hotel = this.state.hotels.get(index).set('name', name)
-			const state_array = this.state.hotels.set(index, edited_hotel)
-			this.setState({ hotels: state_array})
-		} else if (type === 'city') {
-			console.log(index)
-
-			let newCities = this.state.cities
-			const newCity = _.assign(newCities[index], {	name })
-			newCities[index] = newCity
-			this.setState({ cities: newCities })
-		} else {
-			const edited_mustdo = this.state.must_dos.get(index).set('name', name)
-			const state_array = this.state.must_dos.set(index, edited_mustdo)
-			this.setState({ must_dos: state_array})
-		}
+		let newCities = this.state.cities
+		const newCity = _.assign(newCities[index], {	name })
+		newCities[index] = newCity
+		this.setState({ cities: newCities })
 	}
 
 	onHandleCitySelect(results, name) {
@@ -196,75 +186,41 @@ class Onboarding extends Component {
 	}
 
 	onStartDateChange(index, type, start_date) {
-		if (type === 'hotel') {
-			const end_date = this.state.hotels.get(index).get('end_date');
-			if (end_date === null || new Date(end_date) >= new Date(start_date)) {
-				const edited_date = this.state.hotels.get(index).set('start_date', start_date);
-				const state_array = this.state.hotels.set(index, edited_date);
-				this.setState({ hotels: state_array })
-			}
-		} else if (type === 'city') {
-			const { end_date } = this.state.cities[index]
-			if (_.isNil(end_date) || new Date(end_date) >= new Date(start_date)) {
-				let newCities = this.state.cities
-				const newCity = _.assign(this.state.cities[index], { start_date })
-				newCities[index] = newCity
-				this.setState({ cities: newCities })
-			}
-		} else {
-			const end_date = this.state.must_dos.get(index).get('end_date');
-			if (end_date === null || new Date(end_date) >= new Date(start_date)) {
-				const edited_date = this.state.must_dos.get(index).set('start_date', start_date);
-				const state_array = this.state.must_dos.set(index, edited_date);
-				this.setState({ must_dos: state_array })
-			}
+		const { end_date } = this.state.cities[index]
+		if (_.isNil(end_date) || new Date(end_date) >= new Date(start_date)) {
+			let newCities = this.state.cities
+			const newCity = _.assign(this.state.cities[index], { start_date })
+			newCities[index] = newCity
+			this.setState({ cities: newCities })
 		}
-
 	}
 
 	onEndDateChange(index, type, end_date) {
-		if (type === 'hotel') {
-			const start_date = this.state.hotels.get(index).get('start_date')
-			if (start_date === null || new Date(end_date) >= new Date(start_date)) {
-				const edited_date = this.state.hotels.get(index).set('end_date', end_date)
-				const state_array = this.state.hotels.set(index, edited_date)
-				this.setState({ hotels: state_array })
-			}
-		} else if (type === 'city') {
-			const { start_date } = this.state.cities[index]
-			if (_.isNil(start_date) || new Date(end_date) >= new Date(start_date)) {
-				let newCities = this.state.cities
+		const { start_date } = this.state.cities[index]
+		if (_.isNil(start_date) || new Date(end_date) >= new Date(start_date)) {
+			let newCities = this.state.cities
 
-				// make sure you update the start date of the next city if there is one and valid against its end date
-				if (index < this.state.cities.length - 1) {
-					const nextDate = new Date((new Date(end_date)).getTime() + (24 * 60 * 60 * 1000))
+			// make sure you update the start date of the next city if there is one and valid against its end date
+			if (index < this.state.cities.length - 1) {
+				const nextDate = new Date((new Date(end_date)).getTime() + (24 * 60 * 60 * 1000))
 
-					if (!_.isNil(this.state.cities[index + 1].end_date) && new Date(this.state.cities[index + 1].end_date) < nextDate) {
-						// TODO: let user know that a city can't have the same end date as the next city
-						return
-					} else {
-						const nextCity = _.assign(newCities[index + 1], { start_date: moment(nextDate) })
-						newCities[index + 1] = nextCity
-					}
+				if (!_.isNil(this.state.cities[index + 1].end_date) && new Date(this.state.cities[index + 1].end_date) < nextDate) {
+					// TODO: let user know that a city can't have the same end date as the next city
+					return
+				} else {
+					const nextCity = _.assign(newCities[index + 1], { start_date: moment(nextDate) })
+					newCities[index + 1] = nextCity
 				}
+			}
 
-				// update the end date if it's ok
-				const newCity = _.assign(this.state.cities[index], { end_date })
-				newCities[index] = newCity
-				this.setState({ cities: newCities })
-			}
-		} else {
-			const start_date = this.state.must_dos.get(index).get('start_date')
-			if (start_date === null || new Date(end_date) >= new Date(start_date)) {
-				const edited_date = this.state.must_dos.get(index).set('end_date', end_date)
-				const state_array = this.state.must_dos.set(index, edited_date)
-				this.setState({ must_dos: state_array })
-			}
+			// update the end date if it's ok
+			const newCity = _.assign(this.state.cities[index], { end_date })
+			newCities[index] = newCity
+			this.setState({ cities: newCities })
 		}
 	}
 
 	onAddCity(event) {
-		console.log(this.state.cities)
 		let latestDate
 		let incomplete = false
 
@@ -287,7 +243,6 @@ class Onboarding extends Component {
 		const nextDate = new Date((new Date(latestDate)).getTime() + (24 * 60 * 60 * 1000))
 		let newCities = this.state.cities
 		newCities.push({
-			type: 'city',
 			name: '',
 			start_date: _.isUndefined(latestDate) ? null : moment(nextDate),
 			end_date: null
@@ -295,21 +250,29 @@ class Onboarding extends Component {
 		this.setState({ cities: newCities })
 	}
 
-	onAddHotel(event) {
-		const state_array = this.state.hotels.push(Map({ type: 'hotel', name: '', start_date: null, end_date: null}))
-		this.setState({ hotels: state_array })
-	}
+	onDeleteCity(index) {
+		if (index === 0) {
+			return
+		}
 
-	onAddMustDo(event) {
-		const state_array = this.state.must_dos.push(Map({ type: 'must_do', name: '', start_date: null, end_date: null}))
-		this.setState({ must_dos: state_array })
+		let newCities = this.state.cities.slice(0)
+
+		if (this.state.cities.length - 1 !== index) {
+			let deleted_start_date = newCities[index].start_date
+			console.log(deleted_start_date)
+			newCities[index + 1].start_date = deleted_start_date
+		}
+
+		newCities.splice(index, 1)
+		this.setState({ cities: newCities})
 	}
 
 	renderCities() {
 		return (
 			_.map(this.state.cities, (city, index) => {
+				let delete_classes = index === 0? 'fa fa-trash-o fa-2x delete_disabled' : 'fa fa-trash-o fa-2x delete'
 				return (
-					<div key={index}>
+					<div className='city_input' key={index}>
 						<OnboardingInput
 							index={index}
 							placeholder={'City'}
@@ -322,52 +285,7 @@ class Onboarding extends Component {
 							start_date={city.start_date}
 							end_date={city.end_date}
 						/>
-					</div>
-				)
-			})
-		)
-	}
-
-	renderHotels() {
-		return (
-			this.state.hotels.map((hotel, index) => {
-				return (
-					<div key={index}>
-						<OnboardingInput
-							index={index}
-							placeholder={'Hotel'}
-							name={hotel.get('name')}
-							input_type='hotel'
-							onOtherNameChange={this.onOtherNameChange}
-							onStartDateChange={this.onStartDateChange}
-							onEndDateChange={this.onEndDateChange}
-							onHandleSelect={this.onHandleSelect}
-							start_date={hotel.get('start_date')}
-							end_date={hotel.get('end_date')}
-						/>
-					</div>
-				)
-			})
-		)
-	}
-
-	renderMustDos() {
-		return (
-			this.state.must_dos.map((must_do, index) => {
-				return (
-					<div key={index}>
-						<OnboardingInput
-							index={index}
-							placeholder={'Must Do'}
-							name={must_do.get('name')}
-							input_type='must_do'
-							onOtherNameChange={this.onOtherNameChange}
-							onStartDateChange={this.onStartDateChange}
-							onEndDateChange={this.onEndDateChange}
-							onHandleSelect={this.onHandleSelect}
-							start_date={must_do.get('start_date')}
-							end_date={must_do.get('end_date')}
-						/>
+						<i className={delete_classes} aria-hidden='true' onClick={() => this.onDeleteCity(index)}></i>
 					</div>
 				)
 			})
@@ -375,13 +293,24 @@ class Onboarding extends Component {
 	}
 
 	renderStartTrip() {
-		let ok = true
+		let ok = false
 		let startDate
 		let endDate
+		let err_msg
+
+		if (!cookie.load('auth')) {
+			err_msg = 'Please log in'
+			window.location.reload()
+		}
 
 		_.map(this.state.cities, (city) => {
-			if (city.name === '' || city.start_date === null || city.end_date === null) {
-				ok = false
+
+			if (city.name && !city.start_date) {
+				err_msg = `${city.name} has no start date`
+			}
+
+			if (city.name && city.start_date) {
+				ok = true
 			}
 
 			if (_.isUndefined(startDate) || new Date(city.start_date) < new Date(startDate)) {
@@ -394,28 +323,20 @@ class Onboarding extends Component {
 		})
 
 		if (!ok) {
+			err_msg = 'Please enter at least one city with a start date'
+		}
+
+		if (!_.isUndefined(err_msg) || !ok) {
 			return (
-				<div className='button_container start_disabled' onClick={this.onModalOpen}>
+				<div className='button_container start' onClick={() => this.onModalOpen(err_msg)}>
 					Start Trip
 				</div>
 			)
-		}
-		else {
+		} else {
 			return (
 				<div className='button_container start' onClick={() => { this.onCreateTrip(startDate, endDate)}}>Start Trip</div>
 			)
 		}
-	}
-
-	name_slide() {
-		return (
-			<div>
-				<OnboardingInput placeholder={'Name your trip'}
-					onNameChange={this.onNameChange}
-					name={this.state.trip_name}
-				/>
-			</div>
-		)
 	}
 
 	cities_slide() {
@@ -424,35 +345,20 @@ class Onboarding extends Component {
 				<div className='slide_title'>Where are you going?</div>
 				<div className='scrollable'>
 					{this.renderCities()}
-					<div className='button_container add' onClick={this.onAddCity}>Add</div>
+					<div className='button_container add' onClick={this.onAddCity}>Add City</div>
+					{this.renderStartTrip()}
 				</div>
-				{this.renderStartTrip()}
 			</div>
 		)
 	}
 
-	hotels_slide() {
+	names_slide() {
 		return (
-			<div className='slide'>
-				<div className='slide_title'>Where are you staying?</div>
-				<div className='scrollable'>
-					{this.renderHotels()}
-					<div className='button_container add' onClick={this.onAddHotel}>Add</div>
-				</div>
-				{this.renderStartTrip()}
-			</div>
-		)
-	}
-
-	mustdo_slide() {
-		return (
-			<div className='slide'>
-				<div className='slide_title'>Any must do's?</div>
-				<div className='scrollable'>
-					{this.renderMustDos()}
-					<div className='button_container add' onClick={this.onAddMustDo}>Add</div>
-				</div>
-				{this.renderStartTrip()}
+			<div className='name_wrapper'>
+				<OnboardingInput placeholder={'Name your trip'}
+					onNameChange={this.onNameChange}
+					name={this.state.trip_name}
+				/>
 			</div>
 		)
 	}
@@ -495,7 +401,7 @@ class Onboarding extends Component {
 	render() {
 		const onboarding_settings = {
 	      dots: true,
-	      infinite: true,
+	      infinite: false,
 	      speed: 500,
 	      slidesToShow: 1,
 	      slidesToScroll: 1,
@@ -508,6 +414,14 @@ class Onboarding extends Component {
 				<div>
 					<div className='landing_page'>
 						<NavBar background={'no_background'} page={'ONBOARDING'}/>
+						<Modal
+						    isOpen={this.state.modal_open}
+						    onRequestClose={this.onModalClose}
+						    className='card horizontal center no_outline'>
+							<div className="card-content">
+			        			<p>{this.state.err_msg}</p>
+			        		</div>
+						</Modal>
 						<div className='buttons centered'>
 							{this.renderStartCity()}
 							<div className='button_box' onClick={this.onLetsGo}>Let's go</div>
@@ -518,22 +432,21 @@ class Onboarding extends Component {
     	} else {
 			return (
 				<div>
-					<div className='onboarding'>
-						<NavBar background={'no_background'} page={'ONBOARDING'}/>
-						<Modal
+				<div className='onboarding'>
+					<NavBar background={'no_background'} page={'ONBOARDING'}/>
+					<Modal
 					    isOpen={this.state.modal_open}
 					    onRequestClose={this.onModalClose}
-					    className='card horizontal center no_outline'
-				    >
-							<div class="card-content">
-			        	<p>Input at least one city with a start date</p>
-			        </div>
-						</Modal>
-						<Slider {...onboarding_settings} className='onboarding_slider'>
-			        <div>{this.name_slide()}</div>
-			        <div>{this.cities_slide()}</div>
-		      	</Slider>
-					</div>
+					    className='card horizontal center no_outline'>
+						<div className="card-content">
+		        			<p>{this.state.err_msg}</p>
+		        		</div>
+					</Modal>
+					<Slider {...onboarding_settings} className='onboarding_slider'>
+						<div>{this.names_slide()}</div>
+						<div>{this.cities_slide()}</div>
+	      			</Slider>
+				</div>
 				</div>
 			)
 		}

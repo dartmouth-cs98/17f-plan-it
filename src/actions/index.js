@@ -1,11 +1,10 @@
 import axios from 'axios'
 
-export const ROOT_URL = 'http://localhost:4000/api/v1'
-// const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
-// const ROOT_URL = 'https://lab6-elin.herokuapp.com/api'
-// const ROOT_URL = 'https://cs52-blog.herokuapp.com/api'
-// const API_KEY = '?key=e_lin'
+// const ROOT_URL = 'http://localhost:4000/api/v1'
+const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
+
+
 
 // keys for actiontypes
 export const ActionTypes = {
