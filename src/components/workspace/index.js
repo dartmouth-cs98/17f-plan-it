@@ -215,7 +215,43 @@ class Workspace extends Component {
 
 			} else {
 				// handle adding an item to the itinerary by dragging
+				const itinerary = Array.from(this.props.cards)
+				const suggestions = Array.from(this.props.suggestions)
+				const [item] = suggestions.splice(result.source.index, 1)
 
+				// get the start time of the card that you're pushing down
+				const start = result.destination.index === itinerary.length ? 
+					new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
+
+				// replace start time
+
+				const inserted = {
+					...item,
+				  travel_duration: TRAVEL_TIME,
+				  start_time: start,
+				  end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
+				  trip_id: tripId,
+				  day_number: this.state.day
+				}
+
+				// itinerary.splice(result.destination.index, 0, inserted)
+
+				for (let i = result.destination.index; i < itinerary.length; i++) {
+					const card = itinerary[i]
+
+					// shift each card back by the duration of the card removed
+					_.assign(card, {
+						'start_time': new Date((new Date(card.start_time)).getTime() + DEFAULT_DURATION),
+						'end_time': new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
+					})
+				}
+
+				const path = window.location.pathname.split(':')
+				const tripId = _.last(path)
+
+				// insert card request here
+				this.props.insertCard(inserted, tripId, this.state.day)
+				// this.props.updateCards(itinerary, tripId, this.state.day)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -246,7 +282,7 @@ class Workspace extends Component {
 			if (result.destination.index > result.source.index) {
 				endIndex = itinerary.length
 			} else {
-				endIndex = result.source.index
+				endIndex = result.source.index + 1
 			}
 
 			for (let i = result.destination.index + 1; i < endIndex; i++) {
