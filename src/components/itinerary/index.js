@@ -37,6 +37,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 const getListStyle = isDraggingOver => ({
 	background: isDraggingOver ? 'lightblue' : '#F2F2F2',
 	padding: grid,
+	minHeight: '100%'
 })
 
 export default class Itinerary extends Component {

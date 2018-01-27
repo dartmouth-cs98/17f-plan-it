@@ -112,29 +112,3 @@ export default class Suggestions extends Component {
 		)
 	}
 }
-
-class Suggestion extends Component {
-	render() {
-		return (
-			<div className='card-wrapper'>
-				<Card>
-			    <CardHeader
-			      title={this.props.name}
-			      subtitle={this.props.address}
-			      actAsExpander={false}
-			      showExpandableButton={false}
-			    />
-			    <CardText expandable={false}>
-			      {this.props.description}
-			    </CardText>
-			    <CardActions>
-			    	<FlatButton
-			    		label='Add'
-			    		onClick={this.props.addCard}
-		    		/>
-		    	</CardActions>
-			  </Card>
-		  </div>
-  	)
-	}
-}

@@ -229,10 +229,10 @@ class Workspace extends Component {
 			return
 		} else if (result.destination.droppableId !== result.source.droppableId) {
 			if (result.destination.droppableId === 'suggestions-droppable') {
-				// handle removing an item from the itinerary
+				// remove an item from the itinerary
 
 			} else {
-				// handle adding an item to the itinerary by dragging
+				// add an item to the itinerary by dragging
 				const itinerary = Array.from(this.props.cards)
 				const suggestions = Array.from(this.formatSuggestions())
 				const [item] = suggestions.splice(result.source.index, 1)
@@ -274,9 +274,9 @@ class Workspace extends Component {
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
-			
+
 		} else {
-			// handle reordering items in the itinerary
+			// reorder items in the itinerary
 			const itinerary = Array.from(this.props.cards)
 
 			// get the start time of the item you're trying to replace
