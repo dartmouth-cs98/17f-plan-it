@@ -155,6 +155,7 @@ class Workspace extends Component {
 				cityLong = card.long
 				cityStart = new Date(card.start_time)
 				cityEnd = new Date(card.end_time)
+				cardList.push(card)
 				// set the base location
 				return
 			}

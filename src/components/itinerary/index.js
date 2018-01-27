@@ -178,7 +178,7 @@ export default class Itinerary extends Component {
 	renderList() {
 		let index = 0
 		const toRender = _.map(this.props.cards, (card) => {
-			if (card.type === 'day') {
+			if (card.type === 'city') {
 				// return (
 				// 	<FreeTime
 				// 		duration={24 * 60 * 60 * 1000}
