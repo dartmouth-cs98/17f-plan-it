@@ -127,10 +127,8 @@ export function updateCard(id, attributes, trip, day) {
 
 export function updateCards(cards, trip, day) {
   return (dispatch) => {
-    console.log(cards)
-
     axios.post(`${ROOT_URL}/cards?trip_id=${trip}`, Array.from(cards)).then((response) => {
-      dispatch(fetchCards(trip, day))
+      dispatch({ type: ActionTypes.UPDATE_CARDS, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.UPDATE_CARDS_ERROR, payload: error })
     })
@@ -140,7 +138,8 @@ export function updateCards(cards, trip, day) {
 export function deleteCard(id, trip, day) {
   return (dispatch) => {
     axios.delete(`${ROOT_URL}/cards/${id}`).then((response) => {
-      dispatch(fetchCards(trip, day))
+      // dispatch(fetchCards(trip, day))
+      dispatch({ type: ActionTypes.DELETE_CARD, payload: id })
     }).catch((error) => {
       console.log(error)
       dispatch({ type: ActionTypes.DELETE_CARD_ERROR, payload: error })

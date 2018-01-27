@@ -177,30 +177,15 @@ class Workspace extends Component {
 			prevEnd = new Date(card.end_time)
 		})
 
-		if (!_.isUndefined(startOfDay)) {
-			const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000))
-			if (prevEnd.getTime() < endOfDay.getTime()) {
-				const freeTime = {
-					type: 'free',
-					start_time: prevEnd.toString(),
-					end_time: endOfDay.toString()
-				}
-
-				cardList.push(freeTime)
+		// If there are no cards in the day, search for suggestions based on the city
+		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0) {
+			this.props.fetchSuggestions(cityLat, cityLong, CATEGORIES[this.state.category])
+			if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
+				this.setState({
+					pinLat: cityLat, 
+					pinLong: cityLong
+				})
 			}
-		}
-
-		if (cardList.length === 0 && !_.isNil(cityStart) && !_.isNil(cityEnd)) {
-			cityStart.setHours(0, 0, 0, 0)
-			cityEnd.setHours(0, 0, 0, 0)
-
-			cardList.push({
-				type: 'day', 
-				lat: cityLat,
-				long: cityLong,
-				start_time: cityStart.toString(),
-				end_time: cityEnd.toString()
-			})
 		}
 
 		return cardList
