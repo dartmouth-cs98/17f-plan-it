@@ -66,7 +66,9 @@ class Workspace extends Component {
 			this.setState({ 
 				day: newDay,
 				selected: null,
-				category: 0
+				category: 0,
+				pinLat: null,
+				pinLong: null
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
@@ -179,7 +181,7 @@ class Workspace extends Component {
 		})
 
 		// If there are no cards in the day, search for suggestions based on the city
-		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0) {
+		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0 || _.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
 			this.props.fetchSuggestions(cityLat, cityLong, CATEGORIES[this.state.category])
 			if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
 				this.setState({
