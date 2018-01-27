@@ -25,29 +25,6 @@ const getListStyle = isDraggingOver => ({
 })
 
 export default class Suggestions extends Component {
-	constructor(props) {
-		super(props)
-
-		this.formatCards = this.formatCards.bind(this)
-	}
-
-	formatCards() {
-		return _.map(this.props.suggestions, (suggestion) => {
-			return {
-				name: suggestion.name,
-				image_url: suggestion.image_url,
-				yelp_url: suggestion.url,
-				price: suggestion.price,
-				lat: suggestion.coordinates.latitude,
-				long: suggestion.coordinates.longitude,
-				phone: suggestion.phone,
-				display_phone: suggestion.display_phone,
-				type: suggestion.categories[0].alias,
-				description: suggestion.categories[0].title,
-			}
-		})
-	}
-
 	renderHeader() {
 		return (
 			<div className='suggestions-header'>
@@ -74,9 +51,7 @@ export default class Suggestions extends Component {
 
 	renderList() {
 		let index = 0
-		const cards = this.formatCards()
-
-		const suggestions = _.map(cards, (card) => {
+		const suggestions = _.map(this.props.suggestions, (card) => {
 			// keys and id's have a 'sugg' prefix to differentiate from itinerary items
 			return (
 				<Draggable key={`sugg${index}`} draggableId={`sugg${index}`} index={index++}>

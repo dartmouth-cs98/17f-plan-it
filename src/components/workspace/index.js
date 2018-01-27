@@ -42,6 +42,7 @@ class Workspace extends Component {
 		this.searchSuggestions = this.searchSuggestions.bind(this)
 		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
+		this.formatSuggestions = this.formatSuggestions.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
 	}
 
@@ -205,6 +206,23 @@ class Workspace extends Component {
 		return cardList
 	}
 
+	formatSuggestions() {
+		return _.map(this.props.suggestions, (suggestion) => {
+			return {
+				name: suggestion.name,
+				image_url: suggestion.image_url,
+				yelp_url: suggestion.url,
+				price: suggestion.price,
+				lat: suggestion.coordinates.latitude,
+				long: suggestion.coordinates.longitude,
+				phone: suggestion.phone,
+				display_phone: suggestion.display_phone,
+				type: suggestion.categories[0].alias,
+				description: suggestion.categories[0].title,
+			}
+		})
+	}
+
 	onDragEnd(result) {
 		// dropped outside the list
 		if (!result.destination) {
@@ -216,7 +234,7 @@ class Workspace extends Component {
 			} else {
 				// handle adding an item to the itinerary by dragging
 				const itinerary = Array.from(this.props.cards)
-				const suggestions = Array.from(this.props.suggestions)
+				const suggestions = Array.from(this.formatSuggestions())
 				const [item] = suggestions.splice(result.source.index, 1)
 
 				// get the start time of the card that you're pushing down
@@ -225,8 +243,12 @@ class Workspace extends Component {
 
 				// replace start time
 
+				const path = window.location.pathname.split(':')
+				const tripId = _.last(path)
+
 				const inserted = {
 					...item,
+					id: 0,
 				  travel_duration: TRAVEL_TIME,
 				  start_time: start,
 				  end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
@@ -234,28 +256,25 @@ class Workspace extends Component {
 				  day_number: this.state.day
 				}
 
-				// itinerary.splice(result.destination.index, 0, inserted)
+				// add the new card to the itinerary
+				itinerary.splice(result.destination.index, 0, inserted)
 
-				for (let i = result.destination.index; i < itinerary.length; i++) {
+				// shift each card back by the duration of the card removed
+				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
 					const card = itinerary[i]
 
-					// shift each card back by the duration of the card removed
 					_.assign(card, {
 						'start_time': new Date((new Date(card.start_time)).getTime() + DEFAULT_DURATION),
 						'end_time': new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
 					})
 				}
 
-				const path = window.location.pathname.split(':')
-				const tripId = _.last(path)
-
-				// insert card request here
-				this.props.insertCard(inserted, tripId, this.state.day)
-				// this.props.updateCards(itinerary, tripId, this.state.day)
+				// update cards with new itinerary
+				this.props.updateCards(itinerary, tripId, this.state.day)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
-
+			
 		} else {
 			// handle reordering items in the itinerary
 			const itinerary = Array.from(this.props.cards)
@@ -303,6 +322,7 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards()
+		const suggestions = this.formatSuggestions()
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
@@ -320,7 +340,7 @@ class Workspace extends Component {
 					<div className='planner'>
 						<Suggestions
 							addCard={this.addCard}
-							suggestions={this.props.suggestions}
+							suggestions={suggestions}
 							category={this.state.category}
 							selectCategory={this.selectCategory}
 						/>
