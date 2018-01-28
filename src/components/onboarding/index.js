@@ -43,11 +43,13 @@ class Onboarding extends Component {
 			trip_name: '',
 			cities: [],
 			modal_open: false, 
-			err_msg: ''
+			err_msg: '',
+			image_url: 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
 		this.onNameChange = this.onNameChange.bind(this)
+		this.onImageChange = this.onImageChange.bind(this)
 		this.onOtherNameChange = this.onOtherNameChange.bind(this)
 		this.onStartDateChange = this.onStartDateChange.bind(this)
 		this.onEndDateChange = this.onEndDateChange.bind(this)
@@ -101,7 +103,8 @@ class Onboarding extends Component {
 			name: this.state.trip_name,
 			user_id: cookie.load('auth'),
 			start_time: startDate,
-			end_time: endDate
+			end_time: endDate,
+			photo_url: this.state.image_url
 		})
 	}
 
@@ -130,6 +133,10 @@ class Onboarding extends Component {
 
 	onNameChange(event) {
 		this.setState({ trip_name: event.target.value })
+	}
+
+	onImageChange(event) {
+		this.setState({ image_url: event.target.value })
 	}
 
 	onOtherNameChange(index, type, name) {
@@ -363,6 +370,17 @@ class Onboarding extends Component {
 		)
 	}
 
+	image_slide() {
+		return (
+			<div className='name_wrapper'>
+				<OnboardingInput placeholder={'Enter trip image URL'}
+					onImageChange={this.onImageChange}
+					name={this.state.image_url}
+				/>
+			</div>
+		)
+	}
+
 	renderStartCity() {
 		const inputProps = {
 		    value: _.isUndefined(this.state.cities[0]) ? '' : this.state.cities[0].name,
@@ -444,6 +462,7 @@ class Onboarding extends Component {
 					</Modal>
 					<Slider {...onboarding_settings} className='onboarding_slider'>
 						<div>{this.names_slide()}</div>
+						<div>{this.image_slide()}</div>
 						<div>{this.cities_slide()}</div>
 	      			</Slider>
 				</div>

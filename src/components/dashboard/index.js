@@ -43,14 +43,13 @@ class Dashboard extends Component {
 	}
 
 	renderTrips() {
-		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		return this.props.userTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
-				      		<img src={image} alt='' />
+				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
 					    <div className='card_title'>{trip.name}</div>
 					</Card>
@@ -60,14 +59,13 @@ class Dashboard extends Component {
 	}
 
 	renderFavoritedTrips() {
-		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		return this.props.favoritedTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
-				      		<img src={image} alt='' />
+				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
 					    <div className='card_title'>{trip.name}</div>
 					</Card>

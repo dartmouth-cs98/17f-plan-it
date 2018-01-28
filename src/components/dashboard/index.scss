@@ -26,8 +26,9 @@
 }
 
 .card_img img{
-	width: 160px !important;
-	height: 140px !important;
+	width: 160px;
+	height: 140px;
+	object-fit: cover;
 }
 
 .dashboard_slider {
