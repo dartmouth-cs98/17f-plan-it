@@ -222,12 +222,21 @@ class Workspace extends Component {
 			} else {
 				// add an item to the itinerary by dragging
 				const itinerary = Array.from(this.props.cards)
+				const [city] = _.remove(itinerary, (card) => {
+					return card.type === 'city'
+				})
+				console.log(city)
 				const suggestions = Array.from(this.formatSuggestions())
 				const [item] = suggestions.splice(result.source.index, 1)
 
 				// get the start time of the card that you're pushing down
-				const start = result.destination.index === itinerary.length ? 
-					new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
+				let start
+				if (itinerary.length === 0) {
+					start = new Date(city.start_time)
+				} else {
+					start = result.destination.index === itinerary.length ? 
+						new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
+				}
 
 				// replace start time
 
@@ -257,6 +266,9 @@ class Workspace extends Component {
 					})
 				}
 
+				// add the city card back 
+				itinerary.splice(0, 0, city)
+
 				// update cards with new itinerary
 				this.props.updateCards(itinerary, tripId, this.state.day)
 			}
@@ -266,6 +278,9 @@ class Workspace extends Component {
 		} else {
 			// reorder items in the itinerary
 			const itinerary = Array.from(this.props.cards)
+			const [city] = _.remove(itinerary, (card) => {
+				return card.type === 'city'
+			})
 
 			// get the start time of the item you're trying to replace
 			const start = result.destination.index > result.source.index ? 
@@ -281,6 +296,7 @@ class Workspace extends Component {
 				'end_time': new Date(start.getTime() + duration)	
 			})
 
+			// add the item back into the itinerary in the right place
 			itinerary.splice(result.destination.index, 0, item)
 
 			let endIndex
@@ -301,6 +317,9 @@ class Workspace extends Component {
 					'end_time': new Date((new Date(card.end_time)).getTime() + duration)
 				})
 			}
+
+			// add the city card back in 
+			itinerary.splice(0, 0, city)
 		
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
