@@ -196,6 +196,11 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { start_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
+		} 
+
+		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
+		{	
+			this.setState({ modal_open: true, err_msg: 'Start date after end date'})
 		}
 	}
 
@@ -221,6 +226,11 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { end_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
+		}
+
+		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
+		{	
+			this.setState({ modal_open: true, err_msg: 'End date before start date'})
 		}
 	}
 
