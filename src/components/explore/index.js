@@ -66,10 +66,13 @@ class Explore extends Component {
 			<div>
 				<NavBar background={'road_trip_background'}/>
 				<div>
-					<div className='title'>Popular Trips</div>
+					<div className='title'>Recently Viewed By You</div>
+					<div className='title'>Trending Now</div>
 					<Slider {...explore_settings} className='explore_slider'>
 						{this.renderPublished()}
 					</Slider>
+					<div className='title'>Popular Trips</div>
+					<div className='title'>Newly Published</div>
 				</div>			
 			</div>
 		)
