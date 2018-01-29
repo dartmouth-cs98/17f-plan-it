@@ -316,6 +316,10 @@ class Onboarding extends Component {
 				ok = true
 			}
 
+			if (!city.lat) {
+				err_msg = `Please select ${city.name} from drop down suggestions`
+			}
+
 			if (_.isUndefined(startDate) || new Date(city.start_date) < new Date(startDate)) {
 				startDate = city.start_date
 			}
