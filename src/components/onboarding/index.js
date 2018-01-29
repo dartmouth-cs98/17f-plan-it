@@ -86,8 +86,6 @@ class Onboarding extends Component {
 						end_time: new Date(endDate)
 					})
 
-					console.log(new Date(startDate), new Date(endDate))
-
 					startDate = endDate
 				}
 			})
@@ -150,7 +148,6 @@ class Onboarding extends Component {
 
 	onHandleCitySelect(results, name) {
 		getLatLng(results).then(({ lat, lng }) => {
-			console.log(lat, lng)
 
 			let address = results.formatted_address
 			let place_id = results.place_id
@@ -171,8 +168,6 @@ class Onboarding extends Component {
 
 	onHandleSelect(index, type, results, name) {
 		getLatLng(results).then(({ lat, lng }) => {
-			console.log(lat, lng)
-
 			if (type === 'city') {
 				let address = results.formatted_address
 				let day_number = index + 1
@@ -268,7 +263,6 @@ class Onboarding extends Component {
 
 		if (this.state.cities.length - 1 !== index) {
 			let deleted_start_date = newCities[index].start_date
-			console.log(deleted_start_date)
 			newCities[index + 1].start_date = deleted_start_date
 		}
 
