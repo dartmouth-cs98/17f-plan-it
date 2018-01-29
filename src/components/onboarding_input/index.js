@@ -50,6 +50,7 @@ class OnboardingInput extends Component {
 			<PlacesAutocomplete
 				inputProps = { inputProps }
 				onSelect = { handleSelect }
+				onEnterKeyDown = { handleSelect }
 				autoCompleteItem = { AutocompleteItem }
 				options = {{ types }}
 				classNames = {{ input: 'other_input' }}
@@ -66,6 +67,14 @@ class OnboardingInput extends Component {
 				<input type='text' className='name_input' placeholder={this.props.placeholder}
 					value={this.props.name}
 					onChange={this.props.onNameChange}
+				/>
+			)
+		}
+		else if (this.state.placeholder == 'Enter trip image URL') {
+			return (
+				<input type='text' className='name_input' placeholder={this.props.placeholder}
+					value={this.props.image_url}
+					onChange={this.props.onImageChange}
 				/>
 			)
 		}

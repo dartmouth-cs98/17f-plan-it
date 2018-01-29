@@ -8,6 +8,7 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
+import DownloadTrip from '../download_trip/index.js'
 import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
@@ -54,6 +55,7 @@ class Workspace extends Component {
 
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
+		console.log(this.props)
 	}
 
 	dayForward() {
@@ -63,7 +65,7 @@ class Workspace extends Component {
 
 		if (this.state.day < tripDuration) {
 			const newDay = this.state.day + 1
-			this.setState({ 
+			this.setState({
 				day: newDay,
 				selected: null,
 				category: 0,
@@ -79,7 +81,7 @@ class Workspace extends Component {
 	dayBackward() {
 		if (this.state.day > 1) {
 			const newDay = this.state.day - 1
-			this.setState({ 
+			this.setState({
 				day: newDay,
 				selected: null,
 				category: 0
@@ -329,6 +331,10 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards()
+		const [city] = _.filter(cards, (card) => {
+			return card.type === 'city'
+		})
+		console.log(city)
 		const suggestions = this.formatSuggestions()
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
@@ -344,6 +350,7 @@ class Workspace extends Component {
 					tripId={tripId}
 				/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
+					<DownloadTrip tripId={tripId}/>
 					<div className='planner'>
 						<Suggestions
 							addCard={this.addCard}
@@ -351,7 +358,6 @@ class Workspace extends Component {
 							category={this.state.category}
 							selectCategory={this.selectCategory}
 						/>
-
 						<Itinerary
 							tripId={tripId}
 							cards={cards}
@@ -367,9 +373,9 @@ class Workspace extends Component {
 						<Map
 							isInfoOpen={false}
 							isMarkerShown={true}
-							MarkerPosition={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
+							MarkerPosition={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
 							MarkerClusterArray={this.props.suggestions}
-							center={{ lat: this.state.pinLat || 43.704441, lng: this.state.pinLong || -72.288694 }}
+							center={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
 							infoMessage="Hello From Dartmouth"
 							addCard={this.addCard}
 						/>
@@ -408,7 +414,7 @@ const mapDispatchToProps = (dispatch) => {
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))
 		},
-		fetchSuggestions: (lat=43, long=-72, categories=null) => {
+		fetchSuggestions: (lat, long, categories=null) => {
 			dispatch(fetchSuggestions(lat, long, categories))
 		}
 	}

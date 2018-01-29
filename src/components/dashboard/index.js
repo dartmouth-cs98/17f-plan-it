@@ -38,16 +38,18 @@ class Dashboard extends Component {
 		this.props.fetchFavoritedTrips(cookie.load('auth'))
 	}
 
+	reloadPage() {
+		window.location.reload()
+	}
 
 	renderTrips() {
-		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		return this.props.userTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
-				      		<img src={image} alt='' />
+				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
 					    <div className='card_title'>{trip.name}</div>
 					</Card>
@@ -57,14 +59,13 @@ class Dashboard extends Component {
 	}
 
 	renderFavoritedTrips() {
-		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		return this.props.favoritedTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
-				      		<img src={image} alt='' />
+				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
 					    <div className='card_title'>{trip.name}</div>
 					</Card>
@@ -91,7 +92,7 @@ class Dashboard extends Component {
 					<div className='title'>My Trips</div>
 					<Slider {...dashboard_settings} className='dashboard_slider'>
 						{this.renderTrips()}
-						<Link to='/'>
+						<Link to='/' onClick={this.reloadPage}>
 							<Card className='trip_card add_card'>
 								<i className="fa fa-plus fa-5x plus_sign" aria-hidden="true"></i>
 							</Card>
