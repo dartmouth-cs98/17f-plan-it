@@ -3,9 +3,11 @@
 	min-width: 750px;
 	justify-content: space-between;
 	color: #828282;
+	height: 100vh;
 
 	.planner {
 		margin: 5px;
 		display: flex;
+		height: calc(100% - 145px);
 	}
 }

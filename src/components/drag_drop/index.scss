@@ -1,0 +1,19 @@
+.workspace {
+	flex-direction: row;
+	height: 100vh;
+
+	.suggestions {
+		display: inline-block;
+		margin-right: 20px;
+		vertical-align: top;
+		overflow: scroll;
+		height: 100%;
+	}
+
+	.itinerary {
+		display: inline-block;
+		vertical-align: top;
+		overflow: scroll;
+		height: 100%;
+	}
+}

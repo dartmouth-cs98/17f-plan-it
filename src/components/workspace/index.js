@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
-import { fetchTrip, fetchCards, insertCard, updateCard, deleteCard, fetchSuggestions } from '../../actions/index.js';
+import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
-const TRIP_ID = 1
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
 const CATEGORIES = [
@@ -40,9 +40,11 @@ class Workspace extends Component {
 		this.dayForward = this.dayForward.bind(this)
 		this.dayBackward = this.dayBackward.bind(this)
 		this.selectCategory = this.selectCategory.bind(this)
-		this.selectTime = this.selectTime.bind(this)
+		this.searchSuggestions = this.searchSuggestions.bind(this)
 		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
+		this.formatSuggestions = this.formatSuggestions.bind(this)
+		this.onDragEnd = this.onDragEnd.bind(this)
 	}
 
 	componentDidMount() {
@@ -66,7 +68,9 @@ class Workspace extends Component {
 			this.setState({
 				day: newDay,
 				selected: null,
-				category: 0
+				category: 0,
+				pinLat: null,
+				pinLong: null
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
@@ -98,54 +102,12 @@ class Workspace extends Component {
 		}
 	}
 
-	selectTime(freeTime) {
-		const cards = this.formatCards()
-		let lat
-		let long
-
-		if (cards.length > 0) {
-			if (freeTime.type === 'day') {
-				this.props.fetchSuggestions(freeTime.lat, freeTime.long, CATEGORIES[this.state.category])
-				this.setState({
-					selected: freeTime,
-					pinLat: freeTime.lat,
-					pinLong: freeTime.long
-				})
-				return
-			}
-
-			const index = _.findIndex(cards, (card) => {
-				return freeTime.start_time === card.start_time && freeTime.end_time === card.end_time
-			})
-
-			if (index > 0) {
-				const prev = cards[index - 1]
-				lat = prev.lat
-				long = prev.long
-				// use location of previous activity to populate suggestions
-				this.props.fetchSuggestions(prev.lat, prev.long, CATEGORIES[this.state.category])
-			} else {
-				const next = cards[index + 1]
-				lat = next.lat
-				long = next.long
-				// use location of next activity to populate suggestions
-				this.props.fetchSuggestions(next.lat, next.long, CATEGORIES[this.state.category])
-			}
-		}
-
-		if (!_.isNull(this.state.selected) && (new Date(freeTime.start_time)).getTime() === (new Date(this.state.selected.start_time)).getTime()) {
-			this.setState({
-				selected: null,
-				pinLat: null,
-				pinLong: null
-			})
-		} else {
-			this.setState({
-				selected: freeTime,
-				pinLat: lat,
-				pinLong: long
-			})
-		}
+	searchSuggestions(card) {
+		this.props.fetchSuggestions(card.lat, card.long, CATEGORIES[this.state.category])
+		this.setState({
+			pinLat: card.lat,
+			pinLong: card.long
+		})
 	}
 
 	addCard(card) {
@@ -197,88 +159,183 @@ class Workspace extends Component {
 				cityLong = card.long
 				cityStart = new Date(card.start_time)
 				cityEnd = new Date(card.end_time)
+				cardList.push(card)
 				// set the base location
 				return
 			}
 
-			if (_.isUndefined(startCard)) {
-				startCard = card.id
+			const cardStart = new Date(card.start_time)
 
-				const startTime = new Date(card.start_time)
-				startOfDay = new Date(`${startTime.getMonth() + 1}/${startTime.getDate()}/${startTime.getFullYear()}`)
-
-				// add free time at end of the day
-				if (startTime.getTime() > startOfDay.getTime()) {
-					const freeTime = {
-						type: 'free',
-						start_time: startOfDay.toString(),
-						end_time: startTime.toString()
-					}
-
-					cardList.push(freeTime)
-				}
-			} else {
-				const cardStart = new Date(card.start_time)
-
-				const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-				const travel = {
-					type: 'travel',
-					start_time: travelStart.toString(),
-					end_time: card.start_time,
-					travelType: card.travelType,
-					destination: card.name
-				}
-
-				// add the free time and travel before a card
-				if (!_.isUndefined(prevEnd) && prevEnd.getTime() < travelStart.getTime()) {
-					const freeTime = {
-						type: 'free',
-						start_time: prevEnd.toString(),
-						end_time: travelStart.toString()
-					}
-
-					cardList.push(freeTime)
-				}
-
-				cardList.push(travel)
+			const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
+			const travel = {
+				type: 'travel',
+				start_time: travelStart.toString(),
+				end_time: card.start_time,
+				travelType: card.travelType,
+				destination: card.name
 			}
+
+			cardList.push(travel)
 
 			cardList.push(card)
 
 			prevEnd = new Date(card.end_time)
 		})
 
-		if (!_.isUndefined(startOfDay)) {
-			const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000))
-			if (prevEnd.getTime() < endOfDay.getTime()) {
-				const freeTime = {
-					type: 'free',
-					start_time: prevEnd.toString(),
-					end_time: endOfDay.toString()
-				}
-
-				cardList.push(freeTime)
+		// If there are no cards in the day, search for suggestions based on the city
+		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0 || _.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
+			this.props.fetchSuggestions(cityLat, cityLong, CATEGORIES[this.state.category])
+			if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
+				this.setState({
+					pinLat: cityLat, 
+					pinLong: cityLong
+				})
 			}
-		}
-
-		if (cardList.length === 0 && !_.isNil(cityStart) && !_.isNil(cityEnd)) {
-			cityStart.setHours(0, 0, 0, 0)
-			cityEnd.setHours(0, 0, 0, 0)
-
-			cardList.push({
-				type: 'day',
-				lat: cityLat,
-				long: cityLong,
-				start_time: cityStart.toString(),
-				end_time: cityEnd.toString()
-			})
 		}
 
 		return cardList
 	}
 
+	formatSuggestions() {
+		return _.map(this.props.suggestions, (suggestion) => {
+			return {
+				name: suggestion.name,
+				image_url: suggestion.image_url,
+				yelp_url: suggestion.url,
+				price: suggestion.price,
+				lat: suggestion.coordinates.latitude,
+				long: suggestion.coordinates.longitude,
+				phone: suggestion.phone,
+				display_phone: suggestion.display_phone,
+				type: suggestion.categories[0].alias,
+				description: suggestion.categories[0].title,
+			}
+		})
+	}
+
+	onDragEnd(result) {
+		// dropped outside the list
+		if (!result.destination) {
+			return
+		} else if (result.destination.droppableId !== result.source.droppableId) {
+			if (result.destination.droppableId === 'suggestions-droppable') {
+				// remove an item from the itinerary
+
+			} else {
+				// add an item to the itinerary by dragging
+				const itinerary = Array.from(this.props.cards)
+				const [city] = _.remove(itinerary, (card) => {
+					return card.type === 'city'
+				})
+				console.log(city)
+				const suggestions = Array.from(this.formatSuggestions())
+				const [item] = suggestions.splice(result.source.index, 1)
+
+				// get the start time of the card that you're pushing down
+				let start
+				if (itinerary.length === 0) {
+					start = new Date(city.start_time)
+				} else {
+					start = result.destination.index === itinerary.length ? 
+						new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
+				}
+
+				// replace start time
+
+				const path = window.location.pathname.split(':')
+				const tripId = _.last(path)
+
+				const inserted = {
+					...item,
+					id: 0,
+				  travel_duration: TRAVEL_TIME,
+				  start_time: start,
+				  end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
+				  trip_id: tripId,
+				  day_number: this.state.day
+				}
+
+				// add the new card to the itinerary
+				itinerary.splice(result.destination.index, 0, inserted)
+
+				// shift each card back by the duration of the card removed
+				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
+					const card = itinerary[i]
+
+					_.assign(card, {
+						'start_time': new Date((new Date(card.start_time)).getTime() + DEFAULT_DURATION),
+						'end_time': new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
+					})
+				}
+
+				// add the city card back 
+				itinerary.splice(0, 0, city)
+
+				// update cards with new itinerary
+				this.props.updateCards(itinerary, tripId, this.state.day)
+			}
+		} else if (result.destination.droppableId === 'suggestions-droppable') {
+			// reorder suggestions
+
+		} else {
+			// reorder items in the itinerary
+			const itinerary = Array.from(this.props.cards)
+			const [city] = _.remove(itinerary, (card) => {
+				return card.type === 'city'
+			})
+
+			// get the start time of the item you're trying to replace
+			const start = result.destination.index > result.source.index ? 
+				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
+
+			// get the info of the object your dragging
+			const [removed] = itinerary.splice(result.source.index, 1)
+			const duration = (new Date(removed.end_time)).getTime() - (new Date(removed.start_time)).getTime()
+
+			// update the start and end times of the item being dragged
+			const item = _.assignIn({}, removed, { 
+				'start_time': start, 
+				'end_time': new Date(start.getTime() + duration)	
+			})
+
+			// add the item back into the itinerary in the right place
+			itinerary.splice(result.destination.index, 0, item)
+
+			let endIndex
+
+			// indices show range of cards that need to update their times
+			if (result.destination.index > result.source.index) {
+				endIndex = itinerary.length
+			} else {
+				endIndex = result.source.index + 1
+			}
+
+			for (let i = result.destination.index + 1; i < endIndex; i++) {
+				const card = itinerary[i]
+
+				// shift each card back by the duration of the card removed
+				_.assign(card, {
+					'start_time': new Date((new Date(card.start_time)).getTime() + duration),
+					'end_time': new Date((new Date(card.end_time)).getTime() + duration)
+				})
+			}
+
+			// add the city card back in 
+			itinerary.splice(0, 0, city)
+		
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.updateCards(itinerary, tripId, this.state.day)
+		}
+	}
+
 	render() {
 		const cards = this.formatCards()
+		const [city] = _.filter(cards, (card) => {
+			return card.type === 'city'
+		})
+		console.log(city)
+		const suggestions = this.formatSuggestions()
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
@@ -292,34 +349,38 @@ class Workspace extends Component {
 					published={this.props.trips[0] ? this.props.trips[0].published : false}
 					tripId={tripId}
 				/>
-				<DownloadTrip tripId={tripId}/>
-				<div className='planner'>
-					<Suggestions
-						addCard={this.addCard}
-						suggestions={this.props.suggestions}
-						category={this.state.category}
-						selectCategory={this.selectCategory}
-					/>
-					<Itinerary
-						tripId={tripId}
-						cards={cards}
-						day={this.state.day}
-						selectTime={this.selectTime}
-						selected={this.state.selected}
-						updateCard={this.props.updateCard}
-						removeCard={this.props.deleteCard}
-						dayForward={this.dayForward}
-						dayBackward={this.dayBackward}
-						numDays={tripDuration}
-					/>
-					<Map
-						isInfoOpen={false}
-						isMarkerShown={true}
-						MarkerClusterArray={this.props.suggestions}
-						center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
-						addCard={this.addCard}
-					/>
-				</div>
+				<DragDropContext onDragEnd={this.onDragEnd}>
+					<DownloadTrip tripId={tripId}/>
+					<div className='planner'>
+						<Suggestions
+							addCard={this.addCard}
+							suggestions={suggestions}
+							category={this.state.category}
+							selectCategory={this.selectCategory}
+						/>
+						<Itinerary
+							tripId={tripId}
+							cards={cards}
+							day={this.state.day}
+							searchSuggestions={this.searchSuggestions}
+							selected={this.state.selected}
+							updateCard={this.props.updateCard}
+							removeCard={this.props.deleteCard}
+							dayForward={this.dayForward}
+							dayBackward={this.dayBackward}
+							numDays={tripDuration}
+						/>
+						<Map
+							isInfoOpen={false}
+							isMarkerShown={true}
+							MarkerPosition={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
+							MarkerClusterArray={this.props.suggestions}
+							center={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
+							infoMessage="Hello From Dartmouth"
+							addCard={this.addCard}
+						/>
+					</div>
+				</DragDropContext>
 			</div>
 		)
 	}
@@ -347,10 +408,13 @@ const mapDispatchToProps = (dispatch) => {
 		updateCard: (cards, trip, id, day) => {
 			dispatch(updateCard(cards, trip, id, day))
 		},
+		updateCards: (cards, trip, day) => {
+			dispatch(updateCards(cards, trip, day))
+		},
 		deleteCard: (id, trip, day) => {
 			dispatch(deleteCard(id, trip, day))
 		},
-		fetchSuggestions: (lat=43, long=-72, categories=null) => {
+		fetchSuggestions: (lat, long, categories=null) => {
 			dispatch(fetchSuggestions(lat, long, categories))
 		}
 	}

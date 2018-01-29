@@ -7,6 +7,9 @@ import Explore from './components/explore/index.js'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import './App.scss'
 
+
+import Dragger from './components/drag_drop/index.js'
+
 class App extends Component {
   render() {
     return (
@@ -19,6 +22,7 @@ class App extends Component {
                 <Route path="/workspace" component={Workspace}/>
                 <Route path='/explore' component={Explore}/>
                 <Route path='/dashboard' component={Dashboard}/>
+                <Route path='/dragbox' component={Dragger}/>
                 <Route render={() => (<div>post not found </div>)} />
               </Switch>
           </Router>
