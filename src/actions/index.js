@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 
-export const ROOT_URL = 'http://localhost:4000/api/v1'
-// export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
+// export const ROOT_URL = 'http://localhost:4000/api/v1'
+export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 
 
@@ -167,7 +167,6 @@ export function favoriteTrip(trip, userId) {
 }
 
 export function unfavoriteTrip(tripId, userId) {
-  console.log(`unfavorite ${tripId} ${userId}`)
     return (dispatch) => {
       axios.delete(`${ROOT_URL}/favorited?user_id=${userId}&trip_id=${tripId}`).then((response) => {
         dispatch({ type: ActionTypes.UNFAVORITE_TRIP, payload: response.data })
@@ -189,7 +188,6 @@ export function createUser(user) {
 
 export function createCard(cards) {
   return (dispatch) => {
-    console.log(cards)
     axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
         dispatch({ type: ActionTypes.CREATE_CARD, payload: response.data });
       }).catch((error) => {
