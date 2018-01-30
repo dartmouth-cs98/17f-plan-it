@@ -3,6 +3,9 @@ import { ActionTypes } from '../actions';
 const initialState = {
   userTrips: [],
   favoritedTrips: [],
+  publishedDateTrips: [],
+  publishedTrendingTrips: [],
+  publishedPopularTrips: [],
   publishedTrips: [],
   trip: {},
   trip_id: null,
@@ -35,6 +38,18 @@ const TripsReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         favoritedTrips: action.payload,
       }); 
+    case ActionTypes.FETCH_PUBLISH_DATE:
+      return Object.assign({}, state, {
+        publishedDateTrips: action.payload,
+      }); 
+    case ActionTypes.FETCH_TRENDING_TRIPS:
+      return Object.assign({}, state, {
+        publishedTrendingTrips: action.payload,
+      }); 
+    case ActionTypes.FETCH_POPULAR_TRIPS:
+      return Object.assign({}, state, {
+        publishedPopularTrips: action.payload,
+      });
     case ActionTypes.FETCH_PUBLISHED_TRIPS:
       return Object.assign({}, state, {
         publishedTrips: action.payload,
