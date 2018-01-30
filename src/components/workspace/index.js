@@ -70,12 +70,13 @@ class Workspace extends Component {
 
   updateCardState(payload) {
     console.log("payload", payload)
-    this.setState({cards: payload.body})
+    this.setState({cards: payload.cards})
   }
 
   sendLiveUpdate() {
-    const cards = this.state.cards;
-    this.state.channel.send(cards)
+    const send_package = {cards: this.state.cards, tripId: this.state.tripId}
+    console.log("sending update", send_package)
+    this.state.channel.send(send_package)
   }
 
 	dayForward() {

@@ -56,12 +56,12 @@ export default class Channel {
       .receive('timeout', () => console.log('Must be MongoDB.'))
 
     // channel-level event handlers
-    chan.onError(event => console.log('Channel blew up.'))
+    chan.onError(event => console.log(event, 'Channel blew up.'))
     chan.onClose(event => console.log('Channel closed.'))
 
     //recieve new messages
     //chan.on("new:msg", payload => console.log("new message", payload.body))
-    chan.on("new:msg", updateFunction)
+    chan.on("new:msg:cards", updateFunction)
 
     //user entering
     chan.on("new:user", payload => console.log("new user entere", payload.body))
@@ -73,7 +73,7 @@ export default class Channel {
     if (this.chan == null) {
       console.log("channel is negative")
     } else {
-      this.chan.push("new:msg", {body: message})
+      this.chan.push("new:msg:cards", {body: message})
 
     }
   }
