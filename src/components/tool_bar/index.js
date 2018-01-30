@@ -6,9 +6,6 @@ import cookie from 'react-cookies'
 import _ from 'lodash'
 import './index.scss'
 
-
-const tripId = _.last(window.location.pathname.split(':'))
-
 class Toolbar extends Component {
 	constructor(props) {
 		super(props)
@@ -34,7 +31,7 @@ class Toolbar extends Component {
 	isFavorited() {
 		let favorited = false
 		this.props.favoritedTrips.map((trip) => {
-			if (trip.trip_id === parseInt(tripId)) {
+			if (trip.trip_id === parseInt(this.props.tripId)) {
 				favorited = true
 			}
 		})
@@ -43,16 +40,17 @@ class Toolbar extends Component {
 
 	togglePublish(event) {
 		let published = this.state.published? false: true
-		this.setState({published})
-		this.props.updateTrip(tripId, {published})
+		this.setState({ published })
+
+		this.props.updateTrip(this.props.tripId, { publish: published })
 	}
 
 	toggleFavorite(event) {
 		let favorited = this.state.favorited? false : true
 		if (favorited) {
-			this.props.favoriteTrip({trip_id: parseInt(tripId), user_id: cookie.load('auth')})
+			this.props.favoriteTrip({trip_id: this.props.tripId, user_id: cookie.load('auth')})
 		} else {
-			this.props.unfavoriteTrip(tripId, cookie.load('auth'))
+			this.props.unfavoriteTrip(this.props.tripId, cookie.load('auth'))
 		}
 		this.setState({ favorited })
 	}

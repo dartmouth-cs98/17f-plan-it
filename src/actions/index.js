@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 
-// export const ROOT_URL = 'http://localhost:4000/api/v1'
-export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
+export const ROOT_URL = 'http://localhost:4000/api/v1'
+// export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 
 
@@ -11,6 +11,9 @@ export const ActionTypes = {
   FETCH_TRIPS: 'FETCH_TRIPS',
   FETCH_TRIP: 'FETCH_TRIP',
   FETCH_FAVORITED_TRIPS: 'FETCH_FAVORITED_TRIPS',
+  FETCH_PUBLISH_DATE: 'FETCH_PUBLISH_DATE',
+  FETCH_POPULAR_TRIPS: 'FETCH_POPULAR_TRIPS',
+  FETCH_TRENDING_TRIPS: 'FETCH_TRENDING_TRIPS',
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
   CREATE_TRIP: 'CREATE_TRIP',
   UPDATE_TRIP: 'UPDATE_TRIP',
@@ -79,9 +82,39 @@ export function updateTrip(trip_id, trip) {
   }
 }
 
-export function fetchPublishedTrips(id) {
+export function fetchPublishDateTrips() {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/trips?user_id=1`).then((response) => {
+    axios.get(`${ROOT_URL}/published?order=publish_date`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_PUBLISH_DATE, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchPopularTrips() {
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/published?order=popular`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_POPULAR_TRIPS, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchTrendingTrips() {
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/published?order=trending`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_TRENDING_TRIPS, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchPublishedTrips() {
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/published`).then((response) => {
       dispatch({ type: ActionTypes.FETCH_PUBLISHED_TRIPS, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })

@@ -88,6 +88,21 @@ class Onboarding extends Component {
 
 					startDate = endDate
 				}
+
+				if (_.isUndefined(city.end_date)) {
+					const cityCard = _.assign(city, {
+						trip_id: nextProps.trip_id,
+						type: 'city'
+					})
+
+
+					cityCards.push({
+						...cityCard,
+						day_number: dayNumber,
+						start_time: new Date(startDate),
+						end_time: new Date(startDate)
+					})
+				}
 			})
 
 			this.props.createCard(cityCards)
@@ -97,8 +112,12 @@ class Onboarding extends Component {
 	}
 
 	onCreateTrip(startDate, endDate) {
+		let trip_name = this.state.trip_name
+		if (_.isUndefined(trip_name)) { 
+			trip_name = 'My Trip' 
+		}
 		this.props.createTrip({
-			name: this.state.trip_name,
+			name: trip_name,
 			user_id: cookie.load('auth'),
 			start_time: startDate,
 			end_time: endDate,
