@@ -371,6 +371,7 @@ class Workspace extends Component {
 							dayForward={this.dayForward}
 							dayBackward={this.dayBackward}
 							numDays={tripDuration}
+							readOnly={false}
 						/>
 						<Map
 							isInfoOpen={false}
