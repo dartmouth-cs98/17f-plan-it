@@ -70,7 +70,7 @@ class Explore extends Component {
 			counter += 1
 			if (counter > max_trips) { return }
 			return (
-				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+				<Link to={`/preview/:${trip.id}`} key={trip.id}>
 					<Card className='trip_card'>
 						<CardMedia className='card_img'>
 				      		<img src={image} alt='' />
