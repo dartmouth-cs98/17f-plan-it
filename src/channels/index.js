@@ -36,22 +36,16 @@ export function send(chan, message) {
   chan.push("new:msg", {body: "sending message"})
 }
 
-export default class Channel React.Component {
-  constructor(props) {
-    super(props)
+export default class Channel {
+  constructor(room_name, updateFunction) {
+    this.chan = this.connect(room_name, updateFunction)
 
-    this.state = {
-      chan: null
-    }
     this.connect = this.connect.bind(this)
     this.send = this.send.bind(this)
   }
 
-  componentDidMount() {
-    this.connect("lobby")
-  }
 
-  connect(room_name) {
+  connect(room_name, updateFunction) {
     socket.connect({})
     const chan = socket.channel(`rooms:${room_name}`, { user })
 
@@ -66,31 +60,22 @@ export default class Channel React.Component {
     chan.onClose(event => console.log('Channel closed.'))
 
     //recieve new messages
-    chan.on("new:msg", payload => console.log("new message", payload.body))
+    //chan.on("new:msg", payload => console.log("new message", payload.body))
+    chan.on("new:msg", updateFunction)
 
     //user entering
     chan.on("new:user", payload => console.log("new user entere", payload.body))
 
-    this.setState({chan: chan})
+    return chan
   }
 
   send(message) {
-    if (this.state.chan == null) {
+    if (this.chan == null) {
       console.log("channel is negative")
     } else {
-      this.state.chan.push("new:msg", {body: message})
+      this.chan.push("new:msg", {body: message})
 
     }
-  }
-
-  render() {
-    return (
-    <div>
-      <button onClick={this.send("ms")}>
-        Send message
-      </button>
-    </div>
-    )
   }
 
 

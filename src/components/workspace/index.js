@@ -47,6 +47,8 @@ class Workspace extends Component {
 		this.formatCards = this.formatCards.bind(this)
 		this.formatSuggestions = this.formatSuggestions.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
+    this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
+    this.updateCardState = this.updateCardState.bind(this)
 	}
 
 	componentDidMount() {
@@ -57,10 +59,23 @@ class Workspace extends Component {
 
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
+
+    const channel = new Channel("lobby", this.updateCardState)
+    this.setState({channel: channel})
 	}
 
   componentWillReceiveProps(nextProps) {
     this.setState({ cards: nextProps.cards})
+  }
+
+  updateCardState(payload) {
+    console.log("payload", payload)
+    this.setState({cards: payload.body})
+  }
+
+  sendLiveUpdate() {
+    const cards = this.state.cards;
+    this.state.channel.send(cards)
   }
 
 	dayForward() {
@@ -275,9 +290,10 @@ class Workspace extends Component {
 				itinerary.splice(0, 0, city)
 
         this.setState({cards: itinerary})
+        this.sendLiveUpdate()
 
 				// update cards with new itinerary
-				this.props.updateCards(itinerary, tripId, this.state.day)
+				//this.props.updateCards(itinerary, tripId, this.state.day)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -331,8 +347,8 @@ class Workspace extends Component {
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
       this.setState({cards: itinerary})
-
-			this.props.updateCards(itinerary, tripId, this.state.day)
+      this.sendLiveUpdate()
+			//this.props.updateCards(itinerary, tripId, this.state.day)
 		}
 	}
 
@@ -357,7 +373,11 @@ class Workspace extends Component {
 				/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<DownloadTrip tripId={tripId}/>
-          <Channel />
+          <div>
+            <button onClick={this.sendLiveUpdate}>
+              Send live message
+            </button>
+          </div>
 					<div className='planner'>
 						<Suggestions
 							addCard={this.addCard}
