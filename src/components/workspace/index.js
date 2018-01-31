@@ -10,7 +10,7 @@ import NavBar from '../nav_bar/index.js'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
-import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -35,7 +35,6 @@ class Workspace extends Component {
 			category: 0,
 			pinLat: null,
 			pinLong: null,
-			cards: [],
       channel: null
 		}
 
@@ -48,7 +47,9 @@ class Workspace extends Component {
 		this.formatSuggestions = this.formatSuggestions.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
     this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
-    this.updateCardState = this.updateCardState.bind(this)
+    this.sendUpdates = this.sendUpdates.bind(this)
+
+    this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
 	}
 
 	componentDidMount() {
@@ -60,23 +61,36 @@ class Workspace extends Component {
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 
-    const channel = new Channel("lobby", this.updateCardState)
+    const channel = new Channel("lobby", this.componentWillReceiveChannelUpdates)
+
     this.setState({channel: channel})
 	}
 
   componentWillReceiveProps(nextProps) {
+    console.log("receiving props")
     this.setState({ cards: nextProps.cards})
   }
 
-  updateCardState(payload) {
+  //cleverly named function. Not a react function
+  componentWillReceiveChannelUpdates(payload) {
     console.log("payload", payload)
-    this.setState({cards: payload.cards})
+    this.props.updateCardsLive(payload.cards)
   }
 
-  sendLiveUpdate() {
-    const send_package = {cards: this.state.cards, tripId: this.state.tripId}
+  sendLiveUpdate(cards) {
+    const send_package = {cards, tripId: this.state.tripId}
     console.log("sending update", send_package)
     this.state.channel.send(send_package)
+  }
+
+	// update cards with new itinerary
+  sendUpdates(itinerary, tripId) {
+    console.log(itinerary)
+    console.log(this.props.cards)
+    this.setState({cards: itinerary})
+    this.sendLiveUpdate(itinerary)
+    this.props.updateCardsLive(itinerary)
+    //this.props.updateCards(itinerary, tripId, this.state.day)
   }
 
 	dayForward() {
@@ -290,11 +304,7 @@ class Workspace extends Component {
 				// add the city card back
 				itinerary.splice(0, 0, city)
 
-        this.setState({cards: itinerary})
-        this.sendLiveUpdate()
-
-				// update cards with new itinerary
-				//this.props.updateCards(itinerary, tripId, this.state.day)
+        this.sendUpdates(itinerary, tripId)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -347,17 +357,13 @@ class Workspace extends Component {
 
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-      this.setState({cards: itinerary})
-      this.sendLiveUpdate()
-			//this.props.updateCards(itinerary, tripId, this.state.day)
+      this.sendUpdates(itinerary, tripId)
 		}
 	}
 
 	render() {
 		const cards = this.formatCards(this.state.cards)
-		const [city] = _.filter(cards, (card) => {
-			return card.type === 'city'
-		})
+		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 		const suggestions = this.formatSuggestions()
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
@@ -436,6 +442,9 @@ const mapDispatchToProps = (dispatch) => {
 		updateCard: (cards, trip, id, day) => {
 			dispatch(updateCard(cards, trip, id, day))
 		},
+    updateCardsLive: (cards) => {
+      dispatch(updateCardsLive(cards))
+    },
 		updateCards: (cards, trip, day) => {
 			dispatch(updateCards(cards, trip, day))
 		},

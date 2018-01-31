@@ -41,6 +41,10 @@ const CardsReducer = (state = initialState, action) => {
 			return Object.assign({}, state, {
 				error: action.payload,
 			});
+		case ActionTypes.UPDATE_CARDS_LIVE:
+			return Object.assign({}, state, {
+				all: action.payload,
+			});
 		case ActionTypes.CREATE_CARD:
 			return Object.assign({}, state, {
 				card: action.payload,
@@ -48,7 +52,7 @@ const CardsReducer = (state = initialState, action) => {
 		case ActionTypes.CREATE_CARD_ERROR:
 			return Object.assign({}, state, {
 				error: action.payload,
-			}); 
+			});
 		case ActionTypes.DELETE_CARD:
 			return Object.assign({}, state, {
 				all: _.filter(state.all, (card) => {
