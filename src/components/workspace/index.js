@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
+import Channel from '../../channels'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
@@ -9,7 +10,7 @@ import NavBar from '../nav_bar/index.js'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
-import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -34,7 +35,7 @@ class Workspace extends Component {
 			category: 0,
 			pinLat: null,
 			pinLong: null,
-			cards: []
+      channel: null
 		}
 
 		this.dayForward = this.dayForward.bind(this)
@@ -45,6 +46,10 @@ class Workspace extends Component {
 		this.formatCards = this.formatCards.bind(this)
 		this.formatSuggestions = this.formatSuggestions.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
+    this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
+    this.sendUpdates = this.sendUpdates.bind(this)
+
+    this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
 	}
 
 	componentDidMount() {
@@ -52,11 +57,35 @@ class Workspace extends Component {
 		const tripId = _.last(path)
 
 		this.setState({ tripId })
-
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
-		console.log(this.props)
+
+    const channel = new Channel(tripId, "jerry", this.componentWillReceiveChannelUpdates)
+
+    this.setState({channel: channel})
 	}
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ cards: nextProps.cards})
+  }
+
+  //cleverly named function. Not a react function
+  componentWillReceiveChannelUpdates(payload) {
+    this.props.updateCardsLive(payload.cards)
+  }
+
+  sendLiveUpdate(cards) {
+    const send_package = {cards, tripId: this.state.tripId}
+    this.state.channel.send(send_package)
+  }
+
+	// update cards with new itinerary
+  sendUpdates(itinerary, tripId) {
+    this.setState({cards: itinerary})
+    this.sendLiveUpdate(itinerary)
+    this.props.updateCardsLive(itinerary)
+    //this.props.updateCards(itinerary, tripId, this.state.day)
+  }
 
 	dayForward() {
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
@@ -111,7 +140,7 @@ class Workspace extends Component {
 	}
 
 	addCard(card) {
-		const cards = this.formatCards()
+		const cards = this.formatCards(this.props.cards)
 
 		if (!_.isNull(this.state.selected)) {
 			const index = _.findIndex(cards, (card) => {
@@ -143,7 +172,7 @@ class Workspace extends Component {
 		}
 	}
 
-	formatCards() {
+	formatCards(cards) {
 		let cardList = []
 		let startCard
 		let prevEnd
@@ -153,7 +182,7 @@ class Workspace extends Component {
 		let cityStart
 		let cityEnd
 
-		_.each(this.props.cards, (card) => {
+		_.each(cards, (card) => {
 			if (card.type === 'city') {
 				cityLat = card.lat
 				cityLong = card.long
@@ -187,7 +216,7 @@ class Workspace extends Component {
 			this.props.fetchSuggestions(cityLat, cityLong, CATEGORIES[this.state.category])
 			if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
 				this.setState({
-					pinLat: cityLat, 
+					pinLat: cityLat,
 					pinLong: cityLong
 				})
 			}
@@ -227,7 +256,6 @@ class Workspace extends Component {
 				const [city] = _.remove(itinerary, (card) => {
 					return card.type === 'city'
 				})
-				console.log(city)
 				const suggestions = Array.from(this.formatSuggestions())
 				const [item] = suggestions.splice(result.source.index, 1)
 
@@ -236,12 +264,11 @@ class Workspace extends Component {
 				if (itinerary.length === 0) {
 					start = new Date(city.start_time)
 				} else {
-					start = result.destination.index === itinerary.length ? 
+					start = result.destination.index === itinerary.length ?
 						new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
 				}
 
 				// replace start time
-
 				const path = window.location.pathname.split(':')
 				const tripId = _.last(path)
 
@@ -268,11 +295,10 @@ class Workspace extends Component {
 					})
 				}
 
-				// add the city card back 
+				// add the city card back
 				itinerary.splice(0, 0, city)
 
-				// update cards with new itinerary
-				this.props.updateCards(itinerary, tripId, this.state.day)
+        this.sendUpdates(itinerary, tripId)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -285,7 +311,7 @@ class Workspace extends Component {
 			})
 
 			// get the start time of the item you're trying to replace
-			const start = result.destination.index > result.source.index ? 
+			const start = result.destination.index > result.source.index ?
 				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
 
 			// get the info of the object your dragging
@@ -293,9 +319,9 @@ class Workspace extends Component {
 			const duration = (new Date(removed.end_time)).getTime() - (new Date(removed.start_time)).getTime()
 
 			// update the start and end times of the item being dragged
-			const item = _.assignIn({}, removed, { 
-				'start_time': start, 
-				'end_time': new Date(start.getTime() + duration)	
+			const item = _.assignIn({}, removed, {
+				'start_time': start,
+				'end_time': new Date(start.getTime() + duration)
 			})
 
 			// add the item back into the itinerary in the right place
@@ -320,20 +346,20 @@ class Workspace extends Component {
 				})
 			}
 
-			// add the city card back in 
+			// add the city card back in
 			itinerary.splice(0, 0, city)
-		
+
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-			this.props.updateCards(itinerary, tripId, this.state.day)
+      this.sendUpdates(itinerary, tripId)
 		}
 	}
 
 	render() {
-		const cards = this.formatCards()
-		const [city] = _.filter(cards, (card) => {
-			return card.type === 'city'
-		})
+
+		const cards = this.formatCards(this.state.cards)
+		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
+
 
 		const suggestions = this.formatSuggestions()
 		const path = window.location.pathname.split(':')
@@ -354,6 +380,11 @@ class Workspace extends Component {
 				/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<DownloadTrip tripId={tripId}/>
+          <div>
+            <button onClick={this.sendLiveUpdate}>
+              Send live message
+            </button>
+          </div>
 					<div className='planner'>
 						<Suggestions
 							addCard={this.addCard}
@@ -392,6 +423,8 @@ class Workspace extends Component {
 
 const mapStateToProps = (state) => {
 	return {
+
+    user: state.users,
 		trips: state.trips.trip,
 		cards: state.cards.all,
 		suggestions: state.cards.suggestions
@@ -412,6 +445,9 @@ const mapDispatchToProps = (dispatch) => {
 		updateCard: (cards, trip, id, day) => {
 			dispatch(updateCard(cards, trip, id, day))
 		},
+    updateCardsLive: (cards) => {
+      dispatch(updateCardsLive(cards))
+    },
 		updateCards: (cards, trip, day) => {
 			dispatch(updateCards(cards, trip, day))
 		},

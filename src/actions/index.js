@@ -32,6 +32,8 @@ export const ActionTypes = {
   UPDATE_CARDS: 'UPDATE_CARDS',
   UPDATE_CARDS_ERROR: 'UPDATE_CARDS_ERROR',
 
+  UPDATE_CARDS_LIVE: 'UPDATE_CARDS_LIVE',
+
   AUTH_USER: 'AUTH_USER',
   DEAUTH_USER: 'DEAUTH_USER',
   AUTH_ERROR: 'AUTH_ERROR',
@@ -160,12 +162,20 @@ export function updateCard(id, attributes, trip, day) {
 export function updateCards(cards, trip, day) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/cards?trip_id=${trip}`, Array.from(cards)).then((response) => {
+      console.log("this is reposen data", response.data)
       dispatch({ type: ActionTypes.UPDATE_CARDS, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.UPDATE_CARDS_ERROR, payload: error })
     })
   }
 }
+
+export function updateCardsLive(cards) {
+  return (dispatch) => {
+    dispatch({ type: ActionTypes.UPDATE_CARDS_LIVE, payload: cards})
+  }
+}
+
 
 export function deleteCard(id, trip, day) {
   return (dispatch) => {
