@@ -28,6 +28,7 @@ export const ActionTypes = {
   UPDATE_CARD_ERROR: 'UPDATE_CARD_ERROR',
   UPDATE_CARDS: 'UPDATE_CARDS',
   UPDATE_CARDS_ERROR: 'UPDATE_CARDS_ERROR',
+
   UPDATE_CARDS_LIVE: 'UPDATE_CARDS_LIVE',
 
   AUTH_USER: 'AUTH_USER',
@@ -141,6 +142,7 @@ export function updateCardsLive(cards) {
     dispatch({ type: ActionTypes.UPDATE_CARDS_LIVE, payload: cards})
   }
 }
+
 
 export function deleteCard(id, trip, day) {
   return (dispatch) => {

@@ -2,47 +2,47 @@ import React from 'react'
 import { Socket } from 'phoenix'
 
 const user = 'AnonymousCoward'
-const body = 'I got something to say.'
 const timeout = 10000
-const url = 'ws://localhost:4000/socket'
-const socket = new Socket(url, {})
+const URL = 'ws://localhost:4000/socket'
+const socket = new Socket(URL, {})
 
 export default class Channel {
-  constructor(room_name, updateFunction) {
-    this.chan = this.connect(room_name, updateFunction)
+  constructor(roomName, userName, updateFunction) {
+    this.chan = this.connect(roomName, userName, updateFunction)
   }
 
 
-  connect(room_name, updateFunction) {
-    console.log("update", updateFunction)
+  connect(roomName, userName, updateCardsFunction) {
     socket.connect({})
-    const chan = socket.channel(`rooms:${room_name}`, { user })
+    const chan = socket.channel(`rooms:${roomName}`, { userName })
 
     // join the channel and listen for admittance
     chan.join()
-      .receive('ignore', () => console.log('Access denied.'))
-      .receive('ok', () => console.log('Access granted.'))
-      .receive('timeout', () => console.log('Must be MongoDB.'))
+      .receive('ignore', () => console.log('Channel access denied.'))
+      .receive('ok', () => console.log('Channel access granted.'))
+      .receive('timeout', () => console.log('Channel timedout.'))
 
     // channel-level event handlers
-    chan.onError(event => console.log(event, 'Channel blew up.'))
+    chan.onError(event => console.log(event, 'Channel errored out.'))
     chan.onClose(event => console.log('Channel closed.'))
 
     //recieve new messages
-    //chan.on("new:msg", payload => console.log("new message", payload.body))
     chan.on("new:msg:cards", payload => {
-      console.log("new message arrived", payload)
-      updateFunction(payload)
+      //console.log("new message arrived", payload)
+      updateCardsFunction(payload)
     })
+
     //user entering
-    chan.on("new:user", payload => console.log("new user entere", payload.body))
+    //chan.on("new:user:enter", payload => {
+    //  console.log("new user enter", payload.body)
+    //})
 
     return chan
   }
 
   send(message) {
     if (this.chan == null) {
-      console.log("channel is negative")
+      console.log("Channel is not initalized")
     } else {
       this.chan.push("new:msg:cards", {body: message})
     }

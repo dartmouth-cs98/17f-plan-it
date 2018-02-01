@@ -57,36 +57,30 @@ class Workspace extends Component {
 		const tripId = _.last(path)
 
 		this.setState({ tripId })
-
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 
-    const channel = new Channel("lobby", this.componentWillReceiveChannelUpdates)
+    const channel = new Channel(tripId, "jerry", this.componentWillReceiveChannelUpdates)
 
     this.setState({channel: channel})
 	}
 
   componentWillReceiveProps(nextProps) {
-    console.log("receiving props")
     this.setState({ cards: nextProps.cards})
   }
 
   //cleverly named function. Not a react function
   componentWillReceiveChannelUpdates(payload) {
-    console.log("payload", payload)
     this.props.updateCardsLive(payload.cards)
   }
 
   sendLiveUpdate(cards) {
     const send_package = {cards, tripId: this.state.tripId}
-    console.log("sending update", send_package)
     this.state.channel.send(send_package)
   }
 
 	// update cards with new itinerary
   sendUpdates(itinerary, tripId) {
-    console.log(itinerary)
-    console.log(this.props.cards)
     this.setState({cards: itinerary})
     this.sendLiveUpdate(itinerary)
     this.props.updateCardsLive(itinerary)
@@ -422,6 +416,8 @@ class Workspace extends Component {
 
 const mapStateToProps = (state) => {
 	return {
+
+    user: state.users,
 		trips: state.trips.trip,
 		cards: state.cards.all,
 		suggestions: state.cards.suggestions
