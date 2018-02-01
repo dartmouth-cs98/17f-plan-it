@@ -4,32 +4,11 @@ import { withRouter, Link } from 'react-router-dom';
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
+import PrevArrow from '../arrows/prev_arrow.js'
+import NextArrow from '../arrows/next_arrow.js'
 import { fetchTrips, fetchFavoritedTrips } from '../../actions/index.js';
 import cookie from 'react-cookies'
 import './index.scss'
-
-function NextArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light next_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-right vertical_center'></i>
-   </div>
-  );
-}
-
-function PrevArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light prev_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-left vertical_center'></i>
-   </div>
-  );
-}
-
 
 class Dashboard extends Component {
 

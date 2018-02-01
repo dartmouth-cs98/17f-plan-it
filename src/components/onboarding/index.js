@@ -10,29 +10,9 @@ import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
 import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete'
 import moment from 'moment'
+import PrevArrow from '../arrows/prev_arrow.js'
+import NextArrow from '../arrows/next_arrow.js'
 import './index.scss'
-
-function NextArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light next_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-right vertical_center'></i>
-   </div>
-  );
-}
-
-function PrevArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light prev_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-left vertical_center'></i>
-   </div>
-  );
-}
 
 class Onboarding extends Component {
 	constructor(props) {
@@ -283,6 +263,7 @@ class Onboarding extends Component {
 	}
 
 	onDeleteCity(index) {
+		console.log('this is callled')
 		if (index === 0) {
 			return
 		}
@@ -301,7 +282,6 @@ class Onboarding extends Component {
 	renderCities() {
 		return (
 			_.map(this.state.cities, (city, index) => {
-				let delete_classes = index === 0? 'fa fa-trash-o fa-2x delete_disabled' : 'fa fa-trash-o fa-2x delete'
 				return (
 					<div className='city_input' key={index}>
 						<OnboardingInput
@@ -312,11 +292,12 @@ class Onboarding extends Component {
 							onOtherNameChange={this.onOtherNameChange}
 							onStartDateChange={this.onStartDateChange}
 							onEndDateChange={this.onEndDateChange}
+							onDeleteCity={this.onDeleteCity}
 							onHandleSelect={this.onHandleSelect}
 							start_date={city.start_date}
 							end_date={city.end_date}
+							index={index}
 						/>
-						<i className={delete_classes} aria-hidden='true' onClick={() => this.onDeleteCity(index)}></i>
 					</div>
 				)
 			})

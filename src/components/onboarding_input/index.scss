@@ -36,3 +36,26 @@ button:focus{
 .SingleDatePicker {
 	margin-right: 0px;
 }
+
+.delete {
+	color: white;
+	margin: 10px;
+}
+
+.delete:hover {
+	cursor: pointer;
+	text-shadow: 0 0 10px grey;
+}
+
+.delete_disabled {
+	color: #ffffff4d;
+	margin: 10px;
+}
+
+.delete_div { 
+	width: 10px;
+}
+
+.delete_div:hover {
+	cursor: pointer;
+}

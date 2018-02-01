@@ -1,0 +1,36 @@
+.next_arrow {
+	position: absolute;
+  	top: 50%;
+  	left: 100%;
+  	transform: translate(-50%, -50%);
+  	background-color: #67747b;
+}
+
+.next_arrow:hover {
+	background-color: #67747b;
+	box-shadow: 0 0 15px grey;
+}
+
+.vertical_center_next {
+	display:block;
+	margin-left: 11px;
+	margin-top: -2px;
+}
+
+.prev_arrow {
+	position: fixed;
+  	top: 50%;
+  	transform: translate(-50%, -50%);
+  	background-color: #67747b;
+}
+
+.prev_arrow:hover {
+	background-color: #67747b;
+	box-shadow: 0 0 15px grey;
+}
+
+.vertical_center_prev {
+	display:block;
+	margin-left: 7px;
+	margin-top: -2px;
+}

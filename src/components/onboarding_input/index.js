@@ -79,6 +79,7 @@ class OnboardingInput extends Component {
 			)
 		}
 		else {
+			let delete_classes = this.props.index === 0? 'far fa-trash-alt fa-2x delete_disabled' : 'far fa-trash-alt fa-2x delete'
 			return (
 				<div className='multi_input'>
 					{this.renderAutocomplete()}
@@ -98,6 +99,7 @@ class OnboardingInput extends Component {
 						withPortal={true}
 						hideKeyboardShortcutsPanel={true}
 					/>
+					<div className='delete_div' onClick={() => this.props.onDeleteCity(this.props.index)}><i className={delete_classes} ></i></div>
 				</div>
 			)
 		}

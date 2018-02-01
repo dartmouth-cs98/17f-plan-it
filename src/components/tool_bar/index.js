@@ -11,8 +11,7 @@ class Toolbar extends Component {
 
 		this.state = {
 			published: this.props.published,
-			favorited: this.props.favoritedTrips? this.isFavorited() : false,
-			name: this.props.tripName
+			favorited: this.props.favoritedTrips? this.isFavorited() : false
 		}
 
 		this.togglePublish = this.togglePublish.bind(this)	
@@ -45,7 +44,8 @@ class Toolbar extends Component {
 
 	toggleFavorite(event) {
 		if (cookie.load('auth')) { 
-			let favorited = this.state.favorited? false : true
+			let favorited = !this.state.favorited
+			// changed from unfavorited to favorited
 			if (favorited) {
 				this.props.favoriteTrip({trip_id: this.props.tripId, user_id: cookie.load('auth')})
 			} else {
@@ -64,11 +64,12 @@ class Toolbar extends Component {
 	}
 
 	render() {
+		let favoriteIconClass = this.state.favorited? 'fas fa-heart' : 'far fa-heart'
 		let favoriteToggle = cookie.load('auth')? 
 		(<div 
 			onClick={this.toggleFavorite}
 			className='toolbar_click'>
-			{ this.state.favorited? 'Favorited' : 'Favorite' }
+			<i className={ favoriteIconClass }></i>
 		</div>) : <div/>
 
 		if (this.props.readOnly) {
@@ -76,7 +77,7 @@ class Toolbar extends Component {
 				<div id='tool-bar'>
 					<div className='toolbar_items'>
 						<div className='toolbar-trip-title'>
-							{this.state.name}
+							{this.props.tripName}
 						</div>
 						<div className='toggle_options'>
 						{ favoriteToggle }
@@ -89,7 +90,7 @@ class Toolbar extends Component {
 				<div id='tool-bar'>
 					<div className='toolbar_items'>
 						<div className='toolbar-trip-title'>
-							{this.state.name}
+							{this.props.tripName}
 						</div>
 						<div className='toggle_options'>
 							<div 
