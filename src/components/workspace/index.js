@@ -350,6 +350,7 @@ class Workspace extends Component {
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
+					readOnly={false}
 				/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<DownloadTrip tripId={tripId}/>

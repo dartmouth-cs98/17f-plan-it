@@ -137,6 +137,7 @@ class ReadOnly extends Component {
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
+					readOnly={true}
 				/>
 					<DownloadTrip tripId={tripId}/>
 					<DragDropContext>

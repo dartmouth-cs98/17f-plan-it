@@ -17,7 +17,7 @@ class Toolbar extends Component {
 		}
 
 		this.togglePublish = this.togglePublish.bind(this)	
-		this.toggleFavorite = this.toggleFavorite.bind(this)	
+		this.toggleFavorite = this.toggleFavorite.bind(this)
 	}
 
 	componentDidMount() {
@@ -46,13 +46,15 @@ class Toolbar extends Component {
 	}
 
 	toggleFavorite(event) {
-		let favorited = this.state.favorited? false : true
-		if (favorited) {
-			this.props.favoriteTrip({trip_id: this.props.tripId, user_id: cookie.load('auth')})
-		} else {
-			this.props.unfavoriteTrip(this.props.tripId, cookie.load('auth'))
+		if (cookie.load('auth')) { 
+			let favorited = this.state.favorited? false : true
+			if (favorited) {
+				this.props.favoriteTrip({trip_id: this.props.tripId, user_id: cookie.load('auth')})
+			} else {
+				this.props.unfavoriteTrip(this.props.tripId, cookie.load('auth'))
+			}
+			this.setState({ favorited }) 
 		}
-		this.setState({ favorited })
 	}
 
 	getPublishedText() {
@@ -63,36 +65,45 @@ class Toolbar extends Component {
 		}
 	}
 
-	getFavoritedText() {
-		if (cookie.load('auth')) {
-			return this.state.favorited? 'Favorited' : 'Favorite'
-		} else {
-			return ''
-		}
-	}
-
 	render() {
-		return (
-			<div id='tool-bar'>
-				<div className='toolbar_items'>
-					<div className='toolbar-trip-title'>
-						{this.state.name}
-					</div>
-					<div className='toggle_options'>
-						<div 
-							onClick={this.togglePublish}
-							className='toolbar_click'>
-							{this.getPublishedText()}
+		let favoriteToggle = cookie.load('auth')? 
+		(<div 
+			onClick={this.toggleFavorite}
+			className='toolbar_click'>
+			{ this.state.favorited? 'Favorited' : 'Favorite' }
+		</div>) : <div/>
+
+		if (this.props.readOnly) {
+			return (
+				<div id='tool-bar'>
+					<div className='toolbar_items'>
+						<div className='toolbar-trip-title'>
+							{this.state.name}
 						</div>
-						<div 
-							onClick={this.toggleFavorite}
-							className='toolbar_click'>
-							{this.getFavoritedText()}
+						<div className='toggle_options'>
+						{ favoriteToggle }
 						</div>
 					</div>
 				</div>
-			</div>
-		)
+			)
+		} else {
+			return (
+				<div id='tool-bar'>
+					<div className='toolbar_items'>
+						<div className='toolbar-trip-title'>
+							{this.state.name}
+						</div>
+						<div className='toggle_options'>
+							<div 
+								onClick={this.togglePublish}
+								className='toolbar_click'>
+								{this.getPublishedText()}
+							</div>
+						</div>
+					</div>
+				</div>
+			)
+		}
 	}
 }
 
