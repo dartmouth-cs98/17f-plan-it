@@ -86,9 +86,22 @@ class Onboarding extends Component {
 						end_time: new Date(endDate)
 					})
 
-					console.log(new Date(startDate), new Date(endDate))
-
 					startDate = endDate
+				}
+
+				if (_.isUndefined(city.end_date)) {
+					const cityCard = _.assign(city, {
+						trip_id: nextProps.trip_id,
+						type: 'city'
+					})
+
+
+					cityCards.push({
+						...cityCard,
+						day_number: dayNumber,
+						start_time: new Date(startDate),
+						end_time: new Date(startDate)
+					})
 				}
 			})
 
@@ -99,8 +112,12 @@ class Onboarding extends Component {
 	}
 
 	onCreateTrip(startDate, endDate) {
+		let trip_name = this.state.trip_name
+		if (_.isUndefined(trip_name) || trip_name == '') { 
+			trip_name = 'My Trip' 
+		}
 		this.props.createTrip({
-			name: this.state.trip_name,
+			name: trip_name,
 			user_id: cookie.load('auth'),
 			start_time: startDate,
 			end_time: endDate,
@@ -150,7 +167,6 @@ class Onboarding extends Component {
 
 	onHandleCitySelect(results, name) {
 		getLatLng(results).then(({ lat, lng }) => {
-			console.log(lat, lng)
 
 			let address = results.formatted_address
 			let place_id = results.place_id
@@ -171,8 +187,6 @@ class Onboarding extends Component {
 
 	onHandleSelect(index, type, results, name) {
 		getLatLng(results).then(({ lat, lng }) => {
-			console.log(lat, lng)
-
 			if (type === 'city') {
 				let address = results.formatted_address
 				let day_number = index + 1
@@ -201,6 +215,11 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { start_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
+		} 
+
+		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
+		{	
+			this.setState({ modal_open: true, err_msg: 'Start date after end date'})
 		}
 	}
 
@@ -226,6 +245,11 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { end_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
+		}
+
+		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
+		{	
+			this.setState({ modal_open: true, err_msg: 'End date before start date'})
 		}
 	}
 
@@ -268,7 +292,6 @@ class Onboarding extends Component {
 
 		if (this.state.cities.length - 1 !== index) {
 			let deleted_start_date = newCities[index].start_date
-			console.log(deleted_start_date)
 			newCities[index + 1].start_date = deleted_start_date
 		}
 
@@ -320,6 +343,10 @@ class Onboarding extends Component {
 
 			if (city.name && city.start_date) {
 				ok = true
+			}
+
+			if (!city.lat) {
+				err_msg = `Please select ${city.name} from drop down suggestions`
 			}
 
 			if (_.isUndefined(startDate) || new Date(city.start_date) < new Date(startDate)) {

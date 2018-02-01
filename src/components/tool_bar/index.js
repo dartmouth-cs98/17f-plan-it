@@ -6,9 +6,6 @@ import cookie from 'react-cookies'
 import _ from 'lodash'
 import './index.scss'
 
-
-const tripId = _.last(window.location.pathname.split(':'))
-
 class Toolbar extends Component {
 	constructor(props) {
 		super(props)
@@ -20,7 +17,7 @@ class Toolbar extends Component {
 		}
 
 		this.togglePublish = this.togglePublish.bind(this)	
-		this.toggleFavorite = this.toggleFavorite.bind(this)	
+		this.toggleFavorite = this.toggleFavorite.bind(this)
 	}
 
 	componentDidMount() {
@@ -34,7 +31,7 @@ class Toolbar extends Component {
 	isFavorited() {
 		let favorited = false
 		this.props.favoritedTrips.map((trip) => {
-			if (trip.trip_id === parseInt(tripId)) {
+			if (trip.trip_id === parseInt(this.props.tripId)) {
 				favorited = true
 			}
 		})
@@ -43,18 +40,21 @@ class Toolbar extends Component {
 
 	togglePublish(event) {
 		let published = this.state.published? false: true
-		this.setState({published})
-		this.props.updateTrip(tripId, {published})
+		this.setState({ published })
+
+		this.props.updateTrip(this.props.tripId, { publish: published })
 	}
 
 	toggleFavorite(event) {
-		let favorited = this.state.favorited? false : true
-		if (favorited) {
-			this.props.favoriteTrip({trip_id: parseInt(tripId), user_id: cookie.load('auth')})
-		} else {
-			this.props.unfavoriteTrip(tripId, cookie.load('auth'))
+		if (cookie.load('auth')) { 
+			let favorited = this.state.favorited? false : true
+			if (favorited) {
+				this.props.favoriteTrip({trip_id: this.props.tripId, user_id: cookie.load('auth')})
+			} else {
+				this.props.unfavoriteTrip(this.props.tripId, cookie.load('auth'))
+			}
+			this.setState({ favorited }) 
 		}
-		this.setState({ favorited })
 	}
 
 	getPublishedText() {
@@ -65,36 +65,45 @@ class Toolbar extends Component {
 		}
 	}
 
-	getFavoritedText() {
-		if (cookie.load('auth')) {
-			return this.state.favorited? 'Favorited' : 'Favorite'
-		} else {
-			return ''
-		}
-	}
-
 	render() {
-		return (
-			<div id='tool-bar'>
-				<div className='toolbar_items'>
-					<div className='toolbar-trip-title'>
-						{this.state.name}
-					</div>
-					<div className='toggle_options'>
-						<div 
-							onClick={this.togglePublish}
-							className='toolbar_click'>
-							{this.getPublishedText()}
+		let favoriteToggle = cookie.load('auth')? 
+		(<div 
+			onClick={this.toggleFavorite}
+			className='toolbar_click'>
+			{ this.state.favorited? 'Favorited' : 'Favorite' }
+		</div>) : <div/>
+
+		if (this.props.readOnly) {
+			return (
+				<div id='tool-bar'>
+					<div className='toolbar_items'>
+						<div className='toolbar-trip-title'>
+							{this.state.name}
 						</div>
-						<div 
-							onClick={this.toggleFavorite}
-							className='toolbar_click'>
-							{this.getFavoritedText()}
+						<div className='toggle_options'>
+						{ favoriteToggle }
 						</div>
 					</div>
 				</div>
-			</div>
-		)
+			)
+		} else {
+			return (
+				<div id='tool-bar'>
+					<div className='toolbar_items'>
+						<div className='toolbar-trip-title'>
+							{this.state.name}
+						</div>
+						<div className='toggle_options'>
+							<div 
+								onClick={this.togglePublish}
+								className='toolbar_click'>
+								{this.getPublishedText()}
+							</div>
+						</div>
+					</div>
+				</div>
+			)
+		}
 	}
 }
 

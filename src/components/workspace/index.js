@@ -356,21 +356,27 @@ class Workspace extends Component {
 	}
 
 	render() {
+
 		const cards = this.formatCards(this.state.cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
+
+
 		const suggestions = this.formatSuggestions()
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
+
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
+
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
 				<Toolbar
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
-					published={this.props.trips[0] ? this.props.trips[0].published : false}
+					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
+					readOnly={false}
 				/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<DownloadTrip tripId={tripId}/>
@@ -397,6 +403,7 @@ class Workspace extends Component {
 							dayForward={this.dayForward}
 							dayBackward={this.dayBackward}
 							numDays={tripDuration}
+							readOnly={false}
 						/>
 						<Map
 							isInfoOpen={false}

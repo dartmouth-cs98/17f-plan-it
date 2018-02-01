@@ -61,7 +61,7 @@ class Dashboard extends Component {
 	renderFavoritedTrips() {
 		return this.props.favoritedTrips.map((trip) => {
 			return (
-				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+				<Link to={`/preview/:${trip.id}`} key={trip.id}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>

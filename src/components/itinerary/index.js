@@ -48,7 +48,8 @@ export default class Itinerary extends Component {
 			startTimeDialog: false,
 			editCard: null, 
 			shift: false, 
-			newTime: null
+			newTime: null,
+			readOnly: this.props.readOnly
 		}
 
 		this.openStartTimeDialog = this.openStartTimeDialog.bind(this)
@@ -191,6 +192,21 @@ export default class Itinerary extends Component {
 				// 	destination={card.destination}
 				// 	duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 				// />
+			} else if (this.state.readOnly) {
+				return (
+					<div>
+						<Item
+							key={card.id}
+							name={card.name}
+							description={card.description}
+							timeScale={TIME_SCALE}
+							startTime={card.start_time}
+							endTime={card.end_time}
+							duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+							buttons={false}
+						/>
+					</div>
+				)
 			} else {
 				return (
 					<Draggable key={card.id} draggableId={card.id} index={index++}>
@@ -272,29 +288,45 @@ export default class Itinerary extends Component {
 	}
 
 	render() {
-		return (
-			<div id='itinerary-box'>
-				{this.renderHeader()}
-				{this.renderStartTimeDialog()}
-				<div className='body-container'>
-					<div className='itinerary-body'>
-						<div className='itinerary-list'>
-							<Droppable droppableId='itinerary-droppable'>
-								{(provided, snapshot) => (
-									<div
-										ref={provided.innerRef}
-										style={getListStyle(snapshot.isDraggingOver)}
-									>
-										{this.renderList()}
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
+		if (this.state.readOnly) {
+			return (
+				<div id='itinerary-box'>
+					{this.renderHeader()}
+					{this.renderStartTimeDialog()}
+					<div className='body-container'>
+						<div className='itinerary-body'>
+							<div className='itinerary-list'>
+								{this.renderList()}
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		)
+			)
+		} else {
+			return (
+				<div id='itinerary-box'>
+					{this.renderHeader()}
+					{this.renderStartTimeDialog()}
+					<div className='body-container'>
+						<div className='itinerary-body'>
+							<div className='itinerary-list'>
+								<Droppable droppableId='itinerary-droppable'>
+									{(provided, snapshot) => (
+										<div
+											ref={provided.innerRef}
+											style={getListStyle(snapshot.isDraggingOver)}
+										>
+											{this.renderList()}
+											{provided.placeholder}
+										</div>
+									)}
+								</Droppable>
+							</div>
+						</div>
+					</div>
+				</div>
+			)
+		}
 	}
 }
 
