@@ -70,7 +70,7 @@ class OnboardingInput extends Component {
 				/>
 			)
 		}
-		else if (this.state.placeholder == 'Enter trip image URL') {
+		else if (this.state.placeholder === 'Enter trip image URL') {
 			return (
 				<input type='text' className='name_input' placeholder={this.props.placeholder}
 					value={this.props.image_url}

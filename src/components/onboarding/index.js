@@ -5,7 +5,6 @@ import { withRouter } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
-import Immutable from 'immutable'
 import Modal from 'react-modal'
 import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
@@ -113,7 +112,7 @@ class Onboarding extends Component {
 
 	onCreateTrip(startDate, endDate) {
 		let trip_name = this.state.trip_name
-		if (_.isUndefined(trip_name) || trip_name == '') { 
+		if (_.isUndefined(trip_name) || trip_name === '') { 
 			trip_name = 'My Trip' 
 		}
 		this.props.createTrip({
