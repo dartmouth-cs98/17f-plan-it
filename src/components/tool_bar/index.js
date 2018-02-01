@@ -3,7 +3,6 @@ import { updateTrip, fetchFavoritedTrips, favoriteTrip, unfavoriteTrip } from '.
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'
 import cookie from 'react-cookies'
-import _ from 'lodash'
 import './index.scss'
 
 class Toolbar extends Component {
@@ -29,13 +28,12 @@ class Toolbar extends Component {
 	}
 
 	isFavorited() {
-		let favorited = false
 		this.props.favoritedTrips.map((trip) => {
 			if (trip.trip_id === parseInt(this.props.tripId)) {
-				favorited = true
+				return true
 			}
 		})
-		return favorited
+		return false
 	}
 
 	togglePublish(event) {
