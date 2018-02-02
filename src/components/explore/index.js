@@ -64,7 +64,6 @@ class Explore extends Component {
 	}
 
 	renderPublished(trips, max_trips) {
-		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		let counter = 0
 		return trips.map((trip) => {
 			counter += 1
@@ -73,7 +72,7 @@ class Explore extends Component {
 				<Link to={`/preview/:${trip.id}`} key={trip.id}>
 					<Card className='trip_card'>
 						<CardMedia className='card_img'>
-				      		<img src={image} alt='' />
+				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
 					    <div className='card_title'>{trip.name}</div>
 					</Card>
