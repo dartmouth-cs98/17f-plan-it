@@ -64,7 +64,7 @@ class Toolbar extends Component {
 	}
 
 	render() {
-		let favoriteIconClass = this.state.favorited? 'fas fa-heart' : 'far fa-heart'
+		let favoriteIconClass = this.state.favorited? 'fa fa-heart fa-2x heart' : 'fa fa-heart-o fa-2x heart'
 		let favoriteToggle = cookie.load('auth')? 
 		(<div 
 			onClick={this.toggleFavorite}
