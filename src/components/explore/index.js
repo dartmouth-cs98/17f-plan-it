@@ -4,30 +4,10 @@ import { withRouter, Link } from 'react-router-dom';
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
+import PrevArrow from '../arrows/prev_arrow.js'
+import NextArrow from '../arrows/next_arrow.js'
 import { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips } from '../../actions/index.js';
 import './index.scss'
-
-function NextArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light next_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-right vertical_center'></i>
-   </div>
-  );
-}
-
-function PrevArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light prev_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-left vertical_center'></i>
-   </div>
-  );
-}
 
 class Explore extends Component {
 
@@ -49,7 +29,7 @@ class Explore extends Component {
 	      prevArrow: <PrevArrow/>
     	};
 
-		if (trips.length != 0) {
+		if (trips.length !== 0) {
 			return (
 				<div>
 				<div className='title'>{title}</div>
@@ -67,7 +47,7 @@ class Explore extends Component {
 		let counter = 0
 		return trips.map((trip) => {
 			counter += 1
-			if (counter > max_trips) { return }
+			if (counter > max_trips) { return <div/>}
 			return (
 				<Link to={`/preview/:${trip.id}`} key={trip.id}>
 					<Card className='trip_card'>
@@ -82,7 +62,7 @@ class Explore extends Component {
 	}
 
 	render() {
-    	let hasPublishedTrips = this.props.publishedTrips.length != 0
+    	let hasPublishedTrips = this.props.publishedTrips.length !== 0
 
     	if (hasPublishedTrips) {
 			return (

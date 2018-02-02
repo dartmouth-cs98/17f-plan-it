@@ -11,7 +11,6 @@ import DownloadTrip from '../download_trip/index.js'
 import { fetchTrip, fetchCards } from '../../actions/index.js'
 require('./index.scss')
 
-const DEFAULT_DURATION = 3600000
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
 
@@ -77,9 +76,7 @@ class ReadOnly extends Component {
 
 	formatCards() {
 		let cardList = []
-		let startCard
 		let prevEnd
-		let startOfDay
 		let cityLat
 		let cityLong
 		let cityStart
