@@ -263,7 +263,6 @@ class Onboarding extends Component {
 	}
 
 	onDeleteCity(index) {
-		console.log('this is callled')
 		if (index === 0) {
 			return
 		}
