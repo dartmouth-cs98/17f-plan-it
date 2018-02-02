@@ -67,7 +67,7 @@ class Dashboard extends Component {
 						<CardMedia className='card_img'>
 				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
-					    <div className='card_title'>{trip.name}</div>
+					    <div className='card_title'>{trip.trip_name}</div>
 					</Card>
 				</Link>
 			)
