@@ -356,10 +356,8 @@ class Workspace extends Component {
 	}
 
 	render() {
-
 		const cards = this.formatCards(this.state.cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
-
 
 		const suggestions = this.formatSuggestions()
 		const path = window.location.pathname.split(':')
@@ -408,9 +406,9 @@ class Workspace extends Component {
 						<Map
 							isInfoOpen={false}
 							isMarkerShown={true}
-							MarkerPosition={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
+							MarkerPosition={{ lat: this.state.pinLat || city ? city.lat : 43.703320, lng: this.state.pinLong || city ? city.long : -72.288572 }}
 							MarkerClusterArray={this.props.suggestions}
-							center={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
+							center={{ lat: this.state.pinLat || city ? city.lat : 43.703320, lng: this.state.pinLong || city ? city.long : -72.288572 }}
 							infoMessage="Hello From Dartmouth"
 							addCard={this.addCard}
 						/>

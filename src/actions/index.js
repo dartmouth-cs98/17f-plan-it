@@ -180,7 +180,6 @@ export function updateCardsLive(cards) {
 export function deleteCard(id, trip, day) {
   return (dispatch) => {
     axios.delete(`${ROOT_URL}/cards/${id}`).then((response) => {
-      // dispatch(fetchCards(trip, day))
       dispatch({ type: ActionTypes.DELETE_CARD, payload: id })
     }).catch((error) => {
       console.log(error)
