@@ -377,12 +377,6 @@ class Workspace extends Component {
 					readOnly={false}
 				/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
-					<DownloadTrip tripId={tripId}/>
-          <div>
-            <button onClick={this.sendLiveUpdate}>
-              Send live message
-            </button>
-          </div>
 					<div className='planner'>
 						<Suggestions
 							addCard={this.addCard}
