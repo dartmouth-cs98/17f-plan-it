@@ -33,6 +33,7 @@ export const ActionTypes = {
   UPDATE_CARDS_ERROR: 'UPDATE_CARDS_ERROR',
 
   UPDATE_CARDS_LIVE: 'UPDATE_CARDS_LIVE',
+  UPDATE_USERS_LIVE: 'UPDATE_USERS_LIVE',
 
   AUTH_USER: 'AUTH_USER',
   DEAUTH_USER: 'DEAUTH_USER',
@@ -173,6 +174,12 @@ export function updateCards(cards, trip, day) {
 export function updateCardsLive(cards) {
   return (dispatch) => {
     dispatch({ type: ActionTypes.UPDATE_CARDS_LIVE, payload: cards})
+  }
+}
+
+export function updateUsersLive(users) {
+  return (dispatch) => {
+    dispatch({ type: ActionTypes.UPDATE_USERS_LIVE, payload: users})
   }
 }
 

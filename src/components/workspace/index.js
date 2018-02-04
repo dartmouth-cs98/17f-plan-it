@@ -2,15 +2,16 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
-import Channel from '../../channels'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import { mainChannel } from '../../channels'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
 import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
-import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import LiveUsers from '../live_users'
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -35,7 +36,6 @@ class Workspace extends Component {
 			category: 0,
 			pinLat: null,
 			pinLong: null,
-      channel: null
 		}
 
 		this.dayForward = this.dayForward.bind(this)
@@ -60,9 +60,8 @@ class Workspace extends Component {
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 
-    const channel = new Channel(tripId, "jerry", this.componentWillReceiveChannelUpdates)
-
-    this.setState({channel: channel})
+    mainChannel.connect(tripId, "sleechie@gmail.com")
+    mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
 	}
 
   componentWillReceiveProps(nextProps) {
@@ -76,7 +75,7 @@ class Workspace extends Component {
 
   sendLiveUpdate(cards) {
     const send_package = {cards, tripId: this.state.tripId}
-    this.state.channel.send(send_package)
+    mainChannel.send(send_package)
   }
 
 	// update cards with new itinerary
@@ -84,7 +83,6 @@ class Workspace extends Component {
     this.setState({cards: itinerary})
     this.sendLiveUpdate(itinerary)
     this.props.updateCardsLive(itinerary)
-    //this.props.updateCards(itinerary, tripId, this.state.day)
   }
 
 	dayForward() {
@@ -376,6 +374,7 @@ class Workspace extends Component {
 					tripId={tripId}
 					readOnly={false}
 				/>
+        <LiveUsers />
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<div className='planner'>
 						<Suggestions
