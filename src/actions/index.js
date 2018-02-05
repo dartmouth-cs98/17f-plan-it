@@ -17,9 +17,11 @@ export const ActionTypes = {
   UPDATE_TRIP: 'UPDATE_TRIP',
   FAVORITE_TRIP: 'FAVORITE_TRIP',
   UNFAVORITE_TRIP: 'UNFAVORITE_TRIP',
+  RESET_TRIP_ID: 'RESET_TRIP_ID',
   TRIP_ERROR: 'TRIP_ERROR',
 
   FETCH_CARDS: 'FETCH_CARDS',
+  FETCH_ALL_CARDS: 'FETCH_ALL_CARDS',
   FETCH_CARDS_ERROR: 'FETCH_CARDS_ERROR',
   CREATE_CARD: 'CREATE_CARD',
   CREATE_CARD_ERROR: 'CREATE_CARD_ERROR',
@@ -40,6 +42,10 @@ export const ActionTypes = {
 
   FETCH_SUGGESTIONS: 'FETCH_SUGGESTIONS',
   FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR'
+}
+
+export function resetTripId(id) {
+  return { type: ActionTypes.RESET_TRIP_ID, payload: null}
 }
 
 export function fetchTrips(id) {
@@ -129,6 +135,18 @@ export function fetchCards(id, day=null) {
     if (day) { query += `&day=${day}` }
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
+    }).catch((error) => {
+      console.log(error)
+      dispatch({ type: ActionTypes.FETCH_CARDS_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchAllCards(id) {
+  return (dispatch) => {
+    let query = `${ROOT_URL}/cards?trip_id=${id}`
+    axios.get(query).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_ALL_CARDS, payload: response.data })
     }).catch((error) => {
       console.log(error)
       dispatch({ type: ActionTypes.FETCH_CARDS_ERROR, payload: error })

@@ -6,7 +6,7 @@ import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
 import PrevArrow from '../arrows/prev_arrow.js'
 import NextArrow from '../arrows/next_arrow.js'
-import { fetchTrips, fetchFavoritedTrips } from '../../actions/index.js';
+import { fetchTrips, fetchFavoritedTrips, resetTripId } from '../../actions/index.js';
 import cookie from 'react-cookies'
 import './index.scss'
 
@@ -51,6 +51,10 @@ class Dashboard extends Component {
 				</Link>
 			)
 		})
+	}
+
+	componentWillUnmount() {
+		this.props.resetTripId();
 	}
 
 	render() {
@@ -99,4 +103,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, { fetchTrips, fetchFavoritedTrips })(Dashboard));
+export default withRouter(connect(mapStateToProps, { fetchTrips, fetchFavoritedTrips, resetTripId })(Dashboard));
