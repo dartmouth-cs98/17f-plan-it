@@ -315,8 +315,10 @@ class Workspace extends Component {
 						isInfoOpen={false}
 						isMarkerShown={true}
 						MarkerClusterArray={this.props.suggestions}
+						itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
 						center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
 						addCard={this.addCard}
+						removeCard={this.props.deleteCard}
 					/>
 				</div>
 			</div>
