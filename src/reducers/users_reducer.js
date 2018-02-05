@@ -20,11 +20,10 @@ const UsersReducer = (state = initialState, action) => {
         error: action.payload
       });
     case ActionTypes.UPDATE_USERS_LIVE:
-      const key = action.payload;
-      const old_users = state.live_users;
-      const live_users = Object.assign({}, old_users, {
-        key: Date.now()
-      })
+      const key = action.payload.email;
+      const new_users = {}
+      new_users[key] = Date.now()
+      const live_users = Object.assign({}, state.live_users, new_users)
 
       return Object.assign({}, state, {
         live_users: live_users

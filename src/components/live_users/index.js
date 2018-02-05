@@ -5,6 +5,8 @@ import { heartbeatTimer, mainChannel } from '../../channels'
 import { updateUsersLive } from '../../actions'
 
 
+const USER_EXPIRATION = 1000;
+
 class LiveUsers extends React.Component {
   constructor(props) {
     super(props)
@@ -12,30 +14,37 @@ class LiveUsers extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.componentWillReceiveChannelUpdates)
     mainChannel.setUsersUpdateFunction(this.componentWillReceiveChannelUpdates)
   }
 
   componentWillReceiveChannelUpdates(payload) {
-    console.log("this is the pre payload", payload)
     this.props.updateUsersLive(payload)
   }
 
   renderUsers() {
     // so have logi
-    console.log("users", this.props.users)
-    console.log("channel", mainChannel)
+    // so users looks like an email as the key,
+    // time created as value
+
     if (this.props.users) {
-      return this.props.users.map(u => this.renderUser(u))
+      const keys  = Object.keys(this.props.users)
+      return keys.map(k => {
+        console.log(Date.now() - this.props.users[k])
+        if (Date.now() - this.props.users[k] > USER_EXPIRATION) {
+          return
+        } else {
+          this.renderUser(k)
+        }
+      })
     }
     return
   }
 
   renderUser(user) {
     return (
-      <div>
-        {user.name}
-      </div>
+      <span>
+        {user}
+      </span>
     )
   }
 
@@ -43,9 +52,9 @@ class LiveUsers extends React.Component {
     return (
       <div>
         <span>
-        "WHAT IS GOING ON HERE
-        </span>
+        Live Users:
         {this.renderUsers()}
+        </span>
       </div>
     )
   }
@@ -53,7 +62,7 @@ class LiveUsers extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.live_users
+    users: state.users.live_users
   }
 }
 
