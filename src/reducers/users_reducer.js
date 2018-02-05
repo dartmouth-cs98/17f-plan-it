@@ -12,10 +12,16 @@ const initialState = {
 const UsersReducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionTypes.CREATE_USER:
+    console.log(initialState, action)
       return Object.assign({}, state, {
-        user_id: action.payload,
+        user_id: action.payload.user_id,
+        fname: action.payload.fname,
+        lname: action.payload.lname,
+        email: action.payload.email,
       });
     case ActionTypes.CREATE_USER_ERROR:
+    console.log(initialState, action)
+
       return Object.assign({}, state, {
         error: action.payload
       });

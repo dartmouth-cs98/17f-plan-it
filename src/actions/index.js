@@ -4,8 +4,6 @@ import axios from 'axios'
 export const ROOT_URL = 'http://localhost:4000/api/v1'
 // export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
-
-
 // keys for actiontypes
 export const ActionTypes = {
   FETCH_TRIPS: 'FETCH_TRIPS',
@@ -228,7 +226,7 @@ export function unfavoriteTrip(tripId, userId) {
 export function createUser(user) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/users`, user).then((response) => {
-        dispatch({ type: ActionTypes.CREATE_USER, payload: response.data });
+        dispatch({ type: ActionTypes.CREATE_USER, payload: {user_id: response.data, fname: user.fname, lname: user.lname, email: user.email} });
       }).catch((error) => {
         dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
       });
