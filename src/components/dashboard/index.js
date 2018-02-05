@@ -4,32 +4,11 @@ import { withRouter, Link } from 'react-router-dom';
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
+import PrevArrow from '../arrows/prev_arrow.js'
+import NextArrow from '../arrows/next_arrow.js'
 import { fetchTrips, fetchFavoritedTrips } from '../../actions/index.js';
 import cookie from 'react-cookies'
 import './index.scss'
-
-function NextArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light next_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-right vertical_center'></i>
-   </div>
-  );
-}
-
-function PrevArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light prev_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-left vertical_center'></i>
-   </div>
-  );
-}
-
 
 class Dashboard extends Component {
 
@@ -43,14 +22,13 @@ class Dashboard extends Component {
 	}
 
 	renderTrips() {
-		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		return this.props.userTrips.map((trip) => {
 			return (
 				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
-				      		<img src={image} alt='' />
+				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
 					    <div className='card_title'>{trip.name}</div>
 					</Card>
@@ -60,16 +38,15 @@ class Dashboard extends Component {
 	}
 
 	renderFavoritedTrips() {
-		let image = 'https://media.gadventures.com/media-server/cache/38/89/3889f45752d19449f909300bb0b7ad02.jpg'
 		return this.props.favoritedTrips.map((trip) => {
 			return (
-				<Link to={`/workspace/:${trip.id}`} key={trip.id}>
+				<Link to={`/preview/:${trip.id}`} key={trip.id}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
-				      		<img src={image} alt='' />
+				      		<img src={trip.photo_url} alt='' />
 					    </CardMedia>
-					    <div className='card_title'>{trip.name}</div>
+					    <div className='card_title'>{trip.trip_name}</div>
 					</Card>
 				</Link>
 			)

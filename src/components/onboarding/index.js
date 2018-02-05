@@ -5,35 +5,14 @@ import { withRouter } from 'react-router-dom'
 import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
-import Immutable from 'immutable'
 import Modal from 'react-modal'
 import { createTrip, createCard, fetchCards } from '../../actions/index.js'
 import cookie from 'react-cookies'
 import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete'
 import moment from 'moment'
+import PrevArrow from '../arrows/prev_arrow.js'
+import NextArrow from '../arrows/next_arrow.js'
 import './index.scss'
-
-function NextArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light next_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-right vertical_center'></i>
-   </div>
-  );
-}
-
-function PrevArrow(props) {
-  const { onClick } = props
-  return (
-   	<div
-      className='btn-floating btn-small waves-effect waves-light prev_arrow'
-      onClick={onClick}>
-      <i className='fa fa-chevron-left vertical_center'></i>
-   </div>
-  );
-}
 
 class Onboarding extends Component {
 	constructor(props) {
@@ -43,11 +22,13 @@ class Onboarding extends Component {
 			trip_name: '',
 			cities: [],
 			modal_open: false, 
-			err_msg: ''
+			err_msg: '',
+			image_url: 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
 		this.onNameChange = this.onNameChange.bind(this)
+		this.onImageChange = this.onImageChange.bind(this)
 		this.onOtherNameChange = this.onOtherNameChange.bind(this)
 		this.onStartDateChange = this.onStartDateChange.bind(this)
 		this.onEndDateChange = this.onEndDateChange.bind(this)
@@ -84,9 +65,22 @@ class Onboarding extends Component {
 						end_time: new Date(endDate)
 					})
 
-					console.log(new Date(startDate), new Date(endDate))
-
 					startDate = endDate
+				}
+
+				if (_.isUndefined(city.end_date)) {
+					const cityCard = _.assign(city, {
+						trip_id: nextProps.trip_id,
+						type: 'city'
+					})
+
+
+					cityCards.push({
+						...cityCard,
+						day_number: dayNumber,
+						start_time: new Date(startDate),
+						end_time: new Date(startDate)
+					})
 				}
 			})
 
@@ -97,11 +91,16 @@ class Onboarding extends Component {
 	}
 
 	onCreateTrip(startDate, endDate) {
+		let trip_name = this.state.trip_name
+		if (_.isUndefined(trip_name) || trip_name === '') { 
+			trip_name = 'My Trip' 
+		}
 		this.props.createTrip({
-			name: this.state.trip_name,
+			name: trip_name,
 			user_id: cookie.load('auth'),
 			start_time: startDate,
-			end_time: endDate
+			end_time: endDate,
+			photo_url: this.state.image_url
 		})
 	}
 
@@ -129,7 +128,13 @@ class Onboarding extends Component {
 	}
 
 	onNameChange(event) {
-		this.setState({ trip_name: event.target.value })
+		if (event.target.value.length < 20) {
+			this.setState({ trip_name: event.target.value })
+		}
+	}
+
+	onImageChange(event) {
+		this.setState({ image_url: event.target.value })
 	}
 
 	onOtherNameChange(index, type, name) {
@@ -141,7 +146,6 @@ class Onboarding extends Component {
 
 	onHandleCitySelect(results, name) {
 		getLatLng(results).then(({ lat, lng }) => {
-			console.log(lat, lng)
 
 			let address = results.formatted_address
 			let place_id = results.place_id
@@ -162,8 +166,6 @@ class Onboarding extends Component {
 
 	onHandleSelect(index, type, results, name) {
 		getLatLng(results).then(({ lat, lng }) => {
-			console.log(lat, lng)
-
 			if (type === 'city') {
 				let address = results.formatted_address
 				let day_number = index + 1
@@ -192,6 +194,11 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { start_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
+		} 
+
+		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
+		{	
+			this.setState({ modal_open: true, err_msg: 'Start date after end date'})
 		}
 	}
 
@@ -217,6 +224,11 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { end_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
+		}
+
+		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
+		{	
+			this.setState({ modal_open: true, err_msg: 'End date before start date'})
 		}
 	}
 
@@ -259,7 +271,6 @@ class Onboarding extends Component {
 
 		if (this.state.cities.length - 1 !== index) {
 			let deleted_start_date = newCities[index].start_date
-			console.log(deleted_start_date)
 			newCities[index + 1].start_date = deleted_start_date
 		}
 
@@ -270,7 +281,6 @@ class Onboarding extends Component {
 	renderCities() {
 		return (
 			_.map(this.state.cities, (city, index) => {
-				let delete_classes = index === 0? 'fa fa-trash-o fa-2x delete_disabled' : 'fa fa-trash-o fa-2x delete'
 				return (
 					<div className='city_input' key={index}>
 						<OnboardingInput
@@ -281,11 +291,12 @@ class Onboarding extends Component {
 							onOtherNameChange={this.onOtherNameChange}
 							onStartDateChange={this.onStartDateChange}
 							onEndDateChange={this.onEndDateChange}
+							onDeleteCity={this.onDeleteCity}
 							onHandleSelect={this.onHandleSelect}
 							start_date={city.start_date}
 							end_date={city.end_date}
+							index={index}
 						/>
-						<i className={delete_classes} aria-hidden='true' onClick={() => this.onDeleteCity(index)}></i>
 					</div>
 				)
 			})
@@ -311,6 +322,10 @@ class Onboarding extends Component {
 
 			if (city.name && city.start_date) {
 				ok = true
+			}
+
+			if (!city.lat) {
+				err_msg = `Please select ${city.name} from drop down suggestions`
 			}
 
 			if (_.isUndefined(startDate) || new Date(city.start_date) < new Date(startDate)) {
@@ -358,6 +373,17 @@ class Onboarding extends Component {
 				<OnboardingInput placeholder={'Name your trip'}
 					onNameChange={this.onNameChange}
 					name={this.state.trip_name}
+				/>
+			</div>
+		)
+	}
+
+	image_slide() {
+		return (
+			<div className='name_wrapper'>
+				<OnboardingInput placeholder={'Enter trip image URL'}
+					onImageChange={this.onImageChange}
+					name={this.state.image_url}
 				/>
 			</div>
 		)
@@ -444,6 +470,7 @@ class Onboarding extends Component {
 					</Modal>
 					<Slider {...onboarding_settings} className='onboarding_slider'>
 						<div>{this.names_slide()}</div>
+						<div>{this.image_slide()}</div>
 						<div>{this.cities_slide()}</div>
 	      			</Slider>
 				</div>

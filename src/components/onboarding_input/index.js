@@ -70,7 +70,16 @@ class OnboardingInput extends Component {
 				/>
 			)
 		}
+		else if (this.state.placeholder === 'Enter trip image URL') {
+			return (
+				<input type='text' className='name_input' placeholder={this.props.placeholder}
+					value={this.props.image_url}
+					onChange={this.props.onImageChange}
+				/>
+			)
+		}
 		else {
+			let delete_classes = this.props.index === 0? 'fa fa-trash-o fa-2x delete_disabled' : 'fa fa-trash-o fa-2x delete'
 			return (
 				<div className='multi_input'>
 					{this.renderAutocomplete()}
@@ -90,6 +99,7 @@ class OnboardingInput extends Component {
 						withPortal={true}
 						hideKeyboardShortcutsPanel={true}
 					/>
+					<i className={delete_classes} onClick={() => this.props.onDeleteCity(this.props.index)}></i>
 				</div>
 			)
 		}

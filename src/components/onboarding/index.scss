@@ -28,33 +28,6 @@
 	text-align: center;
 }
 
-.next_arrow {
-	background-color: #B6D6E7;
-	position: absolute;
-  	top: 50%;
-  	left: 100%;
-  	transform: translate(-50%, -50%);
-}
-
-.next_arrow:hover {
-	background-color: #B6D6E7;
-}
-
-.prev_arrow {
-	background-color: #B6D6E7;
-	position: fixed;
-  	top: 50%;
-  	transform: translate(-50%, -50%);
-}
-
-.prev_arrow:hover {
-	background-color: #B6D6E7;
-}
-
-.vertical_center {
-	vertical-align: middle;
-}
-
 .slide_title {
 	color: #828282;
 	font-family: 'Source Sans Pro';
@@ -170,20 +143,7 @@
 	width: 60vw !important;
 }
 
-.delete {
-	color: white;
-	margin: 10px;
-}
 
-.delete:hover {
-	cursor: pointer;
-	text-shadow: 0 0 10px grey;
-}
-
-.delete_disabled {
-	color: #ffffff4d;
-	margin: 10px;
-}
 
 .city_input {
 	display: flex;
