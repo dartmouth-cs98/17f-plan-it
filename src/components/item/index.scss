@@ -3,10 +3,37 @@
 }
 
 .item-card {
-	.item-title {
-		padding-left: 10px;
-		color: #000000;
+	flex-direction: row;
+
+	.card-header {
+		height: 36px;
+
+		.item-title {
+			padding-left: 10px;
+			color: #000000;
+		}
+	} 
+
+	.card-body {
+		.time-edit {
+			display: inline-block;
+			flex-direction: column;
+			width: 50%;
+
+			.time-label {
+				font-size: 13px;
+				line-height: 30px;
+			}
+
+			.add-time {
+				border: none;
+			}
+		}
 	}
+}
+
+.edit-icon {
+	min-width: 30px !important;
 }
 
 .item-icon {

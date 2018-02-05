@@ -252,41 +252,6 @@ export default class Itinerary extends Component {
 		return toRender
 	}
 
-	renderStartTimeDialog() {
-		const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.closeDialog}
-      />,
-      <FlatButton
-        label="Update"
-        primary={true}
-        onClick={this.updateStartTime}
-      />
-    ]
-
-		return (
-			<Dialog
-	      title={`Change start time for: ${this.state.editCard ? this.state.editCard.name : null}`}
-	      actions={actions}
-	      modal={false}
-	      contentStyle={{
-	      	width: '100%',
-	      	maxWidth: '350px'
-	      }}
-	      open={this.state.startTimeDialog}
-	      onRequestClose={this.closeDialog}
-	    >
-	    	<TimePicker
-		      hintText="12hr Format"
-		      defaultTime={this.state.editCard ? new Date(this.state.editCard.start_time) : null}
-		      onChange={this.selectTime}
-		    />
-	    </Dialog>
-    )
-	}
-
 	render() {
 		if (this.state.readOnly) {
 			return (
@@ -306,7 +271,6 @@ export default class Itinerary extends Component {
 			return (
 				<div id='itinerary-box'>
 					{this.renderHeader()}
-					{this.renderStartTimeDialog()}
 					<div className='body-container'>
 						<div className='itinerary-body'>
 							<div className='itinerary-list'>
