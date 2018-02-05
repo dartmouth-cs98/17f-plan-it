@@ -376,6 +376,7 @@ class Workspace extends Component {
 					tripId={tripId}
 					readOnly={false}
 				/>
+
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<div className='planner'>
 						<Suggestions
@@ -399,12 +400,12 @@ class Workspace extends Component {
 						/>
 						<Map
 							isInfoOpen={false}
-							isMarkerShown={true}
-							MarkerPosition={{ lat: this.state.pinLat || city ? city.lat : 43.703320, lng: this.state.pinLong || city ? city.long : -72.288572 }}
-							MarkerClusterArray={this.props.suggestions}
-							center={{ lat: this.state.pinLat || city ? city.lat : 43.703320, lng: this.state.pinLong || city ? city.long : -72.288572 }}
-							infoMessage="Hello From Dartmouth"
-							addCard={this.addCard}
+						isMarkerShown={true}
+						MarkerClusterArray={this.props.suggestions}
+						itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
+						center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
+						addCard={this.addCard}
+						removeCard={this.props.deleteCard}
 						/>
 					</div>
 				</DragDropContext>
