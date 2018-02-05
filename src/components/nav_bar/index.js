@@ -85,7 +85,7 @@ class NavBar extends Component {
   processSuccess(response) {
     axios.get('https://www.googleapis.com/oauth2/v3/tokeninfo', { params: { id_token: response.tokenId, }}).then( (response) => {
        var seconds = new Date() / 1000;
-       if ((response.data.aud === "555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com") && 
+       if ((response.data.aud === "555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com") &&
         ((response.data.iss === "accounts.google.com") || (response.data.iss === "https://accounts.google.com")) &&
         (response.data.exp > seconds)){
           this.props.createUser(
@@ -93,7 +93,7 @@ class NavBar extends Component {
             email: response.data.email,
             fname: response.data.given_name,
             lname: response.data.family_name
-            
+
           })
           this.setState({ authenticated: true });
        }
@@ -124,6 +124,8 @@ class NavBar extends Component {
 }
 
 const mapStateToProps = (state) => {
+	console.log("MAPESTATE TO PROPS")
+	console.log(state);
   return {
     user_id: state.users.user_id,
   };

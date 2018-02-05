@@ -37,7 +37,6 @@ const POIMap = compose(
         this.props.onToggleOpen(-1, { lat:0, lng: 0 }) // <-- props is not defined
       },
       componentWillReceiveProps(){
-        console.log(this.props)
       },
   }),
   withScriptjs,
