@@ -6,6 +6,75 @@ import { scaleLinear } from 'd3-scale'
 import './index.scss'
 
 export default class Item extends Component {
+	renderBody() {
+		if (this.props.buttons) {
+			const hours = (new Date(this.props.startTime)).getHours() 
+			const mins = (new Date(this.props.startTime)).getMinutes()
+			const durHours = Math.round(this.props.duration / (1000 * 60 * 60))
+			const durMins = Math.round((this.props.duration % (1000 * 60 * 60)) / (1000 * 60))
+
+			return (
+				<div>
+					<div className='time-edit'>
+						<label className='time-label'>
+							{`Starts: ${hours < 10 ? '0' : ''}${hours}:${mins < 10 ? '0' : ''}${mins}`}
+						</label>
+						<FlatButton
+							className='edit-icon'
+							icon={
+								<i
+									className='fa fa-plus'
+									style={{color: '#000000'}}
+								/>
+							}
+							onClick={() => {
+								const newTime = (new Date(this.props.startTime)).getTime() + (15 * 60 * 1000)
+								this.props.updateTime(this.props.cardId, new Date(newTime))
+							}}
+						/>
+						<FlatButton
+							className='edit-icon'
+							icon={
+								<i
+									className='fa fa-minus'
+									style={{color: '#000000'}}
+								/>
+							}
+							onClick={() => {
+								const newTime = (new Date(this.props.startTime)).getTime() - (15 * 60 * 1000)
+								this.props.updateTime(this.props.cardId, new Date(newTime))
+							}}
+						/>
+					</div>
+					<div className='time-edit'>
+						<label className='time-label'>
+							{`Duration: ${durHours < 10 ? '0' : ''}${durHours}:${durMins < 10 ? '0' : ''}${durMins}`}
+						</label>
+						<FlatButton
+							className='edit-icon'
+							icon={
+								<i
+									className='fa fa-plus'
+									style={{color: '#000000'}}
+								/>
+							}
+						/>
+						<FlatButton
+							className='edit-icon'
+							icon={
+								<i
+									className='fa fa-minus'
+									style={{color: '#000000'}}
+								/>
+							}
+						/>
+					</div>
+				</div>
+			)
+		} else {
+			return
+		}
+	}
 	render() {
 		const buttons = this.props.buttons ? [
 			<FlatButton
@@ -36,10 +105,6 @@ export default class Item extends Component {
 
 		// subtract 10 for padding
 		const height = timeScale(this.props.duration) - 10
-		const hours = (new Date(this.props.startTime)).getHours() 
-		const mins = (new Date(this.props.startTime)).getMinutes()
-		const durHours = Math.round(this.props.duration / (1000 * 60 * 60))
-		const durMins = Math.round((this.props.duration % (1000 * 60 * 60)) / (1000 * 60))
 
 		return (
 			<div className='card-wrapper'>
@@ -54,52 +119,7 @@ export default class Item extends Component {
 						{buttons}
 					</div>
 					<div className='card-body'>
-						<div className='time-edit'>
-							<label className='time-label'>
-								{`Starts: ${hours < 10 ? '0' : ''}${hours}:${mins < 10 ? '0' : ''}${mins}`}
-							</label>
-							<FlatButton
-								className='edit-icon'
-								icon={
-									<i
-										className='fa fa-plus'
-										style={{color: '#000000'}}
-									/>
-								}
-							/>
-							<FlatButton
-								className='edit-icon'
-								icon={
-									<i
-										className='fa fa-minus'
-										style={{color: '#000000'}}
-									/>
-								}
-							/>
-						</div>
-						<div className='time-edit'>
-							<label className='time-label'>
-								{`Duration: ${durHours < 10 ? '0' : ''}${durHours}:${durMins < 10 ? '0' : ''}${durMins}`}
-							</label>
-							<FlatButton
-								className='edit-icon'
-								icon={
-									<i
-										className='fa fa-plus'
-										style={{color: '#000000'}}
-									/>
-								}
-							/>
-							<FlatButton
-								className='edit-icon'
-								icon={
-									<i
-										className='fa fa-minus'
-										style={{color: '#000000'}}
-									/>
-								}
-							/>
-						</div>
+						{this.renderBody()}
 					</div>
 				</div>
 			</div>

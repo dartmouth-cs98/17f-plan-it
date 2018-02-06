@@ -223,6 +223,7 @@ export default class Itinerary extends Component {
 								>
 									<Item
 										key={card.id}
+										cardId={card.id}
 										name={card.name}
 										description={card.description}
 										editCard={() => {
@@ -232,6 +233,7 @@ export default class Itinerary extends Component {
 											this.props.searchSuggestions(card)
 										}}
 										timeScale={TIME_SCALE}
+										updateTime={this.props.updateTime}
 										startTime={card.start_time}
 										endTime={card.end_time}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}

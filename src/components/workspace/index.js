@@ -46,6 +46,7 @@ class Workspace extends Component {
 		this.formatCards = this.formatCards.bind(this)
 		this.formatSuggestions = this.formatSuggestions.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
+		this.updateStartTime = this.updateStartTime.bind(this)
     this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
     this.sendUpdates = this.sendUpdates.bind(this)
 
@@ -355,6 +356,35 @@ class Workspace extends Component {
 		}
 	}
 
+	updateStartTime(cardId, time) {
+		// TODO: figure out how to shift time backwards too
+		const itinerary = Array.from(this.props.cards)
+		const index = _.findIndex(itinerary, (card) => {
+			return card.id === cardId
+		})
+
+		const diff = (new Date(itinerary[index].start_time)).getTime() - (new Date(time)).getTime()
+
+		if (diff < 0) {
+			// increase the start time of the card and all cards after it
+			for (let i = index; i < itinerary.length; i++) {
+				const card = itinerary[i]
+
+				_.assign(card, {
+					'start_time': new Date((new Date(card.start_time)).getTime() - diff),
+					'end_time': new Date((new Date(card.end_time)).getTime() - diff)
+				})
+			}
+		} else if (diff > 0) {
+			// shift card backwards in time if possible
+			
+		}
+
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+    this.sendUpdates(itinerary, tripId)		
+	}
+
 	render() {
 		const cards = this.formatCards(this.state.cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
@@ -400,6 +430,7 @@ class Workspace extends Component {
 							removeCard={this.props.deleteCard}
 							dayForward={this.dayForward}
 							dayBackward={this.dayBackward}
+							updateTime={this.updateStartTime}
 							numDays={tripDuration}
 							readOnly={false}
 						/>
