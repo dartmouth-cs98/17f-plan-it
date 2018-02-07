@@ -4,6 +4,7 @@ import _ from 'lodash'
 const initialState = {
 	all: [],
 	card: {},
+	all_cards: [],
 	error: null
 };
 
@@ -20,6 +21,10 @@ const CardsReducer = (state = initialState, action) => {
 		case ActionTypes.FETCH_CARD:
 			return Object.assign({}, state, {
 				card: action.payload,
+			});
+		case ActionTypes.FETCH_ALL_CARDS:
+			return Object.assign({}, state, {
+				all_cards: action.payload
 			});
 		case ActionTypes.FETCH_CARD_ERROR:
 			return Object.assign({}, state, {

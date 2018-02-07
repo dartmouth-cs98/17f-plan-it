@@ -14,7 +14,7 @@ class NavBar extends Component {
 		this.authenticated = true
 		this.state = {
       background: this.props.background,
-      authenticated: false,
+      authenticated: cookie.load('auth'),
 		}
 
     this.processSuccess = this.processSuccess.bind(this)
@@ -126,8 +126,6 @@ class NavBar extends Component {
 }
 
 const mapStateToProps = (state) => {
-	console.log("MAPESTATE TO PROPS")
-	console.log(state);
   return {
     user_id: state.users.user_id,
   };

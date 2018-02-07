@@ -66,11 +66,13 @@ class Toolbar extends Component {
 	render() {
 		let favoriteIconClass = this.state.favorited? 'fa fa-heart fa-2x heart' : 'fa fa-heart-o fa-2x heart'
 		let favoriteToggle = cookie.load('auth')? 
-		(<div 
-			onClick={this.toggleFavorite}
-			className='toolbar_click'>
-			<i className={ favoriteIconClass }></i>
-		</div>) : <div/>
+			(<div 
+				onClick={this.toggleFavorite}
+				className='toolbar_click'>
+				<i className={ favoriteIconClass }></i>
+			</div>) : <div/>
+		let importButton = cookie.load('auth')?
+			<div onClick={this.props.onModalOpen}>Import Trip</div> : <div/>
 
 		if (this.props.readOnly) {
 			return (
@@ -81,6 +83,7 @@ class Toolbar extends Component {
 						</div>
 						<div className='toggle_options'>
 						{ favoriteToggle }
+						{ importButton }
 						</div>
 					</div>
 				</div>
