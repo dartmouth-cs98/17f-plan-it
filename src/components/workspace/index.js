@@ -46,10 +46,9 @@ class Workspace extends Component {
 		this.formatCards = this.formatCards.bind(this)
 		this.formatSuggestions = this.formatSuggestions.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
-    this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
-    this.sendUpdates = this.sendUpdates.bind(this)
-
-    this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+  	this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
+  	this.sendUpdates = this.sendUpdates.bind(this)
+  	this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
 	}
 
 	componentDidMount() {
@@ -200,17 +199,6 @@ class Workspace extends Component {
 
 			const cardStart = new Date(card.start_time)
 
-			const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-			const travel = {
-				type: 'travel',
-				start_time: travelStart.toString(),
-				end_time: card.start_time,
-				travelType: card.travelType,
-				destination: card.name
-			}
-
-			cardList.push(travel)
-
 			cardList.push(card)
 
 			prevEnd = new Date(card.end_time)
@@ -303,7 +291,7 @@ class Workspace extends Component {
 				// add the city card back
 				itinerary.splice(0, 0, city)
 
-        this.sendUpdates(itinerary, tripId)
+       			this.sendUpdates(itinerary, tripId)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -356,7 +344,7 @@ class Workspace extends Component {
 
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-      this.sendUpdates(itinerary, tripId)
+      		this.sendUpdates(itinerary, tripId)
 		}
 	}
 
@@ -421,8 +409,7 @@ class Workspace extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-
-    user: state.users,
+    	user: state.users,
 		trips: state.trips.trip,
 		cards: state.cards.all,
 		suggestions: state.cards.suggestions
@@ -443,9 +430,9 @@ const mapDispatchToProps = (dispatch) => {
 		updateCard: (cards, trip, id, day) => {
 			dispatch(updateCard(cards, trip, id, day))
 		},
-    updateCardsLive: (cards) => {
-      dispatch(updateCardsLive(cards))
-    },
+	    updateCardsLive: (cards) => {
+	      dispatch(updateCardsLive(cards))
+	    },
 		updateCards: (cards, trip, day) => {
 			dispatch(updateCards(cards, trip, day))
 		},

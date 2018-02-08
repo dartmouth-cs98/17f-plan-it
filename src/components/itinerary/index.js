@@ -187,11 +187,6 @@ export default class Itinerary extends Component {
 				// 		selected={!_.isNull(this.props.selected)}
 				// 	/>
 				// )
-			} else if (card.type === 'travel') {
-				// return <Travel 
-				// 	destination={card.destination}
-				// 	duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-				// />
 			} else if (this.state.readOnly) {
 				return (
 					<div>

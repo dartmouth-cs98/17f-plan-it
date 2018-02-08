@@ -87,6 +87,7 @@ class Toolbar extends Component {
 							<div className ='toolbar-download'>
 								<DownloadTrip tripId={this.props.tripId} />
 							</div>
+							{ importButton }
 							{ favoriteToggle }
 						</div>
 					</div>

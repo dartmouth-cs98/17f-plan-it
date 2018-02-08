@@ -7,7 +7,6 @@ import Itinerary from '../itinerary/index.js'
 import { DragDropContext } from 'react-beautiful-dnd'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import DownloadTrip from '../download_trip/index.js'
 import { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards } from '../../actions/index.js'
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
@@ -20,7 +19,6 @@ import '../../react_dates_overrides.css'
 require('./index.scss')
 
 const DAY_NUMBER = 1
-const TRAVEL_TIME = 900000
 
 class ReadOnly extends Component {
 	constructor(props) {
@@ -158,37 +156,37 @@ class ReadOnly extends Component {
 		}
 	}
 
-	formatCards() {
+	formatCards(cards) {
 		let cardList = []
+		let cityLat
+		let cityLong
 
-		_.each(this.props.cards, (card) => {
+		_.each(cards, (card) => {
 			if (card.type === 'city') {
+				cityLat = card.lat
+				cityLong = card.long
 				cardList.push(card)
 				// set the base location
 				return
 			}
 
-			const cardStart = new Date(card.start_time)
-
-			const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-			const travel = {
-				type: 'travel',
-				start_time: travelStart.toString(),
-				end_time: card.start_time,
-				travelType: card.travelType,
-				destination: card.name
-			}
-
-			cardList.push(travel)
-
 			cardList.push(card)
 		})
+
+		if (_.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
+			if (this.state.pinLat !== cityLat && this.state.pinLong !== cityLong) {
+				this.setState({
+					pinLat: cityLat,
+					pinLong: cityLong
+				})
+			}
+		}
 
 		return cardList
 	}
 
 	render() {
-		const cards = this.formatCards()
+		const cards = this.formatCards(this.props.cards)
 		const [city] = _.filter(cards, (card) => {
 			return card.type === 'city'
 		})

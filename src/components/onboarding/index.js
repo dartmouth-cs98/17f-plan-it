@@ -46,17 +46,20 @@ class Onboarding extends Component {
 		if (nextProps.trip_id) {
 			let cityCards = []
 			let dayNumber = 1
-			let startDate = (new Date(this.state.cities[0].start_date)).getTime()
+			let startDate = new Date(this.state.cities[0].start_date)
+			startDate.setHours(0, 0, 0, 0)
 
 			_.forEach(this.state.cities, (city) => {
-				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000))
-				for (let i = 1; i <= duration; i++) {
+				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000)) + 1
+
+				for (let i = 0; i < duration; i++) {
 					const cityCard = _.assign(city, {
 						trip_id: nextProps.trip_id,
 						type: 'city'
 					})
 
-					const endDate = startDate + (24 * 60 * 60 * 1000)
+					let endDate = new Date(startDate.getTime())
+					endDate.setHours(23, 59, 59, 999)
 
 					cityCards.push({
 						...cityCard,
@@ -65,10 +68,11 @@ class Onboarding extends Component {
 						end_time: new Date(endDate)
 					})
 
-					startDate = endDate
+					startDate = new Date(endDate.getTime() + 1)
 				}
 
 				if (_.isUndefined(city.end_date)) {
+					console.log('its undefined')
 					const cityCard = _.assign(city, {
 						trip_id: nextProps.trip_id,
 						type: 'city'
@@ -83,7 +87,7 @@ class Onboarding extends Component {
 					})
 				}
 			})
-
+			
 			this.props.createCard(cityCards)
 			this.props.fetchCards(nextProps.trip_id, 1)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
@@ -95,11 +99,20 @@ class Onboarding extends Component {
 		if (_.isUndefined(trip_name) || trip_name === '') { 
 			trip_name = 'My Trip' 
 		}
+		
+		let start = new Date(startDate)
+		start.setHours(0, 0, 0, 0)
+		let end = null
+		if (endDate) {
+			end = new Date(endDate)
+			end.setHours(11, 59, 59, 999)
+		}
+
 		this.props.createTrip({
 			name: trip_name,
 			user_id: cookie.load('auth'),
-			start_time: startDate,
-			end_time: endDate,
+			start_time: start,
+			end_time: end,
 			photo_url: this.state.image_url
 		})
 	}
