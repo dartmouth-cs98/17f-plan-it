@@ -1,8 +1,12 @@
 #map-container {
-	min-height: 500px;
+	height: 97%; 
 	width: 100%;
+	/* min-width: 400px; */
+	margin-right: 10px;
 	display: inline-block;
-	background-color: #F2F2F2;
+	background-color: #8ACDF1;
+	overflow-y: hidden;
+	box-shadow: 4px 4px 4px #BDBDBD;
 }
 .pin-title {
 	color: #000000;

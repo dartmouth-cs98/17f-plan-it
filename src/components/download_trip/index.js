@@ -14,12 +14,10 @@ export default class DownloadTrip extends Component {
 
   render() {
     return (
-    <div>
-      <button onClick={this.download}>
-        Download as PDF
-      </button>
+    <div
+      onClick={this.download}>
+        Download PDF
     </div>
     )
   }
 }
-

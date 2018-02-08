@@ -136,7 +136,6 @@ class ReadOnly extends Component {
 					tripId={tripId}
 					readOnly={true}
 				/>
-					<DownloadTrip tripId={tripId}/>
 					<DragDropContext>
 					<div className='planner'>
 						<Itinerary

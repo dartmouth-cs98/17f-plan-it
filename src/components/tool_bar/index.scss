@@ -4,9 +4,12 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	margin: 5px;
+	margin: 15px;
+	margin-top: 10px;
+	margin-bottom: 12px;
 	min-height: 50px;
-	background-color: #66A9CD;
+	background-color: #8ACDF1;
+	box-shadow: 4px 4px 4px #BDBDBD;
 }
 
 #tool-bar-left {
@@ -16,11 +19,12 @@
 	width: 30%;
 }
 
-.tool-bar-center {
+#tool-bar-center {
 	justify-content: center;
 	display: flex;
 	align-items: center;
-	width: 100%;
+	padding: 0;
+	width: 40%;
 }
 
 #tool-bar-right {
@@ -63,21 +67,51 @@
 	color: #FFFFFF;
 }
 
-.toolbar_click {
-	color: white;
+.toolbar_download{
+	color: #8ACDF1;
+	padding-left: 10px;
 	padding-right: 10px;
+	background-color: #FFFFFF;
+	border: 3px solid #8ACDF1;
+	text-align: center;
+}
+
+.toolbar_download:hover {
+	cursor: pointer;
+	text-shadow: 1px 0px 0px #8ACDF1;
+	text-align: center;
+}
+
+.toolbar_favorite {
+	color: #FFFFFF;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.toolbar_favorite:hover {
+	cursor: pointer;
+	text-shadow: 1px 0px 0px #FFFFFF;
+}
+
+.toolbar_click {
+	color: #8ACDF1;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #FFFFFF;
+	border: 3px solid #8ACDF1;
+	text-align: center;
 }
 
 .toolbar_click:hover {
 	cursor: pointer;
-	text-shadow: 0 0 10px grey;
+	text-shadow: 1px 0px 0px #8ACDF1;
+	text-align: center;
 }
 
 .toggle_options {
 	display: flex;
 	align-items: center;
 }
-
 .toolbar_items {
 	display: flex;
 	justify-content: space-between;

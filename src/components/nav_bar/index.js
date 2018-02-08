@@ -6,6 +6,7 @@ import { createUser } from '../../actions/index.js'
 import axios from 'axios'
 import cookie from 'react-cookies'
 import './index.scss'
+import storage from 'redux-persist/lib/storage'
 
 class NavBar extends Component {
 	constructor(props) {
@@ -108,6 +109,7 @@ class NavBar extends Component {
 
   processLogout(props) {
     cookie.remove('auth', { path: '/' })
+		storage.removeItem('persist:root')
     this.setState({ authenticated: false })
   }
 
