@@ -369,11 +369,17 @@ class Workspace extends Component {
 			// increase the start time of the card and all cards after it
 			for (let i = index; i < itinerary.length; i++) {
 				const card = itinerary[i]
+				const endTime = new Date((new Date(card.end_time)).getTime() - diff)
 
 				_.assign(card, {
 					'start_time': new Date((new Date(card.start_time)).getTime() - diff),
-					'end_time': new Date((new Date(card.end_time)).getTime() - diff)
+					'end_time': endTime
 				})
+
+				// stop updating following cards if there is no conflict
+				if (i < itinerary.length - 1 && endTime.getTime() <= (new Date(itinerary[i + 1].start_time)).getTime()) {
+					break
+				}
 			}
 		} else if (diff > 0) {
 			// shift card backwards in time if possible
