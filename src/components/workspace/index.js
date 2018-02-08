@@ -9,7 +9,6 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Map from '../map/index.js'
-import DownloadTrip from '../download_trip/index.js'
 import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
