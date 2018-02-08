@@ -10,6 +10,7 @@ const initialState = {
 };
 
 const UsersReducer = (state = initialState, action) => {
+  console.log("this is state", state)
   switch (action.type) {
     case ActionTypes.CREATE_USER:
     console.log(initialState, action)

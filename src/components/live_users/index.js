@@ -26,18 +26,19 @@ class LiveUsers extends React.Component {
     // so users looks like an email as the key,
     // time created as value
 
-    if (this.props.users) {
-      const keys  = Object.keys(this.props.users)
-      return keys.map(k => {
-        console.log(Date.now() - this.props.users[k])
-        if (Date.now() - this.props.users[k] > USER_EXPIRATION) {
-          return
-        } else {
-          this.renderUser(k)
-        }
-      })
-    }
-    return
+    const users = ["Sam Lee", "Helen He", "Jeff Gao"]
+    //if (this.props.users) {
+    //  const keys  = Object.keys(this.props.users)
+    //  return keys.map(k => {
+    //    console.log(Date.now() - this.props.users[k])
+    //    if (Date.now() - this.props.users[k] > USER_EXPIRATION) {
+    //      return
+    //    } else {
+    //      this.renderUser(k)
+    //    }
+    //  })
+    //}
+    return users.map(u => this.renderUser(u))
   }
 
   renderUser(user) {

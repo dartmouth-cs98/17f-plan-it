@@ -60,6 +60,7 @@ class Workspace extends Component {
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 
+    console.log("this is the user", this.props.user)
     mainChannel.connect(tripId, "sleechie@gmail.com")
     mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
 	}
