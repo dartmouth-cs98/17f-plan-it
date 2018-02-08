@@ -32,6 +32,7 @@ export default class Suggestions extends Component {
 					ATTRACTIONS
 				</label>
 				<IconMenu
+					className='filter-icon'
 					iconButtonElement={<i className='fa fa-filter' style={{color: '#FFFFFF'}} />}
 					onChange={this.props.selectCategory}
 					value={this.props.category}
