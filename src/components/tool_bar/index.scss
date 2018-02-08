@@ -19,11 +19,12 @@
 	width: 30%;
 }
 
-.tool-bar-center {
+#tool-bar-center {
 	justify-content: center;
 	display: flex;
 	align-items: center;
-	width: 100%;
+	padding: 0;
+	width: 40%;
 }
 
 #tool-bar-right {
@@ -72,11 +73,13 @@
 	padding-right: 10px;
 	background-color: #FFFFFF;
 	border: 3px solid #8ACDF1;
+	text-align: center;
 }
 
 .toolbar_download:hover {
 	cursor: pointer;
 	text-shadow: 1px 0px 0px #8ACDF1;
+	text-align: center;
 }
 
 .toolbar_favorite {
@@ -96,11 +99,13 @@
 	padding-right: 10px;
 	background-color: #FFFFFF;
 	border: 3px solid #8ACDF1;
+	text-align: center;
 }
 
 .toolbar_click:hover {
 	cursor: pointer;
 	text-shadow: 1px 0px 0px #8ACDF1;
+	text-align: center;
 }
 
 .toggle_options {
