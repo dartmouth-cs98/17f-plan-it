@@ -12,7 +12,6 @@ import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
 import LiveUsers from '../live_users'
-import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -376,7 +375,6 @@ class Workspace extends Component {
 					tripId={tripId}
 					readOnly={false}
 				/>
-        <LiveUsers />
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<div className='planner'>
 						<Suggestions

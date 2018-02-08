@@ -162,13 +162,13 @@ export default class Map extends Component {
 		return (
 
 			<div id='map-container'>
-        <div className='suggestions-header'>
+        <div className='map-suggestions-header'>
           <FlatButton
-            label='Toggle Suggestion Pins'
+            label={<span className='toggle-pin'>Toggle Suggestion Pins</span>}
             onClick={this.toggleSug}
           />
           <FlatButton
-            label='Toggle Itinerary Pins'
+            label={<span className='toggle-pin'>Toggle Itinerary Pins</span>}
             onClick={this.toggleIt}
           />
   			</div>
