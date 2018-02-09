@@ -42,7 +42,6 @@ class Workspace extends Component {
 		this.dayBackward = this.dayBackward.bind(this)
 		this.selectCategory = this.selectCategory.bind(this)
 		this.searchSuggestions = this.searchSuggestions.bind(this)
-		this.addCard = this.addCard.bind(this)
 		this.formatCards = this.formatCards.bind(this)
 		this.formatSuggestions = this.formatSuggestions.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
@@ -138,39 +137,6 @@ class Workspace extends Component {
 			pinLat: card.lat,
 			pinLong: card.long
 		})
-	}
-
-	addCard(card) {
-		const cards = this.formatCards(this.props.cards)
-
-		if (!_.isNull(this.state.selected)) {
-			const index = _.findIndex(cards, (card) => {
-				return this.state.selected.start_time === card.start_time && this.state.selected.end_time === card.end_time
-			})
-
-			const duration = (new Date(this.state.selected.end_time)).getTime() - (new Date(this.state.selected.start_time)).getTime()
-			if (duration >= DEFAULT_DURATION + TRAVEL_TIME) {
-				let startTime = (new Date(this.state.selected.start_time)).getTime()
-
-				if (index > 0) {
-					startTime += TRAVEL_TIME
-				}
-
-				const path = window.location.pathname.split(':')
-				const tripId = _.last(path)
-
-				this.props.insertCard([{
-					...card,
-				  travel_duration: TRAVEL_TIME,
-				  start_time: (new Date(startTime)),
-				  end_time: (new Date(startTime + DEFAULT_DURATION)),
-				  trip_id: tripId,
-				  day_number: this.state.day
-				}], tripId, this.state.day)
-
-				this.setState({ selected: null })
-			}
-		}
 	}
 
 	formatCards(cards) {
@@ -393,6 +359,7 @@ class Workspace extends Component {
 				})
 			} else {
 				// check if it goes before midnight
+
 			}
 		}
 
@@ -431,7 +398,6 @@ class Workspace extends Component {
           </div>
 					<div className='planner'>
 						<Suggestions
-							addCard={this.addCard}
 							suggestions={suggestions}
 							category={this.state.category}
 							selectCategory={this.selectCategory}
@@ -457,7 +423,6 @@ class Workspace extends Component {
 							MarkerClusterArray={this.props.suggestions}
 							center={{ lat: this.state.pinLat || city ? city.lat : 43.703320, lng: this.state.pinLong || city ? city.long : -72.288572 }}
 							infoMessage="Hello From Dartmouth"
-							addCard={this.addCard}
 						/>
 					</div>
 				</DragDropContext>
