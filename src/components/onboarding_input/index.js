@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import 'react-dates/initialize'
 import { SingleDatePicker } from 'react-dates'
 import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete'
+import '../../react_dates_overrides.css'
 import './index.scss'
 
 class OnboardingInput extends Component {

@@ -1,9 +1,14 @@
 #map-container {
-	min-height: 500px;
+	height: 100%; 
 	width: 100%;
 	display: inline-block;
-	background-color: #F2F2F2;
+	background-color: #8ACDF1;
+	overflow-y: hidden;
 }
 .pin-title {
 	color: #000000;
+}
+
+.toggle-pin {
+	color: #FFFFFF;
 }

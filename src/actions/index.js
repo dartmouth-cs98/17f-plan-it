@@ -4,8 +4,6 @@ import axios from 'axios'
 export const ROOT_URL = 'http://localhost:4000/api/v1'
 // export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
-
-
 // keys for actiontypes
 export const ActionTypes = {
   FETCH_TRIPS: 'FETCH_TRIPS',
@@ -19,9 +17,11 @@ export const ActionTypes = {
   UPDATE_TRIP: 'UPDATE_TRIP',
   FAVORITE_TRIP: 'FAVORITE_TRIP',
   UNFAVORITE_TRIP: 'UNFAVORITE_TRIP',
+  RESET_TRIP_ID: 'RESET_TRIP_ID',
   TRIP_ERROR: 'TRIP_ERROR',
 
   FETCH_CARDS: 'FETCH_CARDS',
+  FETCH_ALL_CARDS: 'FETCH_ALL_CARDS',
   FETCH_CARDS_ERROR: 'FETCH_CARDS_ERROR',
   CREATE_CARD: 'CREATE_CARD',
   CREATE_CARD_ERROR: 'CREATE_CARD_ERROR',
@@ -33,6 +33,7 @@ export const ActionTypes = {
   UPDATE_CARDS_ERROR: 'UPDATE_CARDS_ERROR',
 
   UPDATE_CARDS_LIVE: 'UPDATE_CARDS_LIVE',
+  UPDATE_USERS_LIVE: 'UPDATE_USERS_LIVE',
 
   AUTH_USER: 'AUTH_USER',
   DEAUTH_USER: 'DEAUTH_USER',
@@ -42,6 +43,10 @@ export const ActionTypes = {
 
   FETCH_SUGGESTIONS: 'FETCH_SUGGESTIONS',
   FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR'
+}
+
+export function resetTripId(id) {
+  return { type: ActionTypes.RESET_TRIP_ID, payload: null}
 }
 
 export function fetchTrips(id) {
@@ -138,6 +143,18 @@ export function fetchCards(id, day=null) {
   }
 }
 
+export function fetchAllCards(id) {
+  return (dispatch) => {
+    let query = `${ROOT_URL}/cards?trip_id=${id}`
+    axios.get(query).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_ALL_CARDS, payload: response.data })
+    }).catch((error) => {
+      console.log(error)
+      dispatch({ type: ActionTypes.FETCH_CARDS_ERROR, payload: error })
+    })
+  }
+}
+
 
 export function insertCard(cards, trip, day) {
   return (dispatch) => {
@@ -173,6 +190,12 @@ export function updateCards(cards, trip, day) {
 export function updateCardsLive(cards) {
   return (dispatch) => {
     dispatch({ type: ActionTypes.UPDATE_CARDS_LIVE, payload: cards})
+  }
+}
+
+export function updateUsersLive(users) {
+  return (dispatch) => {
+    dispatch({ type: ActionTypes.UPDATE_USERS_LIVE, payload: users})
   }
 }
 
@@ -221,7 +244,7 @@ export function unfavoriteTrip(tripId, userId) {
 export function createUser(user) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/users`, user).then((response) => {
-        dispatch({ type: ActionTypes.CREATE_USER, payload: response.data });
+        dispatch({ type: ActionTypes.CREATE_USER, payload: {user_id: response.data, fname: user.fname, lname: user.lname, email: user.email} });
       }).catch((error) => {
         dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
       });
@@ -240,7 +263,7 @@ export function createCard(cards) {
 
 export function fetchSuggestions(lat, long, category=null) {
   return (dispatch) => {
-    let query = `${ROOT_URL}/yelp?latitude=${lat}&longitude=${long}`
+    let query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}`
 
     if (category) { query += `&categories=${category}` }
 

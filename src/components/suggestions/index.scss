@@ -8,7 +8,7 @@
 
 	.suggestions-header {
 		height: 35px;
-		background-color: #66A9CD;
+		background-color: #8ACDF1;
 		line-height: 35px;
 		text-align: center;
 
@@ -30,6 +30,10 @@
 			min-width: 40px !important;
 		}
 	}
+}
+
+.filter-icon:hover {
+	text-shadow: 0 0 30px grey;
 }
 
 .empty-suggestions {

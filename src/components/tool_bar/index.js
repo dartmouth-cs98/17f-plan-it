@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'
 import cookie from 'react-cookies'
 import './index.scss'
+import DownloadTrip from '../download_trip/index.js'
+import LiveUsers from '../live_users'
 
 class Toolbar extends Component {
 	constructor(props) {
@@ -57,7 +59,7 @@ class Toolbar extends Component {
 
 	getPublishedText() {
 		if (cookie.load('auth')) {
-			return this.state.published? 'Published' : 'Publish'
+			return this.state.published? 'Unpublish' : 'Publish'
 		} else {
 			return ''
 		}
@@ -68,19 +70,24 @@ class Toolbar extends Component {
 		let favoriteToggle = cookie.load('auth')? 
 		(<div 
 			onClick={this.toggleFavorite}
-			className='toolbar_click'>
+			className='toolbar-favorite'>
 			<i className={ favoriteIconClass }></i>
 		</div>) : <div/>
+		let importButton = cookie.load('auth')?
+			<div onClick={this.props.onModalOpen}>Import Trip</div> : <div/>
 
 		if (this.props.readOnly) {
 			return (
 				<div id='tool-bar'>
-					<div className='toolbar_items'>
+					<div className='toolbar-items'>
 						<div className='toolbar-trip-title'>
 							{this.props.tripName}
 						</div>
-						<div className='toggle_options'>
-						{ favoriteToggle }
+						<div className='toggle-options'>
+							<div className ='toolbar-download'>
+								<DownloadTrip tripId={this.props.tripId} />
+							</div>
+							{ favoriteToggle }
 						</div>
 					</div>
 				</div>
@@ -88,14 +95,21 @@ class Toolbar extends Component {
 		} else {
 			return (
 				<div id='tool-bar'>
-					<div className='toolbar_items'>
+					<div className='toolbar-items'>
+						<div className='toolbar-live-users'>
+							<div className='user-circle'> HH </div>
+							<div className='user-circle'> JS </div>
+						</div>
 						<div className='toolbar-trip-title'>
 							{this.props.tripName}
 						</div>
-						<div className='toggle_options'>
+						<div className='toggle-options'>
+							<div className ='toolbar-download'>
+								<DownloadTrip tripId={this.props.tripId} />
+							</div>
 							<div 
 								onClick={this.togglePublish}
-								className='toolbar_click'>
+								className='toolbar-click'>
 								{this.getPublishedText()}
 							</div>
 						</div>

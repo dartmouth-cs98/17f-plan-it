@@ -22,6 +22,8 @@ const POIMap = compose(
   }),
   withStateHandlers((props) => ({
     isOpen: -1,
+    showSuggestions: props.showSug,
+    showItinerary: props.showIt,
     localcenter: props.center
   }), {
     onToggleOpen: ({ isOpen, localcenter }) => (index, center) => ({
@@ -33,6 +35,8 @@ const POIMap = compose(
       componentDidCatch(error, info) {
         console.log(error, info)
         this.props.onToggleOpen(-1, { lat:0, lng: 0 }) // <-- props is not defined
+      },
+      componentWillReceiveProps(){
       },
   }),
   withScriptjs,
@@ -48,21 +52,75 @@ const POIMap = compose(
     enableRetinaIcons
     gridSize={60}
   >
-    {props.markers.map((marker, index) => (
+
+    {props.showSug && props.markers.map((marker, index) => (
       <Marker
         key={marker.id}
-        position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
-        onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}
+        position={{ lat: marker.lat, lng: marker.long }}
+        onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.lat, lng: marker.long })}
         >
         {props.isOpen === index &&
-          <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}>
+          <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })}>
             <div className='pin-label'>
               <label className='pin-title'>{marker.name}</label>
               <FlatButton
                 label='Add'
                 style={{marginLeft: '10px'}}
                 onClick={() => {
-                  props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
+                  props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })
+                  props.addCard({
+                    name: marker.name,
+                    image_url: marker.image_url,
+                    yelp_url: marker.url,
+                    price: marker.price,
+                    lat: marker.lat,
+                    long: marker.long,
+                    phone: marker.phone,
+                    display_phone: marker.phone,
+                    type: marker.description,
+                    description: marker.description
+                  })
+                }}
+              />
+            </div>
+      	  </InfoWindow>
+        }
+      </Marker>
+    ))}
+  </MarkerClusterer>
+  <MarkerClusterer
+    onClick={props.onMarkerClustererClick}
+    averageCenter
+    enableRetinaIcons
+    gridSize={60}
+  >
+    {props.itin_markers && props.showIt && props.itin_markers.map((marker, index) => (
+      <Marker
+        key={marker.id}
+        position={{ lat: marker.lat, lng: marker.long }}
+        onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.lat, lng: marker.long })}
+        >
+        {props.isOpen === index &&
+          <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })}>
+            <div className='pin-label'>
+              <label className='pin-title'>{marker.name}</label>
+              <FlatButton
+                label='Remove'
+                style={{marginLeft: '10px'}}
+                onClick={() => {
+                  props.onToggleOpen(-1, { lat: marker.clat, lng: marker.long })
+                  props.removeCard({
+                    name: marker.name,
+                    image_url: marker.image_url,
+                    yelp_url: marker.url,
+                    price: marker.price,
+                    lat: marker.lat,
+                    long: marker.long,
+                    phone: marker.phone,
+                    display_phone: marker.phone,
+                    type: marker.description,
+                    description: marker.description
+                  })
                 }}
               />
             </div>
@@ -76,12 +134,52 @@ const POIMap = compose(
 
 export default class Map extends Component {
 
+  constructor(props) {
+		super(props)
+
+		this.state = {
+      ShowIt: true,
+      ShowSug: true,
+
+		}
+
+		this.toggleSug = this.toggleSug.bind(this)
+    this.toggleIt = this.toggleIt.bind(this)
+	}
+
+  toggleSug(){
+    this.setState({
+      ShowSug: !this.state.ShowSug
+    })
+  }
+
+  toggleIt(){
+    this.setState({
+      ShowIt: !this.state.ShowIt
+    })
+  }
+
 	render() {
 		return (
+
 			<div id='map-container'>
+        <div className='map-suggestions-header'>
+          <FlatButton
+            label={<span className='toggle-pin'>Toggle Suggestion Pins</span>}
+            onClick={this.toggleSug}
+          />
+          <FlatButton
+            label={<span className='toggle-pin'>Toggle Itinerary Pins</span>}
+            onClick={this.toggleIt}
+          />
+  			</div>
 				<POIMap
           center={this.props.center}
           markers={this.props.MarkerClusterArray || []}
+          itin_markers={this.props.itin_marker_array || []}
+          addCard={this.props.addCard}
+          showSug={this.state.ShowSug}
+          showIt={this.state.ShowIt}
         />
 			</div>
 		)

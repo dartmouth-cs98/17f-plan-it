@@ -40,10 +40,10 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
-	}
+	} 
 
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.trip_id !== null) {
+		if (nextProps.trip_id) {
 			let cityCards = []
 			let dayNumber = 1
 			let startDate = (new Date(this.state.cities[0].start_date)).getTime()
@@ -295,7 +295,6 @@ class Onboarding extends Component {
 							onHandleSelect={this.onHandleSelect}
 							start_date={city.start_date}
 							end_date={city.end_date}
-							index={index}
 						/>
 					</div>
 				)
@@ -343,13 +342,13 @@ class Onboarding extends Component {
 
 		if (!_.isUndefined(err_msg) || !ok) {
 			return (
-				<div className='button_container start' onClick={() => this.onModalOpen(err_msg)}>
+				<div className='button_container start-onboarding-button' onClick={() => this.onModalOpen(err_msg)}>
 					Start Trip
 				</div>
 			)
 		} else {
 			return (
-				<div className='button_container start' onClick={() => { this.onCreateTrip(startDate, endDate)}}>Start Trip</div>
+				<div className='button_container start-onboarding-button' onClick={() => { this.onCreateTrip(startDate, endDate)}}>Start Trip</div>
 			)
 		}
 	}
@@ -454,8 +453,7 @@ class Onboarding extends Component {
 						</div>
 					</div>
 				</div>
-			)
-    	} else {
+			)} else {
 			return (
 				<div>
 				<div className='onboarding'>
