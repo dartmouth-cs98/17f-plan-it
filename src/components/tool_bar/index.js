@@ -70,9 +70,11 @@ class Toolbar extends Component {
 		let favoriteToggle = cookie.load('auth')? 
 		(<div 
 			onClick={this.toggleFavorite}
-			className='toolbar_favorite'>
+			className='toolbar-favorite'>
 			<i className={ favoriteIconClass }></i>
 		</div>) : <div/>
+		let importButton = cookie.load('auth')?
+			<div onClick={this.props.onModalOpen}>Import Trip</div> : <div/>
 
 		if (this.props.readOnly) {
 			return (

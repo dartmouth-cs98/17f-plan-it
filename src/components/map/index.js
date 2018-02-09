@@ -52,6 +52,7 @@ const POIMap = compose(
     enableRetinaIcons
     gridSize={60}
   >
+
     {props.showSug && props.markers.map((marker, index) => (
       <Marker
         key={marker.id}

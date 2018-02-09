@@ -14,7 +14,7 @@ class NavBar extends Component {
 		this.authenticated = true
 		this.state = {
       background: this.props.background,
-      authenticated: false,
+      authenticated: cookie.load('auth'),
 		}
 
     this.processSuccess = this.processSuccess.bind(this)

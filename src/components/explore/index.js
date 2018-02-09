@@ -6,7 +6,7 @@ import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
 import PrevArrow from '../arrows/prev_arrow.js'
 import NextArrow from '../arrows/next_arrow.js'
-import { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips } from '../../actions/index.js';
+import { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips, resetTripId } from '../../actions/index.js';
 import './index.scss'
 
 class Explore extends Component {
@@ -61,6 +61,10 @@ class Explore extends Component {
 		})
 	}
 
+	componentWillUnmount() {
+		this.props.resetTripId()
+	}
+
 	render() {
     	let hasPublishedTrips = this.props.publishedTrips.length !== 0
 
@@ -84,8 +88,6 @@ class Explore extends Component {
 			</div>
 		)
     	}
-
-		
 	}
 }
 
@@ -98,4 +100,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips })(Explore));
+export default withRouter(connect(mapStateToProps, { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips, resetTripId })(Explore));

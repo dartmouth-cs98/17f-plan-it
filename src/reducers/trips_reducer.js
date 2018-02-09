@@ -14,6 +14,11 @@ const initialState = {
 
 const TripsReducer = (state = initialState, action) => {
   switch (action.type) {
+    case ActionTypes.RESET_TRIP_ID: {
+      return Object.assign({}, state, {
+        trip_id: null,
+      });
+    }
     case ActionTypes.FETCH_TRIPS:
       return Object.assign({}, state, {
         userTrips: action.payload,

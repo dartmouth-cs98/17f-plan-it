@@ -40,10 +40,10 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
-	}
+	} 
 
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.trip_id !== null) {
+		if (nextProps.trip_id) {
 			let cityCards = []
 			let dayNumber = 1
 			let startDate = (new Date(this.state.cities[0].start_date)).getTime()
@@ -295,7 +295,6 @@ class Onboarding extends Component {
 							onHandleSelect={this.onHandleSelect}
 							start_date={city.start_date}
 							end_date={city.end_date}
-							index={index}
 						/>
 					</div>
 				)
@@ -454,8 +453,7 @@ class Onboarding extends Component {
 						</div>
 					</div>
 				</div>
-			)
-    	} else {
+			)} else {
 			return (
 				<div>
 				<div className='onboarding'>
