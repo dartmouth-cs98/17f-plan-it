@@ -349,7 +349,6 @@ class Workspace extends Component {
 			}
 		} else if (diff > 0) {
 			// shift card backwards in time if possible
-
 			const startTime = new Date((new Date(itinerary[index].start_time)).getTime() - diff)
 
 			if (index > 0 && itinerary[index - 1].type !== 'city' && startTime.getTime() >= (new Date(itinerary[index - 1].end_time)).getTime()) {
@@ -359,7 +358,15 @@ class Workspace extends Component {
 				})
 			} else {
 				// check if it goes before midnight
+				const dayStart = new Date(itinerary[index].start_time)
+				dayStart.setHours(0, 0, 0, 0)
 
+				if (startTime.getTime() >= dayStart.getTime()) {
+					_.assign(itinerary[index], {
+						'start_time': startTime,
+						'end_time': new Date((new Date(itinerary[index].end_time)).getTime() - diff)
+					})
+				}
 			}
 		}
 
