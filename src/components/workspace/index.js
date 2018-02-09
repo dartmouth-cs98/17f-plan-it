@@ -334,7 +334,6 @@ class Workspace extends Component {
 		dayEnd.setHours(24, 0, 0, 0)
 
 		// calculate the change in time to update
-		console.log(itinerary)
 		const diff = (new Date(itinerary[index].start_time)).getTime() - (new Date(time)).getTime()
 
 		if (diff < 0) {
@@ -367,7 +366,7 @@ class Workspace extends Component {
 					'start_time': startTime,
 					'end_time': new Date((new Date(itinerary[index].end_time)).getTime() - diff)
 				})
-			} else {
+			} else if (index === 0 || itinerary[index - 1].type === 'city') {
 				// check if it goes before midnight
 				const dayStart = new Date(itinerary[index].start_time)
 				dayStart.setHours(0, 0, 0, 0)
@@ -383,7 +382,6 @@ class Workspace extends Component {
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
-		console.log('updateSent')
     this.sendUpdates(itinerary, tripId)		
 	}
 
