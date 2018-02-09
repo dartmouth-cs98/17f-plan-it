@@ -4,12 +4,11 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	margin: 15px;
+	margin: 5px;
 	margin-top: 10px;
-	margin-bottom: 12px;
+	margin-bottom: 10px;
 	min-height: 50px;
 	background-color: #8ACDF1;
-	box-shadow: 4px 4px 4px #BDBDBD;
 }
 
 #tool-bar-left {
@@ -105,7 +104,6 @@
 
 .toolbar-download:hover {
 	cursor: pointer;
-	/* text-shadow: 1px 0px 0px #8ACDF1; */
 	text-shadow: 0 0 10px grey;
 	text-align: center;
 }
@@ -119,7 +117,6 @@
 .toolbar-favorite:hover {
 	cursor: pointer;
 	text-shadow: 0 0 10px grey;
-	/* text-shadow: 1px 0px 0px #FFFFFF; */
 }
 
 .toolbar-click {
@@ -135,7 +132,6 @@
 .toolbar-click:hover {
 	cursor: pointer;
 	text-shadow: 0 0 10px grey;
-	/* text-shadow: 1px 0px 0px #8ACDF1; */
 	text-align: center;
 }
 
