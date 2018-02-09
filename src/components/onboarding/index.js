@@ -342,13 +342,13 @@ class Onboarding extends Component {
 
 		if (!_.isUndefined(err_msg) || !ok) {
 			return (
-				<div className='button_container start' onClick={() => this.onModalOpen(err_msg)}>
+				<div className='button_container start-onboarding-button' onClick={() => this.onModalOpen(err_msg)}>
 					Start Trip
 				</div>
 			)
 		} else {
 			return (
-				<div className='button_container start' onClick={() => { this.onCreateTrip(startDate, endDate)}}>Start Trip</div>
+				<div className='button_container start-onboarding-button' onClick={() => { this.onCreateTrip(startDate, endDate)}}>Start Trip</div>
 			)
 		}
 	}
