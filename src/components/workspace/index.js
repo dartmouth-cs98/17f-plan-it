@@ -324,11 +324,17 @@ class Workspace extends Component {
 
 	updateStartTime(cardId, time) {
 		// TODO: figure out how to shift time backwards too
-		const itinerary = Array.from(this.props.cards)
+		const itinerary = _.map(Array.from(this.props.cards), _.clone)
 		const index = _.findIndex(itinerary, (card) => {
 			return card.id === cardId
 		})
 
+		// get a value representing the end of the day
+		const dayEnd = new Date(itinerary[index].start_time)
+		dayEnd.setHours(24, 0, 0, 0)
+
+		// calculate the change in time to update
+		console.log(itinerary)
 		const diff = (new Date(itinerary[index].start_time)).getTime() - (new Date(time)).getTime()
 
 		if (diff < 0) {
@@ -336,6 +342,11 @@ class Workspace extends Component {
 			for (let i = index; i < itinerary.length; i++) {
 				const card = itinerary[i]
 				const endTime = new Date((new Date(card.end_time)).getTime() - diff)
+
+				if (endTime.getTime() > dayEnd.getTime()) {
+					// if the later cards would get pushed back to the next day, don't edit the start time
+					return
+				}
 
 				_.assign(card, {
 					'start_time': new Date((new Date(card.start_time)).getTime() - diff),
@@ -372,6 +383,7 @@ class Workspace extends Component {
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
+		console.log('updateSent')
     this.sendUpdates(itinerary, tripId)		
 	}
 
