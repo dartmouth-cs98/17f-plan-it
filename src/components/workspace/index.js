@@ -229,19 +229,14 @@ class Workspace extends Component {
 			return {
 				name: suggestion.name,
 				image_url: suggestion.image_url,
-				url: suggestion.url,
+				yelp_url: suggestion.url,
 				price: suggestion.price,
-				rating: suggestion.rating,
 				lat: suggestion.lat,
 				long: suggestion.long,
-				address: suggestion.address,
-				city: suggestion.city,
-				state: suggestion.state,
-				country: suggestion.country,
-				zip_code: suggestion.zip_code,
 				phone: suggestion.phone,
-				description: suggestion.description,
-				source: suggestion.source
+				display_phone: suggestion.phone,
+				type: suggestion.description,
+				description: suggestion.description
 			}
 		})
 	}

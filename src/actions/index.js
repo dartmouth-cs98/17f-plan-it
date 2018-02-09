@@ -263,7 +263,7 @@ export function createCard(cards) {
 
 export function fetchSuggestions(lat, long, category=null) {
   return (dispatch) => {
-    let query = `${ROOT_URL}/yelp?latitude=${lat}&longitude=${long}`
+    let query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}`
 
     if (category) { query += `&categories=${category}` }
 

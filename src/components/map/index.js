@@ -56,29 +56,29 @@ const POIMap = compose(
     {props.showSug && props.markers.map((marker, index) => (
       <Marker
         key={marker.id}
-        position={{ lat: marker.coordinates.latitude, lng: marker.coordinates.longitude }}
-        onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}
+        position={{ lat: marker.lat, lng: marker.long }}
+        onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.lat, lng: marker.long })}
         >
         {props.isOpen === index &&
-          <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })}>
+          <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })}>
             <div className='pin-label'>
               <label className='pin-title'>{marker.name}</label>
               <FlatButton
                 label='Add'
                 style={{marginLeft: '10px'}}
                 onClick={() => {
-                  props.onToggleOpen(-1, { lat: marker.coordinates.latitude, lng: marker.coordinates.longitude })
+                  props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })
                   props.addCard({
                     name: marker.name,
                     image_url: marker.image_url,
                     yelp_url: marker.url,
                     price: marker.price,
-                    lat: marker.coordinates.latitude,
-                    long: marker.coordinates.longitude,
+                    lat: marker.lat,
+                    long: marker.long,
                     phone: marker.phone,
-                    display_phone: marker.display_phone,
-                    type: marker.categories[0].alias,
-                    description: marker.categories[0].title
+                    display_phone: marker.phone,
+                    type: marker.description,
+                    description: marker.description
                   })
                 }}
               />
@@ -117,9 +117,9 @@ const POIMap = compose(
                     lat: marker.lat,
                     long: marker.long,
                     phone: marker.phone,
-                    display_phone: marker.display_phone,
-                    type: marker.categories[0].alias,
-                    description: marker.categories[0].title
+                    display_phone: marker.phone,
+                    type: marker.description,
+                    description: marker.description
                   })
                 }}
               />

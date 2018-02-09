@@ -39,13 +39,13 @@ export default class Suggestions extends Component {
 					multiple={false}
 					style={{float: 'right', marginRight: '10px', cursor: 'pointer'}}
 				>
-			  	<MenuItem value="0" primaryText="All" />
-          <MenuItem value="1" primaryText="Food" />
-          <MenuItem value="2" primaryText="Hotels" />
-          <MenuItem value="3" primaryText="Rentals" />
-          <MenuItem value="4" primaryText="Fitness & Instruction" />
-          <MenuItem value="5" primaryText="Parks" />
-        </IconMenu>
+				<MenuItem value="0" primaryText="All" />
+          		<MenuItem value="1" primaryText="Food" />
+          		<MenuItem value="2" primaryText="Hotels" />
+          		<MenuItem value="3" primaryText="Rentals" />
+          		<MenuItem value="4" primaryText="Fitness & Instruction" />
+          		<MenuItem value="5" primaryText="Parks" />
+        		</IconMenu>
 			</div>
 		)
 	}
