@@ -35,7 +35,7 @@ const UsersReducer = (state = initialState, action) => {
 
       for (const user of state.live_users) {
         if (user.email.localeCompare(new_user.email) != 0) {
-          live_users.push(new_user);
+          live_users.push(user);
         }
       }
 

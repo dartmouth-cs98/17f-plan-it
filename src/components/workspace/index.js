@@ -63,11 +63,12 @@ class Workspace extends Component {
     console.log("this is the user", this.props.user)
     if (this.props.user.email) {
       mainChannel.connect(tripId, this.props.user.email)
-      mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
-    } else {
+    } else { //connect annon
+      console.log("connecting annon")
       mainChannel.connect(tripId, "foobar")
-      mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
     }
+
+    mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
 	}
 
   componentWillReceiveProps(nextProps) {

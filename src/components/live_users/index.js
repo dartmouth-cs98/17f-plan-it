@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom'
 import { heartbeatTimer, mainChannel } from '../../channels'
 import { updateUsersLive } from '../../actions'
 
-
 const USER_EXPIRATION = 1000;
 
 class LiveUsers extends React.Component {
@@ -27,17 +26,16 @@ class LiveUsers extends React.Component {
         if (Date.now() - u.tdd > USER_EXPIRATION) {
           return
         } else {
-          return this.renderUser(u)
+          const initials = u.fname.slice(0, 1) + u.lname.slice(0, 1);
+          return this.renderUser(initials)
         }
       })
     }
   }
 
-  renderUser(user) {
-    const initials = user.fname.slice(0, 1) + user.lname.slice(0, 1);
-    console.log("render users is called", initials)
+  renderUser(initials) {
     return (
-      <div className='user-circle' key={user.email}>
+      <div className='user-circle'>
         {initials}
       </div>
     )
