@@ -61,7 +61,13 @@ class Workspace extends Component {
 		this.props.fetchCards(tripId, DAY_NUMBER)
 
     console.log("this is the user", this.props.user)
-    mainChannel.connect(tripId, "sleechie@gmail.com")
+    if (this.props.user.email) {
+      mainChannel.connect(tripId, this.props.user.email)
+    } else { //connect annon
+      console.log("connecting annon")
+      mainChannel.connect(tripId, "foobar")
+    }
+
     mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
 	}
 
