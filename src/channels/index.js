@@ -39,13 +39,13 @@ class Channel {
 
     //handling new messages entering
     this.chan.on("new:msg:cards", payload => {
-      console.log("new message arrived", payload)
+//      console.log("new message arrived", payload)
       //updateCardsLive(payload.cards)
       this.cardUpdateHandler(payload)
     })
 
     this.chan.on("new:user:heartbeat", payload =>  {
-      console.log("heartbeat arrived", payload)
+      //console.log("heartbeat arrived", payload)
       this.usersUpdateHandler(payload)
     })
   }
@@ -75,7 +75,7 @@ class Channel {
     if (this.chan == null) {
       console.log("Heartbeat: Channel is not initalized.")
     } else {
-      console.log("Heartbeat: I am alive")
+      //console.log("Heartbeat: I am alive")
       this.chan.push("new:user:heartbeat")
     }
 
