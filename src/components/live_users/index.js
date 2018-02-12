@@ -25,8 +25,9 @@ class LiveUsers extends React.Component {
     // so have logi
     // so users looks like an email as the key,
     // time created as value
-
-    const users = ["Sam Lee", "Helen He", "Jeff Gao"]
+    //
+    //const users = ["Sam Lee", "Helen He", "Jeff Gao"]
+    const users = ["SL", "HH", "JG"]
     //if (this.props.users) {
     //  const keys  = Object.keys(this.props.users)
     //  return keys.map(k => {
@@ -43,19 +44,16 @@ class LiveUsers extends React.Component {
 
   renderUser(user) {
     return (
-      <span>
+      <div className='user-circle'>
         {user}
-      </span>
+      </div>
     )
   }
 
   render() {
     return (
-      <div>
-        <span>
-        Live Users:
+      <div className='toolbar-live-users'>
         {this.renderUsers()}
-        </span>
       </div>
     )
   }
