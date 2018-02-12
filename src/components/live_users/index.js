@@ -22,30 +22,23 @@ class LiveUsers extends React.Component {
   }
 
   renderUsers() {
-    // so have logi
-    // so users looks like an email as the key,
-    // time created as value
-    //
-    //const users = ["Sam Lee", "Helen He", "Jeff Gao"]
-    const users = ["SL", "HH", "JG"]
-    //if (this.props.users) {
-    //  const keys  = Object.keys(this.props.users)
-    //  return keys.map(k => {
-    //    console.log(Date.now() - this.props.users[k])
-    //    if (Date.now() - this.props.users[k] > USER_EXPIRATION) {
-    //      return
-    //    } else {
-    //      this.renderUser(k)
-    //    }
-    //  })
-    //}
-    return users.map(u => this.renderUser(u))
+    if (this.props.users) {
+      return this.props.users.map(u => {
+        if (Date.now() - u.tdd > USER_EXPIRATION) {
+          return
+        } else {
+          return this.renderUser(u)
+        }
+      })
+    }
   }
 
   renderUser(user) {
+    const initials = user.fname.slice(0, 1) + user.lname.slice(0, 1);
+    console.log("render users is called", initials)
     return (
-      <div className='user-circle'>
-        {user}
+      <div className='user-circle' key={user.email}>
+        {initials}
       </div>
     )
   }
