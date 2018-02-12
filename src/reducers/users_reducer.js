@@ -33,9 +33,11 @@ const UsersReducer = (state = initialState, action) => {
 
       const live_users = [new_user]
 
-      for (const user of state.live_users) {
-        if (user.email.localeCompare(new_user.email) != 0) {
-          live_users.push(user);
+      if (state.live_users) {
+        for (const user of state.live_users) {
+          if (user.email.localeCompare(new_user.email) != 0) {
+            live_users.push(user);
+          }
         }
       }
 
