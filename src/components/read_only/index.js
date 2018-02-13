@@ -7,7 +7,7 @@ import Itinerary from '../itinerary/index.js'
 import { DragDropContext } from 'react-beautiful-dnd'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards } from '../../actions/index.js'
+import { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards, fetchFavoritedTrips } from '../../actions/index.js'
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import OnboardingInput from '../onboarding_input'
@@ -87,6 +87,21 @@ class ReadOnly extends Component {
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 		this.props.fetchAllCards(tripId)
+		if (cookie.load('auth')) { this.props.fetchFavoritedTrips(cookie.load('auth')) }
+	}
+
+	isFavorited() {
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+
+		let favorited = false
+		this.props.favoritedTrips.map((trip) => {
+			if (trip.trip_id === parseInt(tripId)) {
+				favorited = true
+			}
+		})
+
+		return favorited
 	}
 
 	onModalClose() {
@@ -232,6 +247,7 @@ class ReadOnly extends Component {
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
+					favorited={this.isFavorited()}
 					readOnly={true}
 					onModalOpen={this.onModalOpen}
 				/>
@@ -266,8 +282,9 @@ const mapStateToProps = (state) => {
 		trips: state.trips.trip,
 		cards: state.cards.all,
 		all_cards: state.cards.all_cards,
-		trip_id: state.trips.trip_id
+		trip_id: state.trips.trip_id,
+		favoritedTrips: state.trips.favoritedTrips
 	}
 }
 
-export default withRouter(connect(mapStateToProps, { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards })(ReadOnly))
+export default withRouter(connect(mapStateToProps, { fetchTrip, fetchCards, createTrip, createCard, fetchFavoritedTrips, fetchAllCards })(ReadOnly))

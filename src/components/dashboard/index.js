@@ -6,7 +6,7 @@ import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
 import PrevArrow from '../arrows/prev_arrow.js'
 import NextArrow from '../arrows/next_arrow.js'
-import { fetchTrips, fetchFavoritedTrips, resetTripId } from '../../actions/index.js';
+import { fetchTrips, fetchFavoritedTrips, resetTripId, viewTrip } from '../../actions/index.js';
 import cookie from 'react-cookies'
 import './index.scss'
 
@@ -19,6 +19,12 @@ class Dashboard extends Component {
 
 	reloadPage() {
 		window.location.reload()
+	}
+
+	viewTrip(tripId) {
+		if (cookie.load('auth')) {
+			this.props.viewTrip({ trip_id: tripId, user_id: cookie.load('auth'), last_visited: new Date()})
+		}
 	}
 
 	renderTrips() {
@@ -40,7 +46,7 @@ class Dashboard extends Component {
 	renderFavoritedTrips() {
 		return this.props.favoritedTrips.map((trip) => {
 			return (
-				<Link to={`/preview/:${trip.id}`} key={trip.id}>
+				<Link to={`/preview/:${trip.id}`} key={trip.id} onClick={()=>this.viewTrip(trip.id)}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
@@ -103,4 +109,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, { fetchTrips, fetchFavoritedTrips, resetTripId })(Dashboard));
+export default withRouter(connect(mapStateToProps, { fetchTrips, fetchFavoritedTrips, resetTripId, viewTrip })(Dashboard));

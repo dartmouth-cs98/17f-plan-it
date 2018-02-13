@@ -6,7 +6,8 @@ import Slider from'react-slick'
 import { Card, CardMedia } from 'material-ui/Card';
 import PrevArrow from '../arrows/prev_arrow.js'
 import NextArrow from '../arrows/next_arrow.js'
-import { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips, resetTripId } from '../../actions/index.js';
+import cookie from 'react-cookies'
+import { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips, resetTripId, viewTrip } from '../../actions/index.js';
 import './index.scss'
 
 class Explore extends Component {
@@ -43,13 +44,19 @@ class Explore extends Component {
 		}
 	}
 
+	viewTrip(tripId) {
+		if (cookie.load('auth')) {
+			this.props.viewTrip({ trip_id: tripId, user_id: cookie.load('auth'), last_visited: new Date()})
+		}
+	}
+
 	renderPublished(trips, max_trips) {
 		let counter = 0
 		return trips.map((trip) => {
 			counter += 1
 			if (counter > max_trips) { return <div/>}
 			return (
-				<Link to={`/preview/:${trip.id}`} key={trip.id}>
+				<Link to={`/preview/:${trip.id}`} key={trip.id} onClick={()=>this.viewTrip(trip.id)}>
 					<Card className='trip_card'>
 						<CardMedia className='card_img'>
 				      		<img src={trip.photo_url} alt='' />
@@ -100,4 +107,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips, resetTripId })(Explore));
+export default withRouter(connect(mapStateToProps, { fetchPublishedTrips, fetchTrendingTrips, fetchPopularTrips, fetchPublishDateTrips, resetTripId, viewTrip })(Explore));
