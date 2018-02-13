@@ -30,7 +30,7 @@ class CollabButton extends React.Component {
 
   render() {
     return (
-      <button onClick={() => this.onClickHandler()}>
+      <button className='toolbar-click' onClick={() => this.onClickHandler()}>
         {this.renderButtonText()}
       </button>
     )
