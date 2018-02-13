@@ -34,6 +34,7 @@ export const ActionTypes = {
 
   UPDATE_CARDS_LIVE: 'UPDATE_CARDS_LIVE',
   UPDATE_USERS_LIVE: 'UPDATE_USERS_LIVE',
+  DELETE_USER_LIVE: 'DELETE_USER_LIVE',
 
   AUTH_USER: 'AUTH_USER',
   DEAUTH_USER: 'DEAUTH_USER',
@@ -196,6 +197,12 @@ export function updateCardsLive(cards) {
 export function updateUsersLive(users) {
   return (dispatch) => {
     dispatch({ type: ActionTypes.UPDATE_USERS_LIVE, payload: users})
+  }
+}
+
+export function deleteUserLive(user) {
+  return (dispatch) => {
+    dispatch({ type: ActionTypes.DELETE_USER_LIVE, payload: user})
   }
 }
 

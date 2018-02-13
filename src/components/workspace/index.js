@@ -11,7 +11,8 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
-import LiveUsers from '../live_users'
+import { generateUUID } from '../../util/random'
+
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -63,9 +64,10 @@ class Workspace extends Component {
     console.log("this is the user", this.props.user)
     if (this.props.user.email) {
       mainChannel.connect(tripId, this.props.user.email)
-    } else { //connect annon
+    } else {
+      //connect annon
       console.log("connecting annon")
-      mainChannel.connect(tripId, "foobar")
+      mainChannel.connect(tripId, generateUUID())
     }
 
     mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)

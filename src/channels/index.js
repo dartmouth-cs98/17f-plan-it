@@ -8,7 +8,7 @@ const URL = 'ws://localhost:4000/socket'
 const socket = new Socket(URL, {})
 
 //const heartbeatTimer = 10000; //10 second heartbeat timer
-const heartbeatTimer = 5000; //5 second heartbeat timer
+export const heartbeatTimer = 5000; //5 second heartbeat timer
 
 
 function logger(payload) {
@@ -39,17 +39,15 @@ class Channel {
 
     //handling new messages entering
     this.chan.on("new:msg:cards", payload => {
-//      console.log("new message arrived", payload)
+      console.log("new message arrived", payload)
       //updateCardsLive(payload.cards)
       this.cardUpdateHandler(payload)
     })
 
     this.chan.on("new:user:heartbeat", payload =>  {
-      //console.log("heartbeat arrived", payload)
       this.usersUpdateHandler(payload)
     })
   }
-
 
   setCardUpdateFunction(func) {
     this.cardUpdateHandler = func;
@@ -75,7 +73,6 @@ class Channel {
     if (this.chan == null) {
       console.log("Heartbeat: Channel is not initalized.")
     } else {
-      //console.log("Heartbeat: I am alive")
       this.chan.push("new:user:heartbeat")
     }
 
