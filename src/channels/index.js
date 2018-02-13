@@ -12,7 +12,7 @@ const heartbeatTimer = 5000; //5 second heartbeat timer
 
 
 function logger(payload) {
-  console.log("Function is not set", payload)
+//  console.log("Function is not set", payload)
 }
 
 class Channel {

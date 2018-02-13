@@ -80,7 +80,6 @@ class Toolbar extends Component {
 			return (
 				<div id='tool-bar'>
 					<div className='toolbar-items'>
-            <LiveUsers />
 						<div className='toolbar-trip-title'>
 							{this.props.tripName}
 						</div>
