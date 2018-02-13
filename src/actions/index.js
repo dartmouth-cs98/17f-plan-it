@@ -248,6 +248,11 @@ export function unfavoriteTrip(tripId, userId) {
   }
 }
 
+export function authUser(is_auth) {
+  return (dispatch) => {
+    dispatch({ type: ActionTypes.AUTH_USER, payload: is_auth})
+  }
+}
 export function createUser(user) {
   return (dispatch) => {
     axios.post(`${ROOT_URL}/users`, user).then((response) => {

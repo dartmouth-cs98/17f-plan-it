@@ -6,11 +6,17 @@ const initialState = {
   email: null,
   fname: null,
   lname: null,
+  authenticated: false,
   live_users: []
 };
 
 const UsersReducer = (state = initialState, action) => {
   switch (action.type) {
+    case ActionTypes.AUTH_USER:
+      return Object.assign({}, state, {
+        authenticated: action.payload
+      })
+
     case ActionTypes.CREATE_USER:
       return Object.assign({}, state, {
         user_id: action.payload.user_id,
