@@ -28,6 +28,11 @@ class NavBar extends Component {
     window.location.reload()
   }
 
+	reloadPageRoot() {
+    this.props.resetTripId()
+		window.location.href = "/";
+  }
+
 	renderOptions() {
 		if (this.state.authenticated) {
 			return (
@@ -113,7 +118,7 @@ class NavBar extends Component {
 		storage.removeItem('persist:root')
     this.props.resetTripId()
     this.setState({ authenticated: false })
-    this.reloadPage()
+    this.reloadPageRoot()
   }
 
 	render() {
