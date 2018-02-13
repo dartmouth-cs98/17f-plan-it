@@ -180,11 +180,7 @@ export default class Itinerary extends Component {
 		let index = 0
 		const toRender = []
 
-		console.log("for")
-
 		for (const card of this.props.cards) {
-			console.log("id", card.id, card)
-		// const toRender = _.map(this.props.cards, (card) => {
 			if (card.type === 'city' || card.type === 'travel') {
 				continue
 			} else if (this.state.readOnly) {
@@ -242,8 +238,6 @@ export default class Itinerary extends Component {
 				)
 			}
 		}
-
-		console.log("render", toRender)
 
 		return toRender
 	}

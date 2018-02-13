@@ -59,11 +59,10 @@ class Workspace extends Component {
         this.props.fetchTrip(tripId)
         this.props.fetchCards(tripId, DAY_NUMBER)
 
-    console.log("this is the user", this.props.user)
     if (this.props.user.email) {
       mainChannel.connect(tripId, this.props.user.email)
-    } else { //connect annon
-      console.log("connecting annon")
+    } else { //connect anon
+      console.log("connecting anon")
       mainChannel.connect(tripId, "foobar")
     }
 
@@ -250,7 +249,6 @@ class Workspace extends Component {
 			// 	source: suggestion.source
 			// }
 		// })
-		console.log("suggestions", this.props.suggestions)
 		return this.props.suggestions
 	}
 
@@ -293,8 +291,6 @@ class Workspace extends Component {
 				  	trip_id: tripId,
 				  	day_number: this.state.day
 				}
-
-				console.log(inserted)
 
 				// add the new card to the itinerary
 				itinerary.splice(result.destination.index, 0, inserted)
@@ -371,19 +367,15 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards(this.state.cards)
-		console.log(cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 
 		const suggestions = this.formatSuggestions()
-		console.log(suggestions)
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
-
-		console.log("cards", cards)
 
 
 		return (
