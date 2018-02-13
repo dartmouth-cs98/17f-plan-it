@@ -267,8 +267,10 @@ class ReadOnly extends Component {
 							isInfoOpen={false}
 							isMarkerShown={true}
 							MarkerPosition={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
+							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
 							center={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
 							infoMessage="Hello From Dartmouth"
+							readOnly={true}
 						/>
 					</div>
 					</DragDropContext>
