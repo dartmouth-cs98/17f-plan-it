@@ -399,6 +399,7 @@ class Workspace extends Component {
                             center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
                             addCard={this.addCard}
                             removeCard={this.props.deleteCard}
+                            readOnly={false}
                         />
 
                     </div>
