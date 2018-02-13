@@ -158,7 +158,7 @@ class Workspace extends Component {
 				const tripId = _.last(path)
 
 				this.props.insertCard([{
-					...card,
+				  	...card,
 				  travel_duration: TRAVEL_TIME,
 				  start_time: (new Date(startTime)),
 				  end_time: (new Date(startTime + DEFAULT_DURATION)),
@@ -225,20 +225,28 @@ class Workspace extends Component {
 	}
 
 	formatSuggestions() {
-		return _.map(this.props.suggestions, (suggestion) => {
-			return {
-				name: suggestion.name,
-				image_url: suggestion.image_url,
-				yelp_url: suggestion.url,
-				price: suggestion.price,
-				lat: suggestion.lat,
-				long: suggestion.long,
-				phone: suggestion.phone,
-				display_phone: suggestion.phone,
-				type: suggestion.description,
-				description: suggestion.description
-			}
-		})
+		// return _.map(this.props.suggestions, (suggestion) => {
+			// return {
+			// 	name: suggestion.name,
+			// 	photo_url: suggestion.photo_url,
+			// 	url: suggestion.url,
+			// 	price: suggestion.price,
+			// 	rating: suggestion.rating,
+			// 	lat: suggestion.lat,
+			// 	long: suggestion.long,
+			// 	address: suggestion.address,
+			// 	city: suggestion.city,
+			// 	state: suggestion.state,
+			// 	country: suggestion.country,
+			// 	zip_code: suggestion.zip_code,
+			// 	phone: suggestion.phone,
+			// 	type: suggestion.type,
+			// 	description: suggestion.description,
+			// 	source: suggestion.source
+			// }
+		// })
+		console.log("suggestions", this.props.suggestions)
+		return this.props.suggestions
 	}
 
 	onDragEnd(result) {
@@ -272,14 +280,16 @@ class Workspace extends Component {
 				const tripId = _.last(path)
 
 				const inserted = {
-					...item,
-					id: 0,
-				  travel_duration: TRAVEL_TIME,
-				  start_time: start,
-				  end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
-				  trip_id: tripId,
-				  day_number: this.state.day
+						...item,
+						id: 0,
+				    travel_duration: TRAVEL_TIME,
+				  	start_time: start,
+				  	end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
+				  	trip_id: tripId,
+				  	day_number: this.state.day
 				}
+
+				console.log(inserted)
 
 				// add the new card to the itinerary
 				itinerary.splice(result.destination.index, 0, inserted)
@@ -356,15 +366,20 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards(this.state.cards)
+		console.log(cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 
 		const suggestions = this.formatSuggestions()
+		console.log(suggestions)
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
+
+		console.log("cards", cards)
+
 
 		return (
 			<div id='workspace'>

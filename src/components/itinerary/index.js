@@ -178,37 +178,31 @@ export default class Itinerary extends Component {
 
 	renderList() {
 		let index = 0
-		const toRender = _.map(this.props.cards, (card) => {
-			if (card.type === 'city') {
-				// return (
-				// 	<FreeTime
-				// 		duration={24 * 60 * 60 * 1000}
-				// 		select={() => { this.props.selectTime(card) }}
-				// 		selected={!_.isNull(this.props.selected)}
-				// 	/>
-				// )
-			} else if (card.type === 'travel') {
-				// return <Travel 
-				// 	destination={card.destination}
-				// 	duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-				// />
+		const toRender = []
+
+		console.log("for")
+
+		for (const card of this.props.cards) {
+			console.log("id", card.id, card)
+		// const toRender = _.map(this.props.cards, (card) => {
+			if (card.type === 'city' || card.type === 'travel') {
+				continue
 			} else if (this.state.readOnly) {
-				return (
-					<div>
-						<Item
-							key={card.id}
-							name={card.name}
-							description={card.description}
-							timeScale={TIME_SCALE}
-							startTime={card.start_time}
-							endTime={card.end_time}
-							duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-							buttons={false}
-						/>
-					</div>
+
+				toRender.push(
+					<Item
+						key={card.id}
+						name={card.name}
+						description={card.description}
+						timeScale={TIME_SCALE}
+						startTime={card.start_time}
+						endTime={card.end_time}
+						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+						buttons={false}
+					/>
 				)
 			} else {
-				return (
+				toRender.push(
 					<Draggable key={card.id} draggableId={card.id} index={index++}>
 						{(provided, snapshot) => (
 							<div>
@@ -247,7 +241,9 @@ export default class Itinerary extends Component {
 					</Draggable>
 				)
 			}
-		})
+		}
+
+		console.log("render", toRender)
 
 		return toRender
 	}
