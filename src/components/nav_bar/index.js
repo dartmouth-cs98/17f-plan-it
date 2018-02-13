@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
-import { createUser } from '../../actions/index.js'
+import { createUser, resetTripId } from '../../actions/index.js'
 import axios from 'axios'
 import cookie from 'react-cookies'
 import './index.scss'
@@ -24,6 +24,7 @@ class NavBar extends Component {
 	}
 
   reloadPage() {
+    this.props.resetTripId()
     window.location.reload()
   }
 
@@ -110,6 +111,7 @@ class NavBar extends Component {
   processLogout(props) {
     cookie.remove('auth', { path: '/' })
 		storage.removeItem('persist:root')
+    this.props.resetTripId()
     this.setState({ authenticated: false })
   }
 
@@ -131,4 +133,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, { createUser })(NavBar));
+export default withRouter(connect(mapStateToProps, { createUser, resetTripId })(NavBar));
