@@ -18,6 +18,7 @@ export const ActionTypes = {
   FAVORITE_TRIP: 'FAVORITE_TRIP',
   UNFAVORITE_TRIP: 'UNFAVORITE_TRIP',
   RESET_TRIP_ID: 'RESET_TRIP_ID',
+  VIEW_TRIP: 'VIEW_TRIP',
   TRIP_ERROR: 'TRIP_ERROR',
 
   FETCH_CARDS: 'FETCH_CARDS',
@@ -47,6 +48,16 @@ export const ActionTypes = {
 
 export function resetTripId(id) {
   return { type: ActionTypes.RESET_TRIP_ID, payload: null}
+}
+
+export function viewTrip(trip) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/viewed`, trip).then((response) => {
+      dispatch({ type: ActionTypes.VIEW_TRIP, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
+    })
+  }
 }
 
 export function fetchTrips(id) {
@@ -221,9 +232,9 @@ export function fetchFavoritedTrips(id) {
   };
 }
 
-export function favoriteTrip(trip, userId) {
+export function favoriteTrip(trip) {
   return (dispatch) => {
-    axios.post(`${ROOT_URL}/favorited?user_id=${userId}`, trip).then((response) => {
+    axios.post(`${ROOT_URL}/favorited?`, trip).then((response) => {
       dispatch({ type: ActionTypes.FAVORITE_TRIP, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })

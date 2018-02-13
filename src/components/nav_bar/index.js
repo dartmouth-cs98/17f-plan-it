@@ -64,7 +64,7 @@ class NavBar extends Component {
     return <div
       className='nav-button'
       onClick={this.processLogout}
-    >Logout</div>;
+      >Logout</div>;
   }
 
   componentWillMount() {
@@ -113,6 +113,7 @@ class NavBar extends Component {
 		storage.removeItem('persist:root')
     this.props.resetTripId()
     this.setState({ authenticated: false })
+    this.reloadPage()
   }
 
 	render() {

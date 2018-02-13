@@ -14,6 +14,10 @@ const initialState = {
 
 const TripsReducer = (state = initialState, action) => {
   switch (action.type) {
+    case ActionTypes.VIEW_TRIP: 
+      return Object.assign({}, state, {
+        error: null,
+      }); 
     case ActionTypes.RESET_TRIP_ID: {
       return Object.assign({}, state, {
         trip_id: null,
@@ -33,8 +37,8 @@ const TripsReducer = (state = initialState, action) => {
       });
     case ActionTypes.UPDATE_TRIP:
       return Object.assign({}, state, {
-        trip: action.payload,
-      });
+        error: null,
+      }); 
     case ActionTypes.CREATE_TRIP:
       return Object.assign({}, state, {
         trip_id: action.payload,
@@ -61,12 +65,12 @@ const TripsReducer = (state = initialState, action) => {
       }); 
     case ActionTypes.FAVORITE_TRIP:
       return Object.assign({}, state, {
-          error: null,
-        }); 
+        error: null,
+      }); 
     case ActionTypes.UNFAVORITE_TRIP:
       return Object.assign({}, state, {
-          error: null,
-        }); 
+        error: null,
+      }); 
     default:
       return state;
   }
