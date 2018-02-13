@@ -6,16 +6,15 @@ import cookie from 'react-cookies'
 import './index.scss'
 import DownloadTrip from '../download_trip/index.js'
 import LiveUsers from '../live_users'
+import CollabButton from '../collab_button'
 
 class Toolbar extends Component {
 	constructor(props) {
 		super(props)
-
 		this.state = {
 			published: this.props.published,
 			favorited: this.props.favoritedTrips? this.isFavorited() : false
 		}
-
 		this.togglePublish = this.togglePublish.bind(this)
 		this.toggleFavorite = this.toggleFavorite.bind(this)
 	}
@@ -65,6 +64,12 @@ class Toolbar extends Component {
 		}
 	}
 
+  renderCollabButton() {
+    if (this.props.authenticated) {
+      return <CollabButton />
+    }
+  }
+
 	render() {
 		let favoriteIconClass = this.state.favorited? 'fa fa-heart fa-2x heart' : 'fa fa-heart-o fa-2x heart'
 		let favoriteToggle = cookie.load('auth')?
@@ -97,6 +102,7 @@ class Toolbar extends Component {
 				<div id='tool-bar'>
 					<div className='toolbar-items'>
             <LiveUsers />
+            {this.renderCollabButton()}
 						<div className='toolbar-trip-title'>
 							{this.props.tripName}
 						</div>
@@ -118,7 +124,10 @@ class Toolbar extends Component {
 }
 
 const mapStateToProps = (state) => {
-	return { favoritedTrips: state.trips.favoritedTrips }
+	return {
+    favoritedTrips: state.trips.favoritedTrips,
+    authenticated: state.users.authenticated,
+  }
 }
 
 export default withRouter(connect(mapStateToProps, { updateTrip, fetchFavoritedTrips, unfavoriteTrip, favoriteTrip })(Toolbar));
