@@ -13,11 +13,13 @@ export const ActionTypes = {
   FETCH_POPULAR_TRIPS: 'FETCH_POPULAR_TRIPS',
   FETCH_TRENDING_TRIPS: 'FETCH_TRENDING_TRIPS',
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
+  FETCH_RECENTLY_VIEWED: 'FETCH_RECENTLY_VIEWED',
   CREATE_TRIP: 'CREATE_TRIP',
   UPDATE_TRIP: 'UPDATE_TRIP',
   FAVORITE_TRIP: 'FAVORITE_TRIP',
   UNFAVORITE_TRIP: 'UNFAVORITE_TRIP',
   RESET_TRIP_ID: 'RESET_TRIP_ID',
+  VIEW_TRIP: 'VIEW_TRIP',
   TRIP_ERROR: 'TRIP_ERROR',
 
   FETCH_CARDS: 'FETCH_CARDS',
@@ -47,6 +49,16 @@ export const ActionTypes = {
 
 export function resetTripId(id) {
   return { type: ActionTypes.RESET_TRIP_ID, payload: null}
+}
+
+export function viewTrip(trip) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/viewed`, trip).then((response) => {
+      dispatch({ type: ActionTypes.VIEW_TRIP, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
+    })
+  }
 }
 
 export function fetchTrips(id) {
@@ -113,6 +125,16 @@ export function fetchTrendingTrips() {
   return (dispatch) => {
     axios.get(`${ROOT_URL}/published?order=trending`).then((response) => {
       dispatch({ type: ActionTypes.FETCH_TRENDING_TRIPS, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchRecentlyViewedTrips(user_id) {
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/published?order=user_recent&user_id=${user_id}`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_RECENTLY_VIEWED, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
     })
@@ -221,9 +243,9 @@ export function fetchFavoritedTrips(id) {
   };
 }
 
-export function favoriteTrip(trip, userId) {
+export function favoriteTrip(trip) {
   return (dispatch) => {
-    axios.post(`${ROOT_URL}/favorited?user_id=${userId}`, trip).then((response) => {
+    axios.post(`${ROOT_URL}/favorited?`, trip).then((response) => {
       dispatch({ type: ActionTypes.FAVORITE_TRIP, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })

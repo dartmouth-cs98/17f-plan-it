@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { updateTrip, fetchFavoritedTrips, favoriteTrip, unfavoriteTrip } from '../../actions/index.js'
+import { updateTrip, favoriteTrip, unfavoriteTrip } from '../../actions/index.js'
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'
 import cookie from 'react-cookies'
@@ -13,28 +13,11 @@ class Toolbar extends Component {
 
 		this.state = {
 			published: this.props.published,
-			favorited: this.props.favoritedTrips? this.isFavorited() : false
+			favorited: this.props.favorited
 		}
 
-		this.togglePublish = this.togglePublish.bind(this)	
+		this.togglePublish = this.togglePublish.bind(this)
 		this.toggleFavorite = this.toggleFavorite.bind(this)
-	}
-
-	componentDidMount() {
-		this.props.fetchFavoritedTrips(cookie.load('auth'))
-	}
-
-	componentWillReceiveProps() {
-		this.setState({ favorited: this.isFavorited() })
-	}
-
-	isFavorited() {
-		this.props.favoritedTrips.map((trip) => {
-			if (trip.trip_id === parseInt(this.props.tripId)) {
-				return true
-			}
-		})
-		return false
 	}
 
 	togglePublish(event) {
@@ -45,15 +28,15 @@ class Toolbar extends Component {
 	}
 
 	toggleFavorite(event) {
-		if (cookie.load('auth')) { 
+		if (cookie.load('auth')) {
 			let favorited = !this.state.favorited
 			// changed from unfavorited to favorited
 			if (favorited) {
-				this.props.favoriteTrip({trip_id: this.props.tripId, user_id: cookie.load('auth')})
+				this.props.favoriteTrip({trip_id: this.props.tripId, user_id: cookie.load('auth'), last_visited: new Date()})
 			} else {
 				this.props.unfavoriteTrip(this.props.tripId, cookie.load('auth'))
 			}
-			this.setState({ favorited }) 
+			this.setState({ favorited })
 		}
 	}
 
@@ -67,8 +50,8 @@ class Toolbar extends Component {
 
 	render() {
 		let favoriteIconClass = this.state.favorited? 'fa fa-heart fa-2x heart' : 'fa fa-heart-o fa-2x heart'
-		let favoriteToggle = cookie.load('auth')? 
-		(<div 
+		let favoriteToggle = cookie.load('auth')?
+		(<div
 			onClick={this.toggleFavorite}
 			className='toolbar-favorite'>
 			<i className={ favoriteIconClass }></i>
@@ -87,6 +70,7 @@ class Toolbar extends Component {
 							<div className ='toolbar-download'>
 								<DownloadTrip tripId={this.props.tripId} />
 							</div>
+							{ importButton }
 							{ favoriteToggle }
 						</div>
 					</div>
@@ -96,10 +80,6 @@ class Toolbar extends Component {
 			return (
 				<div id='tool-bar'>
 					<div className='toolbar-items'>
-						<div className='toolbar-live-users'>
-							<div className='user-circle'> HH </div>
-							<div className='user-circle'> JS </div>
-						</div>
 						<div className='toolbar-trip-title'>
 							{this.props.tripName}
 						</div>
@@ -107,7 +87,7 @@ class Toolbar extends Component {
 							<div className ='toolbar-download'>
 								<DownloadTrip tripId={this.props.tripId} />
 							</div>
-							<div 
+							<div
 								onClick={this.togglePublish}
 								className='toolbar-click'>
 								{this.getPublishedText()}
@@ -120,9 +100,5 @@ class Toolbar extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return { favoritedTrips: state.trips.favoritedTrips }
-}
-
-export default withRouter(connect(mapStateToProps, { updateTrip, fetchFavoritedTrips, unfavoriteTrip, favoriteTrip })(Toolbar));
+export default withRouter(connect(null, { updateTrip, unfavoriteTrip, favoriteTrip })(Toolbar));
 

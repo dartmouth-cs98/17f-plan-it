@@ -11,12 +11,12 @@ import './index.scss'
 
 const TIME_SCALE = 2500
 const MONTHS = [
-	'January', 
-	'February', 
-	'March', 
-	'April', 
-	'May', 
-	'June', 
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
 	'July',
 	'August',
 	'September',
@@ -42,12 +42,12 @@ const getListStyle = isDraggingOver => ({
 
 export default class Itinerary extends Component {
 	constructor(props) {
-		super(props) 
+		super(props)
 
 		this.state = {
 			startTimeDialog: false,
-			editCard: null, 
-			shift: false, 
+			editCard: null,
+			shift: false,
 			newTime: null,
 			readOnly: this.props.readOnly
 		}
@@ -117,7 +117,7 @@ export default class Itinerary extends Component {
 
 		this.props.updateCard(this.state.editCard.id, {
 			start_time: this.state.newTime,
-			end_time: new Date(this.state.newTime.getTime() + duration)			
+			end_time: new Date(this.state.newTime.getTime() + duration)
 		}, this.props.tripId, this.props.day)
 
 		this.closeDialog()
@@ -337,7 +337,7 @@ class Travel extends Component {
 
 		return (
 			<div className='card-wrapper'>
-				<div 
+				<div
 					className='card travel-card'
 					style={{height}}
 				>

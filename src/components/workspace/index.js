@@ -18,52 +18,57 @@ const DEFAULT_DURATION = 3600000
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
 const CATEGORIES = [
-	null,
-	'food',
-	'hotels',
-	'rentals',
-	'fitness & instruction',
-	'parks'
+    null,
+    'food',
+    'hotels',
+    'rentals',
+    'fitness & instruction',
+    'parks'
 ]
 
 class Workspace extends Component {
-	constructor(props) {
-		super(props)
+    constructor(props) {
+        super(props)
 
-		this.state = {
-			day: DAY_NUMBER,
-			selected: null,
-			category: 0,
-			pinLat: null,
-			pinLong: null,
-		}
+        this.state = {
+            day: DAY_NUMBER,
+            selected: null,
+            category: 0,
+            pinLat: null,
+            pinLong: null,
+        }
 
-		this.dayForward = this.dayForward.bind(this)
-		this.dayBackward = this.dayBackward.bind(this)
-		this.selectCategory = this.selectCategory.bind(this)
-		this.searchSuggestions = this.searchSuggestions.bind(this)
-		this.addCard = this.addCard.bind(this)
-		this.formatCards = this.formatCards.bind(this)
-		this.formatSuggestions = this.formatSuggestions.bind(this)
-		this.onDragEnd = this.onDragEnd.bind(this)
-    this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
-    this.sendUpdates = this.sendUpdates.bind(this)
+        this.dayForward = this.dayForward.bind(this)
+        this.dayBackward = this.dayBackward.bind(this)
+        this.selectCategory = this.selectCategory.bind(this)
+        this.searchSuggestions = this.searchSuggestions.bind(this)
+        this.addCard = this.addCard.bind(this)
+        this.formatCards = this.formatCards.bind(this)
+        this.formatSuggestions = this.formatSuggestions.bind(this)
+        this.onDragEnd = this.onDragEnd.bind(this)
+        this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
+        this.sendUpdates = this.sendUpdates.bind(this)
+        this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+    }
 
-    this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
-	}
+    componentDidMount() {
+        const path = window.location.pathname.split(':')
+        const tripId = _.last(path)
 
-	componentDidMount() {
-		const path = window.location.pathname.split(':')
-		const tripId = _.last(path)
-
-		this.setState({ tripId })
-		this.props.fetchTrip(tripId)
-		this.props.fetchCards(tripId, DAY_NUMBER)
+        this.setState({ tripId })
+        this.props.fetchTrip(tripId)
+        this.props.fetchCards(tripId, DAY_NUMBER)
 
     console.log("this is the user", this.props.user)
-    mainChannel.connect(tripId, "sleechie@gmail.com")
+    if (this.props.user.email) {
+      mainChannel.connect(tripId, this.props.user.email)
+    } else { //connect annon
+      console.log("connecting annon")
+      mainChannel.connect(tripId, "foobar")
+    }
+
     mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
-	}
+    }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ cards: nextProps.cards})
@@ -79,7 +84,7 @@ class Workspace extends Component {
     mainChannel.send(send_package)
   }
 
-	// update cards with new itinerary
+    // update cards with new itinerary
   sendUpdates(itinerary, tripId) {
     this.setState({cards: itinerary})
     this.sendLiveUpdate(itinerary)
@@ -429,42 +434,41 @@ class Workspace extends Component {
 }
 
 const mapStateToProps = (state) => {
-	return {
-
-    user: state.users,
-		trips: state.trips.trip,
-		cards: state.cards.all,
-		suggestions: state.cards.suggestions
-	}
+    return {
+        user: state.users,
+        trips: state.trips.trip,
+        cards: state.cards.all,
+        suggestions: state.cards.suggestions
+    }
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-		fetchTrip: (id) => {
-			dispatch(fetchTrip(id))
-		},
-		fetchCards: (id, day) => {
-			dispatch(fetchCards(id, day))
-		},
-		insertCard: (cards, trip, id) => {
-			dispatch(insertCard(cards, trip, id))
-		},
-		updateCard: (cards, trip, id, day) => {
-			dispatch(updateCard(cards, trip, id, day))
-		},
-    updateCardsLive: (cards) => {
-      dispatch(updateCardsLive(cards))
-    },
-		updateCards: (cards, trip, day) => {
-			dispatch(updateCards(cards, trip, day))
-		},
-		deleteCard: (id, trip, day) => {
-			dispatch(deleteCard(id, trip, day))
-		},
-		fetchSuggestions: (lat, long, categories=null) => {
-			dispatch(fetchSuggestions(lat, long, categories))
-		}
-	}
+    return {
+        fetchTrip: (id) => {
+            dispatch(fetchTrip(id))
+        },
+        fetchCards: (id, day) => {
+            dispatch(fetchCards(id, day))
+        },
+        insertCard: (cards, trip, id) => {
+            dispatch(insertCard(cards, trip, id))
+        },
+        updateCard: (cards, trip, id, day) => {
+            dispatch(updateCard(cards, trip, id, day))
+        },
+        updateCardsLive: (cards) => {
+          dispatch(updateCardsLive(cards))
+        },
+        updateCards: (cards, trip, day) => {
+            dispatch(updateCards(cards, trip, day))
+        },
+        deleteCard: (id, trip, day) => {
+            dispatch(deleteCard(id, trip, day))
+        },
+        fetchSuggestions: (lat, long, categories=null) => {
+            dispatch(fetchSuggestions(lat, long, categories))
+        }
+    }
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Workspace))

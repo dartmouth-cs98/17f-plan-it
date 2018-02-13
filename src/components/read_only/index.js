@@ -7,8 +7,7 @@ import Itinerary from '../itinerary/index.js'
 import { DragDropContext } from 'react-beautiful-dnd'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import DownloadTrip from '../download_trip/index.js'
-import { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards } from '../../actions/index.js'
+import { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards, fetchFavoritedTrips } from '../../actions/index.js'
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import OnboardingInput from '../onboarding_input'
@@ -20,7 +19,6 @@ import '../../react_dates_overrides.css'
 require('./index.scss')
 
 const DAY_NUMBER = 1
-const TRAVEL_TIME = 900000
 
 class ReadOnly extends Component {
 	constructor(props) {
@@ -89,6 +87,21 @@ class ReadOnly extends Component {
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 		this.props.fetchAllCards(tripId)
+		if (cookie.load('auth')) { this.props.fetchFavoritedTrips(cookie.load('auth')) }
+	}
+
+	isFavorited() {
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+
+		let favorited = false
+		this.props.favoritedTrips.map((trip) => {
+			if (trip.trip_id === parseInt(tripId)) {
+				favorited = true
+			}
+		})
+
+		return favorited
 	}
 
 	onModalClose() {
@@ -158,37 +171,37 @@ class ReadOnly extends Component {
 		}
 	}
 
-	formatCards() {
+	formatCards(cards) {
 		let cardList = []
+		let cityLat
+		let cityLong
 
-		_.each(this.props.cards, (card) => {
+		_.each(cards, (card) => {
 			if (card.type === 'city') {
+				cityLat = card.lat
+				cityLong = card.long
 				cardList.push(card)
 				// set the base location
 				return
 			}
 
-			const cardStart = new Date(card.start_time)
-
-			const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-			const travel = {
-				type: 'travel',
-				start_time: travelStart.toString(),
-				end_time: card.start_time,
-				travelType: card.travelType,
-				destination: card.name
-			}
-
-			cardList.push(travel)
-
 			cardList.push(card)
 		})
+
+		if (_.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
+			if (this.state.pinLat !== cityLat && this.state.pinLong !== cityLong) {
+				this.setState({
+					pinLat: cityLat,
+					pinLong: cityLong
+				})
+			}
+		}
 
 		return cardList
 	}
 
 	render() {
-		const cards = this.formatCards()
+		const cards = this.formatCards(this.props.cards)
 		const [city] = _.filter(cards, (card) => {
 			return card.type === 'city'
 		})
@@ -234,6 +247,7 @@ class ReadOnly extends Component {
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
+					favorited={this.isFavorited()}
 					readOnly={true}
 					onModalOpen={this.onModalOpen}
 				/>
@@ -253,8 +267,10 @@ class ReadOnly extends Component {
 							isInfoOpen={false}
 							isMarkerShown={true}
 							MarkerPosition={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
+							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
 							center={{ lat: this.state.pinLat || city ? city.lat : null, lng: this.state.pinLong || city ? city.long : null }}
 							infoMessage="Hello From Dartmouth"
+							readOnly={true}
 						/>
 					</div>
 					</DragDropContext>
@@ -268,8 +284,9 @@ const mapStateToProps = (state) => {
 		trips: state.trips.trip,
 		cards: state.cards.all,
 		all_cards: state.cards.all_cards,
-		trip_id: state.trips.trip_id
+		trip_id: state.trips.trip_id,
+		favoritedTrips: state.trips.favoritedTrips
 	}
 }
 
-export default withRouter(connect(mapStateToProps, { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards })(ReadOnly))
+export default withRouter(connect(mapStateToProps, { fetchTrip, fetchCards, createTrip, createCard, fetchFavoritedTrips, fetchAllCards })(ReadOnly))
