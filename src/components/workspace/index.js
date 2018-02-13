@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
+import * as qs from 'qs'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
 import { mainChannel } from '../../channels'
@@ -61,17 +62,23 @@ class Workspace extends Component {
 		this.props.fetchTrip(tripId)
 		this.props.fetchCards(tripId, DAY_NUMBER)
 
-    console.log("this is the user", this.props.user)
+    this.connectToChannel(tripId);
+    mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
+	}
+
+  connectToChannel(tripId) {
     if (this.props.user.email) {
       mainChannel.connect(tripId, this.props.user.email)
     } else {
       //connect annon
-      console.log("connecting annon")
-      mainChannel.connect(tripId, generateUUID())
+      const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
+      if (_.isEmpty(uuid)) {
+        mainChannel.connect(tripId, generateUUID())
+      } else {
+        mainChannel.connect(tripId, uuid.uuid)
+      }
     }
-
-    mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
-	}
+  }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ cards: nextProps.cards})
