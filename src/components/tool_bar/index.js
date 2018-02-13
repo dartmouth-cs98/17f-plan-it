@@ -62,36 +62,35 @@ class Toolbar extends Component {
 		if (this.props.readOnly) {
 			return (
 				<div id='tool-bar'>
-					<div className='toolbar-items'>
-						<div className='toolbar-trip-title'>
-							{this.props.tripName}
-						</div>
-						<div className='toggle-options'>
-							<div className ='toolbar-download'>
-								<DownloadTrip tripId={this.props.tripId} />
-							</div>
-							{ importButton }
-							{ favoriteToggle }
-						</div>
+					<div className='toolbar-trip-title'>
+						{this.props.tripName}
 					</div>
+					<div className='toggle-options'>
+						<div className ='toolbar-download'>
+							<DownloadTrip tripId={this.props.tripId} />
+						</div>
+						<div className = 'toolbar-download'>
+							{ importButton }
+						</div>
+						{ favoriteToggle }
+					</div>
+
 				</div>
 			)
 		} else {
 			return (
 				<div id='tool-bar'>
-					<div className='toolbar-items'>
-						<div className='toolbar-trip-title'>
-							{this.props.tripName}
+					<div className='toolbar-trip-title'>
+						{this.props.tripName}
+					</div>
+					<div className='toggle-options'>
+						<div className ='toolbar-download'>
+							<DownloadTrip tripId={this.props.tripId} />
 						</div>
-						<div className='toggle-options'>
-							<div className ='toolbar-download'>
-								<DownloadTrip tripId={this.props.tripId} />
-							</div>
-							<div
-								onClick={this.togglePublish}
-								className='toolbar-click'>
-								{this.getPublishedText()}
-							</div>
+						<div
+							onClick={this.togglePublish}
+							className='toolbar-click'>
+							{this.getPublishedText()}
 						</div>
 					</div>
 				</div>
