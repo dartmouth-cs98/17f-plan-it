@@ -6,6 +6,7 @@ const initialState = {
   publishedDateTrips: [],
   publishedTrendingTrips: [],
   publishedPopularTrips: [],
+  publishedViewedTrips: [],
   publishedTrips: [],
   trip: {},
   trip_id: null,
@@ -18,6 +19,10 @@ const TripsReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         error: null,
       }); 
+    case ActionTypes.FETCH_RECENTLY_VIEWED:
+      return Object.assign({}, state, {
+        publishedViewedTrips: action.payload,
+      });
     case ActionTypes.RESET_TRIP_ID: {
       return Object.assign({}, state, {
         trip_id: null,

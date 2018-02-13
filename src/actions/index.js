@@ -13,6 +13,7 @@ export const ActionTypes = {
   FETCH_POPULAR_TRIPS: 'FETCH_POPULAR_TRIPS',
   FETCH_TRENDING_TRIPS: 'FETCH_TRENDING_TRIPS',
   FETCH_PUBLISHED_TRIPS: 'FETCH_PUBLISHED_TRIPS',
+  FETCH_RECENTLY_VIEWED: 'FETCH_RECENTLY_VIEWED',
   CREATE_TRIP: 'CREATE_TRIP',
   UPDATE_TRIP: 'UPDATE_TRIP',
   FAVORITE_TRIP: 'FAVORITE_TRIP',
@@ -124,6 +125,16 @@ export function fetchTrendingTrips() {
   return (dispatch) => {
     axios.get(`${ROOT_URL}/published?order=trending`).then((response) => {
       dispatch({ type: ActionTypes.FETCH_TRENDING_TRIPS, payload: response.data })
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchRecentlyViewedTrips(user_id) {
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/published?order=user_recent&user_id=${user_id}`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_RECENTLY_VIEWED, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
     })
