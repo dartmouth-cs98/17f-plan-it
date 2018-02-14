@@ -80,6 +80,7 @@ class Workspace extends Component {
     return {
       update: this.props.updateCardsLive,
       delete: this.props.deleteCardLive,
+      logger: console.log
     }
   }
 
@@ -414,7 +415,7 @@ class Workspace extends Component {
 							searchSuggestions={this.searchSuggestions}
 							selected={this.state.selected}
 							updateCard={this.props.updateCard}
-							removeCard={this.props.deleteCard}
+							removeCard={this.sendDelete}
 							dayForward={this.dayForward}
 							dayBackward={this.dayBackward}
 							numDays={tripDuration}
@@ -427,7 +428,7 @@ class Workspace extends Component {
 							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
 							addCard={this.addCard}
-							removeCard={this.deleteCard}
+							removeCard={this.sendDelete}
 						/>
 
 					</div>

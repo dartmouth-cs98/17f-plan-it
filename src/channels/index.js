@@ -40,25 +40,20 @@ class Channel {
 
     //handling new messages entering
     this.chan.on("new:msg:cards", payload => {
-//      console.log("new message arrived", payload)
-      //updateCardsLive(payload.cards)
-      console.log("ASDKLFJ", payload)
-      this.cardUpdateHandler(payload)
+      this.cardUpdateHandler(payload.cards)
     })
 
     this.chan.on("new:msg:cards:delete", payload => {
-      this.cardUpdateHandler(payload)
+      this.cardDeleteHandler(payload.body)
     })
 
     this.chan.on("new:user:heartbeat", payload =>  {
-      //console.log("heartbeat arrived", payload)
       this.usersUpdateHandler(payload)
     })
   }
 
 
   setCardFunctions(config) {
-    console.log(config)
     this.cardUpdateHandler = config.update;
     this.cardDeleteHandler = config.delete;
   }
@@ -100,7 +95,6 @@ class Channel {
     if (this.chan == null) {
       console.log("Heartbeat: Channel is not initalized.")
     } else {
-      //console.log("Heartbeat: I am alive")
       this.chan.push("new:user:heartbeat")
     }
 
