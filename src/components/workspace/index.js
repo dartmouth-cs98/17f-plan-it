@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
 import { mainChannel } from '../../channels'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
@@ -11,7 +11,7 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
-import LiveUsers from '../live_users'
+
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
@@ -48,16 +48,17 @@ class Workspace extends Component {
         this.onDragEnd = this.onDragEnd.bind(this)
         this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
         this.sendUpdates = this.sendUpdates.bind(this)
+        this.sendDelete = this.sendDelete.bind(this)
         this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
     }
 
-    componentDidMount() {
-        const path = window.location.pathname.split(':')
-        const tripId = _.last(path)
+  componentDidMount() {
+    const path = window.location.pathname.split(':')
+    const tripId = _.last(path)
 
-        this.setState({ tripId })
-        this.props.fetchTrip(tripId)
-        this.props.fetchCards(tripId, DAY_NUMBER)
+    this.setState({ tripId })
+    this.props.fetchTrip(tripId)
+    this.props.fetchCards(tripId, DAY_NUMBER)
 
     if (this.props.user.email) {
       mainChannel.connect(tripId, this.props.user.email)
@@ -66,21 +67,32 @@ class Workspace extends Component {
       mainChannel.connect(tripId, "foobar")
     }
 
-    mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
-    }
+    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
+  }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ cards: nextProps.cards})
   }
 
   //cleverly named function. Not a react function
-  componentWillReceiveChannelUpdates(payload) {
-    this.props.updateCardsLive(payload.cards)
+  //this handles receiving websocket messages and updating the state
+  componentWillReceiveChannelUpdates() {
+    return {
+      update: this.props.updateCardsLive,
+      delete: this.props.deleteCardLive,
+    }
   }
 
+  //send card updates through the websocket
   sendLiveUpdate(cards) {
     const send_package = {cards, tripId: this.state.tripId}
-    mainChannel.send(send_package)
+    mainChannel.sendCards(send_package)
+  }
+
+  //delete a card through websocket
+  sendDelete(card_id) {
+    mainChannel.deleteCard(card_id)
+    this.props.deleteCardLive(card_id)
   }
 
     // update cards with new itinerary
@@ -415,7 +427,7 @@ class Workspace extends Component {
 							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
 							addCard={this.addCard}
-							removeCard={this.props.deleteCard}
+							removeCard={this.deleteCard}
 						/>
 
 					</div>
@@ -456,6 +468,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         deleteCard: (id, trip, day) => {
             dispatch(deleteCard(id, trip, day))
+        },
+        deleteCardLive: (id) => {
+          dispatch(deleteCardLive(id))
         },
         fetchSuggestions: (lat, long, categories=null) => {
             dispatch(fetchSuggestions(lat, long, categories))

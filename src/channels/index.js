@@ -19,6 +19,7 @@ class Channel {
   constructor() {
     setInterval(() => this.heartbeat(), heartbeatTimer)
     this.cardUpdateHandler = logger;
+    this.cardDeleteHandler = logger;
     this.usersUpdateHandler = logger;
   }
 
@@ -41,6 +42,11 @@ class Channel {
     this.chan.on("new:msg:cards", payload => {
 //      console.log("new message arrived", payload)
       //updateCardsLive(payload.cards)
+      console.log("ASDKLFJ", payload)
+      this.cardUpdateHandler(payload)
+    })
+
+    this.chan.on("new:msg:cards:delete", payload => {
       this.cardUpdateHandler(payload)
     })
 
@@ -51,19 +57,38 @@ class Channel {
   }
 
 
-  setCardUpdateFunction(func) {
-    this.cardUpdateHandler = func;
+  setCardFunctions(config) {
+    console.log(config)
+    this.cardUpdateHandler = config.update;
+    this.cardDeleteHandler = config.delete;
   }
 
   setUsersUpdateFunction(func) {
     this.usersUpdateHandler = func
   }
 
+  //deprecating
   send(message) {
     if (this.chan == null) {
       console.log("Send: Channel is not initalized.")
     } else {
       this.chan.push("new:msg:cards", {body: message})
+    }
+  }
+
+  sendCards(message) {
+    if (this.chan == null) {
+      console.log("Send: Channel is not initalized.")
+    } else {
+      this.chan.push("new:msg:cards", {body: message})
+    }
+  }
+
+  deleteCard(id) {
+    if (this.chan == null) {
+      console.log("Delete: Channel is not initalized.")
+    } else {
+      this.chan.push("new:msg:cards:delete", {body: id})
     }
   }
 
