@@ -50,36 +50,11 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	justify-content: center;
+	vertical-align: center;
 	position: absolute;
 	right: 0;
-	bottom: 0;
-}
-
-
-.tool-bar-left-flex-item {
-	padding-left: 20px;
-	text-align: center;
-}
-
-.tool-bar-right-flex-item {
-	padding-right: 20px;
-	text-align: center;
-	vertical-align: middle;
-}
-
-.tool-bar-header-text {
-	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: bold;
-	font-size: 20px;
-	color: #FFFFFF;
-}
-
-.tool-bar-text {
-	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: lighter;
-	font-size: 16px;
-	line-height: 25px;
-	color: #FFFFFF;
+	top: 12.5px;
 }
 
 .toolbar-download{
@@ -89,12 +64,12 @@
 	background-color: #FFFFFF;
 	border: 2px solid #6FCF97;
 	text-align: center;
-	margin-right: 3px;
+	margin-right: 5px;
 }
 
 .toolbar-download:hover {
 	cursor: pointer;
-	text-shadow: 0 0 10px grey;
+	box-shadow: 0 0 10px grey;
 	text-align: center;
 }
 
@@ -110,12 +85,12 @@
 	background-color: #FFFFFF;
 	border: 2px solid #6FCF97;
 	text-align: center;
-	margin-right: 2px;
+	margin-right: 5px;
 }
 
 .toolbar-click:hover {
 	cursor: pointer;
-	text-shadow: 0 0 10px grey;
+	box-shadow: 0 0 10px grey;
 	text-align: center;
 }
 
@@ -142,5 +117,4 @@
 	vertical-align: center;
 
 	display: inline-block;
-
 }
