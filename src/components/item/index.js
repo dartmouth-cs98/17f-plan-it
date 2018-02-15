@@ -8,10 +8,12 @@ import './index.scss'
 export default class Item extends Component {
 	renderBody() {
 		if (this.props.buttons) {
-			const hours = (new Date(this.props.startTime)).getHours() 
+			const hours = (new Date(this.props.startTime)).getHours()
 			const mins = (new Date(this.props.startTime)).getMinutes()
-			const durHours = Math.round(this.props.duration / (1000 * 60 * 60))
-			const durMins = Math.round((this.props.duration % (1000 * 60 * 60)) / (1000 * 60))
+			console.log(this.props.duration)
+			const durHours = Math.floor(this.props.duration / (1000 * 60 * 60))
+			const durMins = Math.floor((this.props.duration % (1000 * 60 * 60)) / (1000 * 60))
+			console.log(durHours, durMins)
 
 			return (
 				<div>
@@ -58,6 +60,10 @@ export default class Item extends Component {
 									style={{color: '#000000'}}
 								/>
 							}
+							onClick={() => {
+								const newDuration = (new Date(this.props.endTime)).getTime() - (new Date(this.props.startTime)).getTime() + (15 * 60 * 1000)
+								this.props.updateDuration(this.props.cardId, newDuration)
+							}}
 						/>
 						<FlatButton
 							className='edit-icon'
@@ -67,6 +73,10 @@ export default class Item extends Component {
 									style={{color: '#000000'}}
 								/>
 							}
+							onClick={() => {
+								const newDuration = (new Date(this.props.endTime)).getTime() - (new Date(this.props.startTime)).getTime() - (15 * 60 * 1000)
+								this.props.updateDuration(this.props.cardId, newDuration)
+							}}
 						/>
 					</div>
 				</div>
@@ -108,7 +118,7 @@ export default class Item extends Component {
 
 		return (
 			<div className='card-wrapper'>
-				<div 
+				<div
 					className='card item-card'
 					style={{height: `${height}px`}}
 				>

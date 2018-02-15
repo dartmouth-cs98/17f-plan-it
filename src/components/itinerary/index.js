@@ -224,6 +224,7 @@ export default class Itinerary extends Component {
 										}}
 										timeScale={TIME_SCALE}
 										updateTime={this.props.updateTime}
+										updateDuration={this.props.updateDuration}
 										startTime={card.start_time}
 										endTime={card.end_time}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
