@@ -369,7 +369,6 @@ class Workspace extends Component {
 		const diff = (new Date(itinerary[index].start_time)).getTime() - (new Date(time)).getTime()
 
 		if (diff < 0) {
-			console.log(index, itinerary.length)
 			// increase the start time of the card and all cards after it
 			for (let i = index; i < itinerary.length; i++) {
 				const card = itinerary[i]
@@ -423,6 +422,10 @@ class Workspace extends Component {
 	}
 
 	updateDuration(cardId, duration) {
+		if (duration < (1000 * 60 * 60)) {
+			return
+		}
+
 		const itinerary = _.map(Array.from(this.props.cards), _.clone)
 
 		const [city] = _.remove(itinerary, (card) => {
@@ -441,6 +444,26 @@ class Workspace extends Component {
 		const endTime = new Date((new Date(card.start_time)).getTime() + duration)
 
 		_.assign(card, { 'end_time': endTime })
+
+		let diff
+
+		for (let i = index + 1; i < itinerary.length; i++) {
+			diff = (new Date(itinerary[i].start_time)).getTime() - (new Date(itinerary[i - 1].end_time)).getTime()
+			if (diff < 0) {
+				const endTime = new Date((new Date(itinerary[i].end_time)).getTime() - diff)
+				if (endTime.getTime() > dayEnd.getTime()) {
+					// if it would push a card to the next day, don't update
+					return
+				} else {
+					_.assign(itinerary[i], {
+						'start_time': new Date((new Date(itinerary[i].start_time)).getTime() - diff),
+						'end_time': endTime
+					})
+				}
+			} else {
+				break
+			}
+		}
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)

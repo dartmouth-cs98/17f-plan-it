@@ -10,10 +10,8 @@ export default class Item extends Component {
 		if (this.props.buttons) {
 			const hours = (new Date(this.props.startTime)).getHours()
 			const mins = (new Date(this.props.startTime)).getMinutes()
-			console.log(this.props.duration)
 			const durHours = Math.floor(this.props.duration / (1000 * 60 * 60))
 			const durMins = Math.floor((this.props.duration % (1000 * 60 * 60)) / (1000 * 60))
-			console.log(durHours, durMins)
 
 			return (
 				<div>
