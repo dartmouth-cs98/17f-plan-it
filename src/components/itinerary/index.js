@@ -79,7 +79,7 @@ export default class Itinerary extends Component {
 	}
 
 	selectTime(event, time) {
-		this.setState({ newTime: time })
+		this.setState({ newTime: time - new Date().getTimezoneOffset() })
 	}
 
 	updateStartTime() {

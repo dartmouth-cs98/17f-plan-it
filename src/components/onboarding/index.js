@@ -48,6 +48,7 @@ class Onboarding extends Component {
 			let dayNumber = 1
 			let startDate = new Date(this.state.cities[0].start_date)
 			startDate.setHours(0, 0, 0, 0)
+			startDate = new Date(startDate.getTime() - startDate.getTimezoneOffset()*60*1000)
 
 			_.forEach(this.state.cities, (city) => {
 				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000)) + 1
@@ -58,8 +59,7 @@ class Onboarding extends Component {
 						type: 'city'
 					})
 
-					let endDate = new Date(startDate.getTime())
-					endDate.setHours(23, 59, 59, 999)
+					let endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000 - 1)
 
 					cityCards.push({
 						...cityCard,
@@ -102,10 +102,15 @@ class Onboarding extends Component {
 		
 		let start = new Date(startDate)
 		start.setHours(0, 0, 0, 0)
+		console.log("start", start)
+		start = new Date(start.getTime() - start.getTimezoneOffset()*60*1000)
+		console.log("start2", start)
+
 		let end = null
 		if (endDate) {
 			end = new Date(endDate)
-			end.setHours(11, 59, 59, 999)
+			end.setHours(23, 59, 59, 999)
+			end = new Date(end.getTime() - end.getTimezoneOffset()*60*1000)
 		}
 
 		this.props.createTrip({
