@@ -228,7 +228,7 @@ class Workspace extends Component {
 
 			} else {
 				// add an item to the itinerary by dragging
-				const itinerary = Array.from(this.props.cards)
+				const itinerary = _.map(Array.from(this.props.cards), _.clone)
 				const [city] = _.remove(itinerary, (card) => {
 					return card.type === 'city'
 				})
@@ -264,10 +264,19 @@ class Workspace extends Component {
 				// shift each card back by the duration of the card removed
 				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
 					const card = itinerary[i]
+					const endTime = new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
+
+					const dayEnd = new Date(start.getTime())
+					dayEnd.setHours(24, 0, 0, 0)
+
+					// make sure no cards would be pushed into the next day
+					if (endTime.getTime() > dayEnd.getTime()) {
+						return
+					}
 
 					_.assign(card, {
 						'start_time': new Date((new Date(card.start_time)).getTime() + DEFAULT_DURATION),
-						'end_time': new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
+						'end_time': endTime
 					})
 				}
 
@@ -279,9 +288,9 @@ class Workspace extends Component {
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
 
-		} else {
+		} else if (result.destination.droppableId === 'itinerary-droppable') {
 			// reorder items in the itinerary
-			const itinerary = Array.from(this.props.cards)
+			const itinerary = _.map(Array.from(this.props.cards), _.clone)
 			const [city] = _.remove(itinerary, (card) => {
 				return card.type === 'city'
 			})
@@ -312,13 +321,22 @@ class Workspace extends Component {
 				endIndex = result.source.index + 1
 			}
 
+			// shift each card back by the duration of the card removed
 			for (let i = result.destination.index + 1; i < endIndex; i++) {
 				const card = itinerary[i]
+				const endTime = new Date((new Date(card.end_time)).getTime() + duration)
 
-				// shift each card back by the duration of the card removed
+				const dayEnd = new Date(start.getTime())
+				dayEnd.setHours(24, 0, 0, 0)
+
+				// make sure no cards would be pushed into the next day
+				if (endTime.getTime() > dayEnd.getTime()) {
+					return
+				}
+
 				_.assign(card, {
 					'start_time': new Date((new Date(card.start_time)).getTime() + duration),
-					'end_time': new Date((new Date(card.end_time)).getTime() + duration)
+					'end_time': endTime
 				})
 			}
 
