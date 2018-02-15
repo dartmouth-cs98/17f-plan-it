@@ -175,17 +175,6 @@ class Workspace extends Component {
 
 			const cardStart = new Date(card.start_time)
 
-			const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-			const travel = {
-				type: 'travel',
-				start_time: travelStart.toString(),
-				end_time: card.start_time,
-				travelType: card.travelType,
-				destination: card.name
-			}
-
-			cardList.push(travel)
-
 			cardList.push(card)
 
 			prevEnd = new Date(card.end_time)
@@ -301,7 +290,7 @@ class Workspace extends Component {
 			const start = result.destination.index > result.source.index ?
 				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
 
-			// get the info of the object your dragging
+			// get the info of the object you're dragging
 			const [removed] = itinerary.splice(result.source.index, 1)
 			const duration = (new Date(removed.end_time)).getTime() - (new Date(removed.start_time)).getTime()
 

@@ -181,7 +181,7 @@ export default class Itinerary extends Component {
 		const toRender = []
 
 		for (const card of this.props.cards) {
-			if (card.type === 'city' || card.type === 'travel') {
+			if (card.type === 'city') {
 				continue
 			} else if (this.state.readOnly) {
 
@@ -283,29 +283,5 @@ export default class Itinerary extends Component {
 				</div>
 			)
 		}
-	}
-}
-
-class Travel extends Component {
-	render() {
-		const timeScale = scaleLinear()
-			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, TIME_SCALE])
-
-		// subtract 10 for margin
-		const height = timeScale(this.props.duration) - 10
-
-		return (
-			<div className='card-wrapper'>
-				<div
-					className='card travel-card'
-					style={{height}}
-				>
-					<label className='travel-title'>
-						{`Travel to: ${this.props.destination}`}
-					</label>
-				</div>
-			</div>
-		)
 	}
 }
