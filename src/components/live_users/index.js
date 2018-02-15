@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom'
 import { heartbeatTimer, mainChannel } from '../../channels'
 import { updateUsersLive } from '../../actions'
 
-
 const USER_EXPIRATION = 1000;
 
 class LiveUsers extends React.Component {
@@ -22,40 +21,30 @@ class LiveUsers extends React.Component {
   }
 
   renderUsers() {
-    // so have logi
-    // so users looks like an email as the key,
-    // time created as value
-
-    const users = ["Sam Lee", "Helen He", "Jeff Gao"]
-    //if (this.props.users) {
-    //  const keys  = Object.keys(this.props.users)
-    //  return keys.map(k => {
-    //    console.log(Date.now() - this.props.users[k])
-    //    if (Date.now() - this.props.users[k] > USER_EXPIRATION) {
-    //      return
-    //    } else {
-    //      this.renderUser(k)
-    //    }
-    //  })
-    //}
-    return users.map(u => this.renderUser(u))
+    if (this.props.users) {
+      return this.props.users.map(u => {
+        if (Date.now() - u.tdd > USER_EXPIRATION) {
+          return
+        } else {
+          const initials = u.fname.slice(0, 1) + u.lname.slice(0, 1);
+          return this.renderUser(initials)
+        }
+      })
+    }
   }
 
-  renderUser(user) {
+  renderUser(initials) {
     return (
-      <span>
-        {user}
-      </span>
+      <div className='user-circle'>
+        {initials}
+      </div>
     )
   }
 
   render() {
     return (
-      <div>
-        <span>
-        Live Users:
+      <div className='toolbar-live-users'>
         {this.renderUsers()}
-        </span>
       </div>
     )
   }

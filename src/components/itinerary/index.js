@@ -11,12 +11,12 @@ import './index.scss'
 
 const TIME_SCALE = 2500
 const MONTHS = [
-	'January', 
-	'February', 
-	'March', 
-	'April', 
-	'May', 
-	'June', 
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
 	'July',
 	'August',
 	'September',
@@ -42,12 +42,12 @@ const getListStyle = isDraggingOver => ({
 
 export default class Itinerary extends Component {
 	constructor(props) {
-		super(props) 
+		super(props)
 
 		this.state = {
 			startTimeDialog: false,
-			editCard: null, 
-			shift: false, 
+			editCard: null,
+			shift: false,
 			newTime: null,
 			readOnly: this.props.readOnly
 		}
@@ -117,7 +117,7 @@ export default class Itinerary extends Component {
 
 		this.props.updateCard(this.state.editCard.id, {
 			start_time: this.state.newTime,
-			end_time: new Date(this.state.newTime.getTime() + duration)			
+			end_time: new Date(this.state.newTime.getTime() + duration)
 		}, this.props.tripId, this.props.day)
 
 		this.closeDialog()
@@ -178,37 +178,27 @@ export default class Itinerary extends Component {
 
 	renderList() {
 		let index = 0
-		const toRender = _.map(this.props.cards, (card) => {
-			if (card.type === 'city') {
-				// return (
-				// 	<FreeTime
-				// 		duration={24 * 60 * 60 * 1000}
-				// 		select={() => { this.props.selectTime(card) }}
-				// 		selected={!_.isNull(this.props.selected)}
-				// 	/>
-				// )
-			} else if (card.type === 'travel') {
-				// return <Travel 
-				// 	destination={card.destination}
-				// 	duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-				// />
+		const toRender = []
+
+		for (const card of this.props.cards) {
+			if (card.type === 'city' || card.type === 'travel') {
+				continue
 			} else if (this.state.readOnly) {
-				return (
-					<div>
-						<Item
-							key={card.id}
-							name={card.name}
-							description={card.description}
-							timeScale={TIME_SCALE}
-							startTime={card.start_time}
-							endTime={card.end_time}
-							duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-							buttons={false}
-						/>
-					</div>
+
+				toRender.push(
+					<Item
+						key={card.id}
+						name={card.name}
+						description={card.description}
+						timeScale={TIME_SCALE}
+						startTime={card.start_time}
+						endTime={card.end_time}
+						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+						buttons={false}
+					/>
 				)
 			} else {
-				return (
+				toRender.push(
 					<Draggable key={card.id} draggableId={card.id} index={index++}>
 						{(provided, snapshot) => (
 							<div>
@@ -249,7 +239,7 @@ export default class Itinerary extends Component {
 					</Draggable>
 				)
 			}
-		})
+		}
 
 		return toRender
 	}
@@ -307,7 +297,7 @@ class Travel extends Component {
 
 		return (
 			<div className='card-wrapper'>
-				<div 
+				<div
 					className='card travel-card'
 					style={{height}}
 				>

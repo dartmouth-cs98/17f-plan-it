@@ -12,13 +12,14 @@ const heartbeatTimer = 5000; //5 second heartbeat timer
 
 
 function logger(payload) {
-  console.log("Function is not set", payload)
+//  console.log("Function is not set", payload)
 }
 
 class Channel {
   constructor() {
     setInterval(() => this.heartbeat(), heartbeatTimer)
     this.cardUpdateHandler = logger;
+    this.cardDeleteHandler = logger;
     this.usersUpdateHandler = logger;
   }
 
@@ -39,31 +40,50 @@ class Channel {
 
     //handling new messages entering
     this.chan.on("new:msg:cards", payload => {
-      console.log("new message arrived", payload)
-      //updateCardsLive(payload.cards)
-      this.cardUpdateHandler(payload)
+      this.cardUpdateHandler(payload.cards)
+    })
+
+    this.chan.on("new:msg:cards:delete", payload => {
+      this.cardDeleteHandler(payload.body)
     })
 
     this.chan.on("new:user:heartbeat", payload =>  {
-      console.log("heartbeat arrived", payload)
       this.usersUpdateHandler(payload)
     })
   }
 
 
-  setCardUpdateFunction(func) {
-    this.cardUpdateHandler = func;
+  setCardFunctions(config) {
+    this.cardUpdateHandler = config.update;
+    this.cardDeleteHandler = config.delete;
   }
 
   setUsersUpdateFunction(func) {
     this.usersUpdateHandler = func
   }
 
+  //deprecating
   send(message) {
     if (this.chan == null) {
       console.log("Send: Channel is not initalized.")
     } else {
       this.chan.push("new:msg:cards", {body: message})
+    }
+  }
+
+  sendCards(message) {
+    if (this.chan == null) {
+      console.log("Send: Channel is not initalized.")
+    } else {
+      this.chan.push("new:msg:cards", {body: message})
+    }
+  }
+
+  deleteCard(id) {
+    if (this.chan == null) {
+      console.log("Delete: Channel is not initalized.")
+    } else {
+      this.chan.push("new:msg:cards:delete", {body: id})
     }
   }
 
@@ -75,7 +95,6 @@ class Channel {
     if (this.chan == null) {
       console.log("Heartbeat: Channel is not initalized.")
     } else {
-      console.log("Heartbeat: I am alive")
       this.chan.push("new:user:heartbeat")
     }
 

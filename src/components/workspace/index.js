@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
 import { mainChannel } from '../../channels'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
@@ -11,75 +11,91 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
-import LiveUsers from '../live_users'
+
 require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
 const CATEGORIES = [
-	null,
-	'food',
-	'hotels',
-	'rentals',
-	'fitness & instruction',
-	'parks'
+    null,
+    'food',
+    'hotels',
+    'rentals',
+    'fitness & instruction',
+    'parks'
 ]
 
 class Workspace extends Component {
-	constructor(props) {
-		super(props)
+    constructor(props) {
+        super(props)
 
-		this.state = {
-			day: DAY_NUMBER,
-			selected: null,
-			category: 0,
-			pinLat: null,
-			pinLong: null,
-		}
+        this.state = {
+            day: DAY_NUMBER,
+            category: 0,
+            pinLat: null,
+            pinLong: null,
+        }
 
-		this.dayForward = this.dayForward.bind(this)
-		this.dayBackward = this.dayBackward.bind(this)
-		this.selectCategory = this.selectCategory.bind(this)
-		this.searchSuggestions = this.searchSuggestions.bind(this)
-		this.formatCards = this.formatCards.bind(this)
-		this.formatSuggestions = this.formatSuggestions.bind(this)
-		this.onDragEnd = this.onDragEnd.bind(this)
-		this.updateStartTime = this.updateStartTime.bind(this)
-    this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
-    this.sendUpdates = this.sendUpdates.bind(this)
+        this.dayForward = this.dayForward.bind(this)
+        this.dayBackward = this.dayBackward.bind(this)
+        this.selectCategory = this.selectCategory.bind(this)
+        this.searchSuggestions = this.searchSuggestions.bind(this)
+        this.formatCards = this.formatCards.bind(this)
+        this.formatSuggestions = this.formatSuggestions.bind(this)
+        this.onDragEnd = this.onDragEnd.bind(this)
+        this.updateStartTime = this.updateStartTime.bind(this)
+        this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
+        this.sendUpdates = this.sendUpdates.bind(this)
+        this.sendDelete = this.sendDelete.bind(this)
+        this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+    }
 
-    this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
-	}
+  componentDidMount() {
+    const path = window.location.pathname.split(':')
+    const tripId = _.last(path)
 
-	componentDidMount() {
-		const path = window.location.pathname.split(':')
-		const tripId = _.last(path)
+    this.setState({ tripId })
+    this.props.fetchTrip(tripId)
+    this.props.fetchCards(tripId, DAY_NUMBER)
 
-		this.setState({ tripId })
-		this.props.fetchTrip(tripId)
-		this.props.fetchCards(tripId, DAY_NUMBER)
+    if (this.props.user.email) {
+      mainChannel.connect(tripId, this.props.user.email)
+    } else { //connect anon
+      console.log("connecting anon")
+      mainChannel.connect(tripId, "foobar")
+    }
 
-    console.log("this is the user", this.props.user)
-    mainChannel.connect(tripId, "sleechie@gmail.com")
-    mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
-	}
+    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
+  }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ cards: nextProps.cards})
   }
 
   //cleverly named function. Not a react function
-  componentWillReceiveChannelUpdates(payload) {
-    this.props.updateCardsLive(payload.cards)
+  //this handles receiving websocket messages and updating the state
+  componentWillReceiveChannelUpdates() {
+    return {
+      update: this.props.updateCardsLive,
+      delete: this.props.deleteCardLive,
+      logger: console.log
+    }
   }
 
+  //send card updates through the websocket
   sendLiveUpdate(cards) {
     const send_package = {cards, tripId: this.state.tripId}
-    mainChannel.send(send_package)
+    mainChannel.sendCards(send_package)
   }
 
-	// update cards with new itinerary
+  //delete a card through websocket
+  sendDelete(card_id) {
+    mainChannel.deleteCard(card_id)
+    this.props.deleteCardLive(card_id)
+  }
+
+    // update cards with new itinerary
   sendUpdates(itinerary, tripId) {
     this.setState({cards: itinerary})
     this.sendLiveUpdate(itinerary)
@@ -95,7 +111,6 @@ class Workspace extends Component {
 			const newDay = this.state.day + 1
 			this.setState({
 				day: newDay,
-				selected: null,
 				category: 0,
 				pinLat: null,
 				pinLong: null
@@ -111,7 +126,6 @@ class Workspace extends Component {
 			const newDay = this.state.day - 1
 			this.setState({
 				day: newDay,
-				selected: null,
 				category: 0
 			})
 			const path = window.location.pathname.split(':')
@@ -192,20 +206,27 @@ class Workspace extends Component {
 	}
 
 	formatSuggestions() {
-		return _.map(this.props.suggestions, (suggestion) => {
-			return {
-				name: suggestion.name,
-				image_url: suggestion.image_url,
-				yelp_url: suggestion.url,
-				price: suggestion.price,
-				lat: suggestion.lat,
-				long: suggestion.long,
-				phone: suggestion.phone,
-				display_phone: suggestion.phone,
-				type: suggestion.description,
-				description: suggestion.description
-			}
-		})
+		// return _.map(this.props.suggestions, (suggestion) => {
+			// return {
+			// 	name: suggestion.name,
+			// 	photo_url: suggestion.photo_url,
+			// 	url: suggestion.url,
+			// 	price: suggestion.price,
+			// 	rating: suggestion.rating,
+			// 	lat: suggestion.lat,
+			// 	long: suggestion.long,
+			// 	address: suggestion.address,
+			// 	city: suggestion.city,
+			// 	state: suggestion.state,
+			// 	country: suggestion.country,
+			// 	zip_code: suggestion.zip_code,
+			// 	phone: suggestion.phone,
+			// 	type: suggestion.type,
+			// 	description: suggestion.description,
+			// 	source: suggestion.source
+			// }
+		// })
+		return this.props.suggestions
 	}
 
 	onDragEnd(result) {
@@ -239,13 +260,13 @@ class Workspace extends Component {
 				const tripId = _.last(path)
 
 				const inserted = {
-					...item,
-					id: 0,
-				  travel_duration: TRAVEL_TIME,
-				  start_time: start,
-				  end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
-				  trip_id: tripId,
-				  day_number: this.state.day
+						...item,
+						id: 0,
+				    travel_duration: TRAVEL_TIME,
+				  	start_time: start,
+				  	end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
+				  	trip_id: tripId,
+				  	day_number: this.state.day
 				}
 
 				// add the new card to the itinerary
@@ -322,7 +343,6 @@ class Workspace extends Component {
 	}
 
 	updateStartTime(cardId, time) {
-		// TODO: figure out how to shift time backwards too
 		const itinerary = _.map(Array.from(this.props.cards), _.clone)
 		const index = _.findIndex(itinerary, (card) => {
 			return card.id === cardId
@@ -336,6 +356,7 @@ class Workspace extends Component {
 		const diff = (new Date(itinerary[index].start_time)).getTime() - (new Date(time)).getTime()
 
 		if (diff < 0) {
+			console.log(index, itinerary.length)
 			// increase the start time of the card and all cards after it
 			for (let i = index; i < itinerary.length; i++) {
 				const card = itinerary[i]
@@ -396,6 +417,7 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
+
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
@@ -417,9 +439,8 @@ class Workspace extends Component {
 							cards={cards}
 							day={this.state.day}
 							searchSuggestions={this.searchSuggestions}
-							selected={this.state.selected}
 							updateCard={this.props.updateCard}
-							removeCard={this.props.deleteCard}
+							removeCard={this.sendDelete}
 							dayForward={this.dayForward}
 							dayBackward={this.dayBackward}
 							updateTime={this.updateStartTime}
@@ -432,8 +453,7 @@ class Workspace extends Component {
 							MarkerClusterArray={this.props.suggestions}
 							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
-							addCard={this.addCard}
-							removeCard={this.props.deleteCard}
+							removeCard={this.sendDelete}
 						/>
 					</div>
 				</DragDropContext>
@@ -443,42 +463,44 @@ class Workspace extends Component {
 }
 
 const mapStateToProps = (state) => {
-	return {
-
-    user: state.users,
-		trips: state.trips.trip,
-		cards: state.cards.all,
-		suggestions: state.cards.suggestions
-	}
+    return {
+        user: state.users,
+        trips: state.trips.trip,
+        cards: state.cards.all,
+        suggestions: state.cards.suggestions
+    }
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-		fetchTrip: (id) => {
-			dispatch(fetchTrip(id))
-		},
-		fetchCards: (id, day) => {
-			dispatch(fetchCards(id, day))
-		},
-		insertCard: (cards, trip, id) => {
-			dispatch(insertCard(cards, trip, id))
-		},
-		updateCard: (cards, trip, id, day) => {
-			dispatch(updateCard(cards, trip, id, day))
-		},
-    updateCardsLive: (cards) => {
-      dispatch(updateCardsLive(cards))
-    },
-		updateCards: (cards, trip, day) => {
-			dispatch(updateCards(cards, trip, day))
-		},
-		deleteCard: (id, trip, day) => {
-			dispatch(deleteCard(id, trip, day))
-		},
-		fetchSuggestions: (lat, long, categories=null) => {
-			dispatch(fetchSuggestions(lat, long, categories))
-		}
-	}
+    return {
+        fetchTrip: (id) => {
+            dispatch(fetchTrip(id))
+        },
+        fetchCards: (id, day) => {
+            dispatch(fetchCards(id, day))
+        },
+        insertCard: (cards, trip, id) => {
+            dispatch(insertCard(cards, trip, id))
+        },
+        updateCard: (cards, trip, id, day) => {
+            dispatch(updateCard(cards, trip, id, day))
+        },
+        updateCardsLive: (cards) => {
+          dispatch(updateCardsLive(cards))
+        },
+        updateCards: (cards, trip, day) => {
+            dispatch(updateCards(cards, trip, day))
+        },
+        deleteCard: (id, trip, day) => {
+            dispatch(deleteCard(id, trip, day))
+        },
+        deleteCardLive: (id) => {
+          dispatch(deleteCardLive(id))
+        },
+        fetchSuggestions: (lat, long, categories=null) => {
+            dispatch(fetchSuggestions(lat, long, categories))
+        }
+    }
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Workspace))
