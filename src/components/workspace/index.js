@@ -174,224 +174,226 @@ class Workspace extends Component {
     this.props.updateCardsLive(itinerary)
   }
 
-  dayForward() {
-    const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
-    const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
-    const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
+	dayForward() {
+		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
+		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
+		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-    if (this.state.day < tripDuration) {
-      const newDay = this.state.day + 1
-      this.setState({
-        day: newDay,
-        selected: null,
-        category: 0,
+		if (this.state.day < tripDuration) {
+			const newDay = this.state.day + 1
+			this.setState({
+				day: newDay,
+				selected: null,
+				category: 0,
+				pinLat: null,
+				pinLong: null
+			})
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.fetchCards(tripId, newDay + 1)
+
+		}
+	}
+
+	dayBackward() {
+		if (this.state.day > 1) {
+			const newDay = this.state.day - 1
+			this.setState({
+				day: newDay,
+				selected: null,
+				category: 0,
         pinLat: null,
-        pinLong: null
-      })
-      const path = window.location.pathname.split(':')
-      const tripId = _.last(path)
-      this.props.fetchCards(tripId, newDay)
-    }
-  }
+				pinLong: null
+			})
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			this.props.fetchCards(tripId, newDay - 1)
+		}
+	}
 
-  dayBackward() {
-    if (this.state.day > 1) {
-      const newDay = this.state.day - 1
-      this.setState({
-        day: newDay,
-        selected: null,
-        category: 0
-      })
-      const path = window.location.pathname.split(':')
-      const tripId = _.last(path)
-      this.props.fetchCards(tripId, newDay)
-    }
-  }
+	selectCategory(event, val) {
+		if (0 <= val < CATEGORIES.length) {
+			this.setState({ category: val })
+			const { pinLat, pinLong } = this.state
+			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
+				this.props.fetchSuggestions(pinLat, pinLong, CATEGORIES[val])
+			}
+		}
+	}
 
-  selectCategory(event, val) {
-    if (0 <= val < CATEGORIES.length) {
-      this.setState({ category: val })
-      const { pinLat, pinLong } = this.state
-      if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
-        this.props.fetchSuggestions(pinLat, pinLong, CATEGORIES[val])
-      }
-    }
-  }
+	searchSuggestions(card) {
+		this.props.fetchSuggestions(card.lat, card.long, CATEGORIES[this.state.category])
+		this.setState({
+			pinLat: card.lat,
+			pinLong: card.long
+		})
+	}
 
-  searchSuggestions(card) {
-    this.props.fetchSuggestions(card.lat, card.long, CATEGORIES[this.state.category])
-    this.setState({
-      pinLat: card.lat,
-      pinLong: card.long
-    })
-  }
+	addCard(card) {
+		const cards = this.formatCards(this.props.cards)
 
-  addCard(card) {
-    const cards = this.formatCards(this.props.cards)
+		if (!_.isNull(this.state.selected)) {
+			const index = _.findIndex(cards, (card) => {
+				return this.state.selected.start_time === card.start_time && this.state.selected.end_time === card.end_time
+			})
 
-    if (!_.isNull(this.state.selected)) {
-      const index = _.findIndex(cards, (card) => {
-        return this.state.selected.start_time === card.start_time && this.state.selected.end_time === card.end_time
-      })
+			const duration = (new Date(this.state.selected.end_time)).getTime() - (new Date(this.state.selected.start_time)).getTime()
+			if (duration >= DEFAULT_DURATION + TRAVEL_TIME) {
+				let startTime = (new Date(this.state.selected.start_time)).getTime()
 
-      const duration = (new Date(this.state.selected.end_time)).getTime() - (new Date(this.state.selected.start_time)).getTime()
-      if (duration >= DEFAULT_DURATION + TRAVEL_TIME) {
-        let startTime = (new Date(this.state.selected.start_time)).getTime()
+				if (index > 0) {
+					startTime += TRAVEL_TIME
+				}
 
-        if (index > 0) {
-          startTime += TRAVEL_TIME
-        }
+				const path = window.location.pathname.split(':')
+				const tripId = _.last(path)
 
-        const path = window.location.pathname.split(':')
-        const tripId = _.last(path)
+				this.props.insertCard([{
+				  	...card,
+				  travel_duration: TRAVEL_TIME,
+				  start_time: (new Date(startTime)),
+				  end_time: (new Date(startTime + DEFAULT_DURATION)),
+				  trip_id: tripId,
+				  day_number: this.state.day
+				}], tripId, this.state.day)
 
-        this.props.insertCard([{
-          ...card,
-          travel_duration: TRAVEL_TIME,
-          start_time: (new Date(startTime)),
-          end_time: (new Date(startTime + DEFAULT_DURATION)),
-          trip_id: tripId,
-          day_number: this.state.day
-        }], tripId, this.state.day)
+				this.setState({ selected: null })
+			}
+		}
+	}
 
-        this.setState({ selected: null })
-      }
-    }
-  }
+	formatCards(cards) {
+		let cardList = []
+		let startCard
+		let prevEnd
+		let startOfDay
+		let cityLat
+		let cityLong
+		let cityStart
+		let cityEnd
 
-  formatCards(cards) {
-    let cardList = []
-    let startCard
-    let prevEnd
-    let startOfDay
-    let cityLat
-    let cityLong
-    let cityStart
-    let cityEnd
+		_.each(cards, (card) => {
+			if (card.type === 'city') {
+				cityLat = card.lat
+				cityLong = card.long
+				cityStart = new Date(card.start_time)
+				cityEnd = new Date(card.end_time)
+				cardList.push(card)
+				// set the base location
+				return
+			}
 
-    _.each(cards, (card) => {
-      if (card.type === 'city') {
-        cityLat = card.lat
-        cityLong = card.long
-        cityStart = new Date(card.start_time)
-        cityEnd = new Date(card.end_time)
-        cardList.push(card)
-        // set the base location
-        return
-      }
+			const cardStart = new Date(card.start_time)
 
-      const cardStart = new Date(card.start_time)
+			const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
+			const travel = {
+				type: 'travel',
+				start_time: travelStart.toString(),
+				end_time: card.start_time,
+				travelType: card.travelType,
+				destination: card.name
+			}
 
-      const travelStart = new Date(cardStart.getTime() - TRAVEL_TIME)
-      const travel = {
-        type: 'travel',
-        start_time: travelStart.toString(),
-        end_time: card.start_time,
-        travelType: card.travelType,
-        destination: card.name
-      }
+			cardList.push(travel)
 
-      cardList.push(travel)
+			cardList.push(card)
 
-      cardList.push(card)
+			prevEnd = new Date(card.end_time)
+		})
 
-      prevEnd = new Date(card.end_time)
-    })
+		// If there are no cards in the day, search for suggestions based on the city
+		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0 || _.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
+			this.props.fetchSuggestions(cityLat, cityLong, CATEGORIES[this.state.category])
+			if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
+				this.setState({
+					pinLat: cityLat,
+					pinLong: cityLong
+				})
+			}
+		}
 
-    // If there are no cards in the day, search for suggestions based on the city
-    if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0 || _.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
-      this.props.fetchSuggestions(cityLat, cityLong, CATEGORIES[this.state.category])
-      if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
-        this.setState({
-          pinLat: cityLat,
-          pinLong: cityLong
-        })
-      }
-    }
+		return cardList
+	}
 
-    return cardList
-  }
+	formatSuggestions() {
+		// return _.map(this.props.suggestions, (suggestion) => {
+			// return {
+			// 	name: suggestion.name,
+			// 	photo_url: suggestion.photo_url,
+			// 	url: suggestion.url,
+			// 	price: suggestion.price,
+			// 	rating: suggestion.rating,
+			// 	lat: suggestion.lat,
+			// 	long: suggestion.long,
+			// 	address: suggestion.address,
+			// 	city: suggestion.city,
+			// 	state: suggestion.state,
+			// 	country: suggestion.country,
+			// 	zip_code: suggestion.zip_code,
+			// 	phone: suggestion.phone,
+			// 	type: suggestion.type,
+			// 	description: suggestion.description,
+			// 	source: suggestion.source
+			// }
+		// })
+		return this.props.suggestions
+	}
 
-  formatSuggestions() {
-    // return _.map(this.props.suggestions, (suggestion) => {
-      // return {
-      //  name: suggestion.name,
-      //  photo_url: suggestion.photo_url,
-      //  url: suggestion.url,
-      //  price: suggestion.price,
-      //  rating: suggestion.rating,
-      //  lat: suggestion.lat,
-      //  long: suggestion.long,
-      //  address: suggestion.address,
-      //  city: suggestion.city,
-      //  state: suggestion.state,
-      //  country: suggestion.country,
-      //  zip_code: suggestion.zip_code,
-      //  phone: suggestion.phone,
-      //  type: suggestion.type,
-      //  description: suggestion.description,
-      //  source: suggestion.source
-      // }
-    // })
-    return this.props.suggestions
-  }
+	onDragEnd(result) {
+		// dropped outside the list
+		if (!result.destination) {
+			return
+		} else if (result.destination.droppableId !== result.source.droppableId) {
+			if (result.destination.droppableId === 'suggestions-droppable') {
+				// remove an item from the itinerary
 
-  onDragEnd(result) {
-    // dropped outside the list
-    if (!result.destination) {
-      return
-    } else if (result.destination.droppableId !== result.source.droppableId) {
-      if (result.destination.droppableId === 'suggestions-droppable') {
-        // remove an item from the itinerary
+			} else {
+				// add an item to the itinerary by dragging
+				const itinerary = Array.from(this.props.cards)
+				const [city] = _.remove(itinerary, (card) => {
+					return card.type === 'city'
+				})
+				const suggestions = Array.from(this.formatSuggestions())
+				const [item] = suggestions.splice(result.source.index, 1)
 
-      } else {
-        // add an item to the itinerary by dragging
-        const itinerary = Array.from(this.props.cards)
-        const [city] = _.remove(itinerary, (card) => {
-          return card.type === 'city'
-        })
-        const suggestions = Array.from(this.formatSuggestions())
-        const [item] = suggestions.splice(result.source.index, 1)
+				// get the start time of the card that you're pushing down
+				let start
+				if (itinerary.length === 0) {
+					start = new Date(city.start_time)
+				} else {
+					start = result.destination.index === itinerary.length ?
+						new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
+				}
 
-        // get the start time of the card that you're pushing down
-        let start
-        if (itinerary.length === 0) {
-          start = new Date(city.start_time)
-        } else {
-          start = result.destination.index === itinerary.length ?
-            new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
-        }
+				// replace start time
+				const path = window.location.pathname.split(':')
+				const tripId = _.last(path)
 
-        // replace start time
-        const path = window.location.pathname.split(':')
-        const tripId = _.last(path)
+				const inserted = {
+						...item,
+						id: 0,
+				    travel_duration: TRAVEL_TIME,
+				  	start_time: start,
+				  	end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
+				  	trip_id: tripId,
+				  	day_number: this.state.day
+				}
 
-        const inserted = {
-          ...item,
-          id: 0,
-          travel_duration: TRAVEL_TIME,
-          start_time: start,
-          end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
-          trip_id: tripId,
-          day_number: this.state.day
-        }
+				// add the new card to the itinerary
+				itinerary.splice(result.destination.index, 0, inserted)
 
-        // add the new card to the itinerary
-        itinerary.splice(result.destination.index, 0, inserted)
+				// shift each card back by the duration of the card removed
+				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
+					const card = itinerary[i]
 
-        // shift each card back by the duration of the card removed
-        for (let i = result.destination.index + 1; i < itinerary.length; i++) {
-          const card = itinerary[i]
+					_.assign(card, {
+						'start_time': new Date((new Date(card.start_time)).getTime() + DEFAULT_DURATION),
+						'end_time': new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
+					})
+				}
 
-          _.assign(card, {
-            'start_time': new Date((new Date(card.start_time)).getTime() + DEFAULT_DURATION),
-            'end_time': new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
-          })
-        }
-
-        // add the city card back
-        itinerary.splice(0, 0, city)
-
+				// add the city card back
+				itinerary.splice(0, 0, city)
         this.sendUpdates(itinerary, tripId)
       }
     } else if (result.destination.droppableId === 'suggestions-droppable') {

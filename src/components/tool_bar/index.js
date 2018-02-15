@@ -20,6 +20,12 @@ class Toolbar extends Component {
 		this.toggleFavorite = this.toggleFavorite.bind(this)
 	}
 
+	componentWillReceiveProps(nextProps){
+		this.setState({ 
+			published: nextProps.published,
+			favorited: nextProps.favorited })
+	}
+
 	togglePublish(event) {
 		let published = this.state.published? false: true
 		this.setState({ published })
@@ -100,4 +106,3 @@ class Toolbar extends Component {
 }
 
 export default withRouter(connect(null, { updateTrip, unfavoriteTrip, favoriteTrip })(Toolbar));
-
