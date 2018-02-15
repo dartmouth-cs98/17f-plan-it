@@ -95,7 +95,6 @@ class Onboarding extends Component {
 	}
 
 	onCreateTrip(startDate, endDate) {
-		//let trip_name = this.state.cities[0].name
 		let trip_name = this.state.trip_name
 		if (_.isUndefined(trip_name) || trip_name === '') { 
 			trip_name = `${this.state.cities[0].name.split(',')[0]} Trip`
