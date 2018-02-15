@@ -351,6 +351,11 @@ class Workspace extends Component {
 
 	updateStartTime(cardId, time) {
 		const itinerary = _.map(Array.from(this.props.cards), _.clone)
+
+		const [city] = _.remove(itinerary, (card) => {
+			return card.type === 'city'
+		})
+
 		const index = _.findIndex(itinerary, (card) => {
 			return card.id === cardId
 		})
@@ -409,6 +414,10 @@ class Workspace extends Component {
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
+
+		// add the city card back in
+		itinerary.splice(0, 0, city)
+
     this.sendUpdates(itinerary, tripId)		
 	}
 
