@@ -21,8 +21,9 @@ class Toolbar extends Component {
 	}
 
 	componentWillReceiveProps(nextProps){
-		this.setState({ published: nextProps.published,
-										favorited: nextProps.favorited })
+		this.setState({ 
+			published: nextProps.published,
+			favorited: nextProps.favorited })
 	}
 
 	togglePublish(event) {

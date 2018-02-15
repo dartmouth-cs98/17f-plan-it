@@ -11,6 +11,9 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
+import OnboardingInput from '../onboarding_input'
+import Modal from 'react-modal'
+import { getLatLng } from 'react-places-autocomplete'
 
 require('./index.scss')
 
@@ -18,39 +21,51 @@ const DEFAULT_DURATION = 3600000
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
 const CATEGORIES = [
-    null,
-    'food',
-    'hotels',
-    'rentals',
-    'fitness & instruction',
-    'parks'
+  null,
+  'food',
+  'hotels',
+  'rentals',
+  'fitness & instruction',
+  'parks'
 ]
 
 class Workspace extends Component {
-    constructor(props) {
-        super(props)
+  constructor(props) {
+    super(props)
 
-        this.state = {
-            day: DAY_NUMBER,
-            selected: null,
-            category: 0,
-            pinLat: null,
-            pinLong: null,
-        }
-
-        this.dayForward = this.dayForward.bind(this)
-        this.dayBackward = this.dayBackward.bind(this)
-        this.selectCategory = this.selectCategory.bind(this)
-        this.searchSuggestions = this.searchSuggestions.bind(this)
-        this.addCard = this.addCard.bind(this)
-        this.formatCards = this.formatCards.bind(this)
-        this.formatSuggestions = this.formatSuggestions.bind(this)
-        this.onDragEnd = this.onDragEnd.bind(this)
-        this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
-        this.sendUpdates = this.sendUpdates.bind(this)
-        this.sendDelete = this.sendDelete.bind(this)
-        this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+    this.state = {
+      day: DAY_NUMBER,
+      selected: null,
+      category: 0,
+      pinLat: null,
+      pinLong: null,
+      modal_open: false,
+      custom_card_name: '',
+      custom_card_address: '',
+      custom_card: {}
     }
+
+    this.dayForward = this.dayForward.bind(this)
+    this.dayBackward = this.dayBackward.bind(this)
+    this.selectCategory = this.selectCategory.bind(this)
+    this.searchSuggestions = this.searchSuggestions.bind(this)
+    this.addCard = this.addCard.bind(this)
+    this.formatCards = this.formatCards.bind(this)
+    this.formatSuggestions = this.formatSuggestions.bind(this)
+    this.onDragEnd = this.onDragEnd.bind(this)
+    this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
+    this.sendUpdates = this.sendUpdates.bind(this)
+    this.sendDelete = this.sendDelete.bind(this)
+    this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+
+    // custom card functions
+    this.onModalOpen = this.onModalOpen.bind(this)
+    this.onModalClose = this.onModalClose.bind(this)
+    this.onNameChange = this.onNameChange.bind(this)
+    this.onOtherNameChange = this.onOtherNameChange.bind(this)
+    this.onHandleSelect = this.onHandleSelect.bind(this)
+    this.onExitCustomCreate = this.onExitCustomCreate.bind(this)
+  }
 
   componentDidMount() {
     const path = window.location.pathname.split(':')
@@ -72,6 +87,62 @@ class Workspace extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ cards: nextProps.cards})
+  }
+
+  /****** custom card functions *******/
+  onModalOpen() {
+    this.setState({ modal_open: true })
+  }
+
+  onModalClose() {
+    this.setState({ modal_open: false })
+    this.onExitCustomCreate(false)
+  }
+
+  onNameChange(event) {
+    this.setState({ custom_card_name: event.target.value })
+  }
+
+  onHandleSelect(index, type, results, name) {
+    const path = window.location.pathname.split(':')
+    const trip_id = _.last(path)
+
+    getLatLng(results).then(({ lat, lng }) => {
+      let address = results.formatted_address
+
+      let custom_card = { 
+        type,
+        address,
+        lat,
+        long: lng,
+        day_number: this.state.day,
+        place_id: results.place_id,
+        trip_id,
+        travel_duration: 900
+      }
+      this.setState({ custom_card, custom_card_address: name })
+    })
+  }
+
+  onOtherNameChange(index, type, name) {
+    this.setState({ custom_card_address: name})
+  }
+
+  onExitCustomCreate(addingCard) {
+    if(addingCard) {
+      //create and insert card
+      // add custom_card_name
+      // add start and end date
+      // add travel_duration
+      // add to 'your queue'
+    }
+
+    //reset card, name, and address
+    this.setState({
+      custom_card_address: '',
+      custom_card_name: '',
+      custom_card: {}
+    })
   }
 
   //cleverly named function. Not a react function
@@ -96,7 +167,7 @@ class Workspace extends Component {
     this.props.deleteCardLive(card_id)
   }
 
-    // update cards with new itinerary
+  // update cards with new itinerary
   sendUpdates(itinerary, tripId) {
     this.setState({cards: itinerary})
     this.sendLiveUpdate(itinerary)
@@ -323,163 +394,187 @@ class Workspace extends Component {
 
 				// add the city card back
 				itinerary.splice(0, 0, city)
-
         this.sendUpdates(itinerary, tripId)
-			}
-		} else if (result.destination.droppableId === 'suggestions-droppable') {
-			// reorder suggestions
+      }
+    } else if (result.destination.droppableId === 'suggestions-droppable') {
+      // reorder suggestions
 
-		} else {
-			// reorder items in the itinerary
-			const itinerary = Array.from(this.props.cards)
-			const [city] = _.remove(itinerary, (card) => {
-				return card.type === 'city'
-			})
+    } else {
+      // reorder items in the itinerary
+      const itinerary = Array.from(this.props.cards)
+      const [city] = _.remove(itinerary, (card) => {
+        return card.type === 'city'
+      })
 
-			// get the start time of the item you're trying to replace
-			const start = result.destination.index > result.source.index ?
-				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
+      // get the start time of the item you're trying to replace
+      const start = result.destination.index > result.source.index ?
+        new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
 
-			// get the info of the object your dragging
-			const [removed] = itinerary.splice(result.source.index, 1)
-			const duration = (new Date(removed.end_time)).getTime() - (new Date(removed.start_time)).getTime()
+      // get the info of the object your dragging
+      const [removed] = itinerary.splice(result.source.index, 1)
+      const duration = (new Date(removed.end_time)).getTime() - (new Date(removed.start_time)).getTime()
 
-			// update the start and end times of the item being dragged
-			const item = _.assignIn({}, removed, {
-				'start_time': start,
-				'end_time': new Date(start.getTime() + duration)
-			})
+      // update the start and end times of the item being dragged
+      const item = _.assignIn({}, removed, {
+        'start_time': start,
+        'end_time': new Date(start.getTime() + duration)
+      })
 
-			// add the item back into the itinerary in the right place
-			itinerary.splice(result.destination.index, 0, item)
+      // add the item back into the itinerary in the right place
+      itinerary.splice(result.destination.index, 0, item)
 
-			let endIndex
+      let endIndex
 
-			// indices show range of cards that need to update their times
-			if (result.destination.index > result.source.index) {
-				endIndex = itinerary.length
-			} else {
-				endIndex = result.source.index + 1
-			}
+      // indices show range of cards that need to update their times
+      if (result.destination.index > result.source.index) {
+        endIndex = itinerary.length
+      } else {
+        endIndex = result.source.index + 1
+      }
 
-			for (let i = result.destination.index + 1; i < endIndex; i++) {
-				const card = itinerary[i]
+      for (let i = result.destination.index + 1; i < endIndex; i++) {
+        const card = itinerary[i]
 
-				// shift each card back by the duration of the card removed
-				_.assign(card, {
-					'start_time': new Date((new Date(card.start_time)).getTime() + duration),
-					'end_time': new Date((new Date(card.end_time)).getTime() + duration)
-				})
-			}
+        // shift each card back by the duration of the card removed
+        _.assign(card, {
+          'start_time': new Date((new Date(card.start_time)).getTime() + duration),
+          'end_time': new Date((new Date(card.end_time)).getTime() + duration)
+        })
+      }
 
-			// add the city card back in
-			itinerary.splice(0, 0, city)
+      // add the city card back in
+      itinerary.splice(0, 0, city)
 
-			const path = window.location.pathname.split(':')
-			const tripId = _.last(path)
-      this.sendUpdates(itinerary, tripId)
-		}
-	}
+      const path = window.location.pathname.split(':')
+      const tripId = _.last(path)
+    this.sendUpdates(itinerary, tripId)
+    }
+  }
 
-	render() {
-		const cards = this.formatCards(this.state.cards)
-		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
+  render() {
+    const cards = this.formatCards(this.state.cards)
+    const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 
-		const suggestions = this.formatSuggestions()
-		const path = window.location.pathname.split(':')
-		const tripId = _.last(path)
+    const suggestions = this.formatSuggestions()
+    const path = window.location.pathname.split(':')
+    const tripId = _.last(path)
 
-		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
-		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
-		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
+    const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
+    const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
+    const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
 
-		return (
-			<div id='workspace'>
-				<NavBar background={'globe_background'}/>
-				<Toolbar
-					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
-					published={this.props.trips[0] ? this.props.trips[0].publish : false}
-					tripId={tripId}
-					readOnly={false}
-				/>
-				<DragDropContext onDragEnd={this.onDragEnd}>
-					<div className='planner'>
-						<Suggestions
-							addCard={this.addCard}
-							suggestions={suggestions}
-							category={this.state.category}
-							selectCategory={this.selectCategory}
-						/>
-						<Itinerary
-							tripId={tripId}
-							cards={cards}
-							day={this.state.day}
-							searchSuggestions={this.searchSuggestions}
-							selected={this.state.selected}
-							updateCard={this.props.updateCard}
-							removeCard={this.sendDelete}
-							dayForward={this.dayForward}
-							dayBackward={this.dayBackward}
-							numDays={tripDuration}
-							readOnly={false}
-						/>
-						<Map
-							isInfoOpen={false}
-							isMarkerShown={true}
-							MarkerClusterArray={this.props.suggestions}
-							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
-							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
-							addCard={this.addCard}
-							removeCard={this.sendDelete}
-						/>
+    return (
+      <div id='workspace'>
+        <NavBar background={'globe_background'}/>
+        <Toolbar
+          tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
+          published={this.props.trips[0] ? this.props.trips[0].publish : false}
+          tripId={tripId}
+          readOnly={false}
+        />
+        <Modal
+          isOpen={this.state.modal_open}
+          onRequestClose={this.onModalClose}
+          className='card horizontal center no_outline'>
+          <div className="card-content date_modal">
+            <p>Card Name</p>
+            <OnboardingInput placeholder={'Name your card'}
+              onNameChange={this.onNameChange}
+              name={this.state.custom_card_name}
+            />
+            <p>Card Address</p>
+            <OnboardingInput placeholder={'Enter address or attraction name'}
+              index={0}
+              name={this.state.custom_card_address}
+              input_type='custom'
+              onOtherNameChange={this.onOtherNameChange}
+              onHandleSelect={this.onHandleSelect}
+            />
+            <div className='button_container start-onboarding-button'
+              onClick={() => this.onExitCustomCreate(true)}>
+              Add Card
+            </div>
+          </div>
+        </Modal>
+        <DragDropContext onDragEnd={this.onDragEnd}>
+          <div className='planner'>
+            <Suggestions
+              addCard={this.addCard}
+              suggestions={suggestions}
+              category={this.state.category}
+              selectCategory={this.selectCategory}
+              onModalOpen={this.onModalOpen}
+            />
+            <Itinerary
+              tripId={tripId}
+              cards={cards}
+              day={this.state.day}
+              searchSuggestions={this.searchSuggestions}
+              selected={this.state.selected}
+              updateCard={this.props.updateCard}
+              removeCard={this.sendDelete}
+              dayForward={this.dayForward}
+              dayBackward={this.dayBackward}
+              numDays={tripDuration}
+              readOnly={false}
+            />
+            <Map
+              isInfoOpen={false}
+              isMarkerShown={true}
+              MarkerClusterArray={this.props.suggestions}
+              itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
+              center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
+              addCard={this.addCard}
+              removeCard={this.sendDelete}
+            />
 
-					</div>
-				</DragDropContext>
-			</div>
-		)
-	}
+          </div>
+        </DragDropContext>
+      </div>
+    )
+  }
 }
 
 const mapStateToProps = (state) => {
-    return {
-        user: state.users,
-        trips: state.trips.trip,
-        cards: state.cards.all,
-        suggestions: state.cards.suggestions
-    }
+  return {
+    user: state.users,
+    trips: state.trips.trip,
+    cards: state.cards.all,
+    suggestions: state.cards.suggestions
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchTrip: (id) => {
-            dispatch(fetchTrip(id))
-        },
-        fetchCards: (id, day) => {
-            dispatch(fetchCards(id, day))
-        },
-        insertCard: (cards, trip, id) => {
-            dispatch(insertCard(cards, trip, id))
-        },
-        updateCard: (cards, trip, id, day) => {
-            dispatch(updateCard(cards, trip, id, day))
-        },
-        updateCardsLive: (cards) => {
-          dispatch(updateCardsLive(cards))
-        },
-        updateCards: (cards, trip, day) => {
-            dispatch(updateCards(cards, trip, day))
-        },
-        deleteCard: (id, trip, day) => {
-            dispatch(deleteCard(id, trip, day))
-        },
-        deleteCardLive: (id) => {
-          dispatch(deleteCardLive(id))
-        },
-        fetchSuggestions: (lat, long, categories=null) => {
-            dispatch(fetchSuggestions(lat, long, categories))
-        }
+  return {
+    fetchTrip: (id) => {
+      dispatch(fetchTrip(id))
+    },
+    fetchCards: (id, day) => {
+      dispatch(fetchCards(id, day))
+    },
+    insertCard: (cards, trip, id) => {
+      dispatch(insertCard(cards, trip, id))
+    },
+    updateCard: (cards, trip, id, day) => {
+      dispatch(updateCard(cards, trip, id, day))
+    },
+    updateCardsLive: (cards) => {
+      dispatch(updateCardsLive(cards))
+    },
+    updateCards: (cards, trip, day) => {
+      dispatch(updateCards(cards, trip, day))
+    },
+    deleteCard: (id, trip, day) => {
+      dispatch(deleteCard(id, trip, day))
+    },
+    deleteCardLive: (id) => {
+      dispatch(deleteCardLive(id))
+    },
+    fetchSuggestions: (lat, long, categories=null) => {
+      dispatch(fetchSuggestions(lat, long, categories))
     }
+  }
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Workspace))

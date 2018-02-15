@@ -152,7 +152,7 @@ class Onboarding extends Component {
 
 	onOtherNameChange(index, type, name) {
 		let newCities = this.state.cities
-		const newCity = _.assign(newCities[index], {	name })
+		const newCity = _.assign(newCities[index], { name })
 		newCities[index] = newCity
 		this.setState({ cities: newCities })
 	}
