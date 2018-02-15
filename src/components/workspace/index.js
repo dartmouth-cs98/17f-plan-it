@@ -119,7 +119,8 @@ class Workspace extends Component {
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-			this.props.fetchCards(tripId, newDay)
+			this.props.fetchCards(tripId, newDay + 1)
+
 		}
 	}
 
@@ -129,11 +130,13 @@ class Workspace extends Component {
 			this.setState({
 				day: newDay,
 				selected: null,
-				category: 0
+				category: 0,
+        pinLat: null,
+				pinLong: null
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-			this.props.fetchCards(tripId, newDay)
+			this.props.fetchCards(tripId, newDay - 1)
 		}
 	}
 
