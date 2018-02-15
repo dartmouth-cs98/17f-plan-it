@@ -123,7 +123,7 @@ class ReadOnly extends Component {
 	}
 
 	onImportTrip() {
-		let trip_name = (_.isUndefined(this.state.trip_name) || this.state.trip_name === '')? 'My Trip' : this.state.trip_name
+		let trip_name = (_.isUndefined(this.state.trip_name) || this.state.trip_name === '')? `${this.state.cities[0].name.split(',')[0]} Trip` : this.state.trip_name
 		let start_date = _.isUndefined(this.state.start_date)? new Date(this.state.start_date) : new Date()
 		let end_date = this.props.trips[0].end_time? this.addDays(new Date(this.props.trips[0].end_time), 
 			this.getDayOffset(start_date, new Date(this.props.trips[0].start_time))) : null
@@ -244,7 +244,7 @@ class ReadOnly extends Component {
 	        		</div>
 				</Modal>
 				<Toolbar
-					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
+					tripName={this.props.trips[0] ? this.props.trips[0].name : `${this.state.cities[0].name.split(',')[0]} Trip`}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
 					favorited={this.isFavorited()}
