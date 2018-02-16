@@ -71,6 +71,7 @@ const CardsReducer = (state = initialState, action) => {
 				})
 			})
 		case ActionTypes.FETCH_SUGGESTIONS:
+			console.log(action.payload)
 			return Object.assign({}, state, {
 				suggestions: action.payload,
 			});
@@ -78,6 +79,11 @@ const CardsReducer = (state = initialState, action) => {
 			return Object.assign({}, state, {
 				error: action.payload,
 			});
+		case ActionTypes.CLEAR_SUGGESTIONS:
+			console.log('clear')
+			return Object.assign({}, state, {
+				suggestions: []
+			})
 		default:
 			return state;
 	}

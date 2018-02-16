@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { fetchTrip, fetchCards, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions } from '../../actions/index.js'
+import { fetchTrip, fetchCards, fetchDay, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions, clearSuggestions } from '../../actions/index.js'
 import { mainChannel } from '../../channels'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
@@ -38,6 +38,8 @@ class Workspace extends Component {
 					category: 0,
 					pinLat: null,
 					pinLong: null,
+					cityLat: null,
+					cityLong: null,
 					modal_open: false,
 					custom_card_name: '',
 					custom_card_address: '',
@@ -72,8 +74,9 @@ class Workspace extends Component {
 		const tripId = _.last(path)
 
 		this.setState({ tripId })
+		this.props.clearSuggestions()
 		this.props.fetchTrip(tripId)
-		this.props.fetchCards(tripId, DAY_NUMBER)
+		this.props.fetchDay(tripId, DAY_NUMBER)
 
 		if (this.props.user.email) {
 			mainChannel.connect(tripId, this.props.user.email)
@@ -184,13 +187,11 @@ class Workspace extends Component {
 			this.setState({
 				day: newDay,
 				category: 0,
-				pinLat: null,
-				pinLong: null
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-			this.props.fetchCards(tripId, newDay)
-
+			this.props.fetchDay(tripId, newDay)
+			// this.props.clearSuggestions()
 		}
 	}
 
@@ -200,12 +201,11 @@ class Workspace extends Component {
 			this.setState({
 				day: newDay,
 				category: 0,
-				pinLat: null,
-				pinLong: null
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-			this.props.fetchCards(tripId, newDay)
+			this.props.fetchDay(tripId, newDay)
+			// this.props.clearSuggestions()
 		}
 	}
 
@@ -228,6 +228,7 @@ class Workspace extends Component {
 	}
 
 	formatCards(cards) {
+		console.log('format')
 		let cardList = []
 		let startCard
 		let prevEnd
@@ -239,6 +240,7 @@ class Workspace extends Component {
 
 		_.each(cards, (card) => {
 			if (card.type === 'city') {
+				console.log(card.address)
 				cityLat = card.lat
 				cityLong = card.long
 				cityStart = new Date(card.start_time)
@@ -254,6 +256,16 @@ class Workspace extends Component {
 
 			prevEnd = new Date(card.end_time)
 		})
+
+		// recenter map if the city card has changed
+		if (cityLat !== this.state.cityLat || cityLong !== this.state.cityLong) {
+			this.setState({
+				pinLat: cityLat,
+				pinLong: cityLong,
+				cityLat,
+				cityLong
+			})
+		}
 
 		// If there are no cards in the day, search for suggestions based on the city
 		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0 || _.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
@@ -531,7 +543,6 @@ class Workspace extends Component {
 		const endTime = new Date((new Date(card.start_time)).getTime() + duration)
 
 		if (endTime.getTime() > dayEnd.getTime()) {
-			console.log(endTime, dayEnd)
 			// if the card would overlap into the next day, prevent updating
 			return
 		}
@@ -571,7 +582,8 @@ class Workspace extends Component {
 		const cards = this.formatCards(this.state.cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 
-		const suggestions = this.formatSuggestions()
+		const suggestions = this.props.suggestions
+		console.log(suggestions)
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
@@ -661,33 +673,39 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 		return {
-				fetchTrip: (id) => {
-						dispatch(fetchTrip(id))
-				},
-				fetchCards: (id, day) => {
-						dispatch(fetchCards(id, day))
-				},
-				insertCard: (cards, trip, id) => {
-						dispatch(insertCard(cards, trip, id))
-				},
-				updateCard: (cards, trip, id, day) => {
-						dispatch(updateCard(cards, trip, id, day))
-				},
-				updateCardsLive: (cards) => {
-					dispatch(updateCardsLive(cards))
-				},
-				updateCards: (cards, trip, day) => {
-						dispatch(updateCards(cards, trip, day))
-				},
-				deleteCard: (id, trip, day) => {
-						dispatch(deleteCard(id, trip, day))
-				},
-				deleteCardLive: (id) => {
-					dispatch(deleteCardLive(id))
-				},
-				fetchSuggestions: (lat, long, categories=null) => {
-						dispatch(fetchSuggestions(lat, long, categories))
-				}
+			fetchTrip: (id) => {
+					dispatch(fetchTrip(id))
+			},
+			fetchCards: (id, day) => {
+					dispatch(fetchCards(id, day))
+			},
+			fetchDay: (id, day) => {
+				dispatch(fetchDay(id, day))
+			},
+			insertCard: (cards, trip, id) => {
+					dispatch(insertCard(cards, trip, id))
+			},
+			updateCard: (cards, trip, id, day) => {
+					dispatch(updateCard(cards, trip, id, day))
+			},
+			updateCardsLive: (cards) => {
+				dispatch(updateCardsLive(cards))
+			},
+			updateCards: (cards, trip, day) => {
+					dispatch(updateCards(cards, trip, day))
+			},
+			deleteCard: (id, trip, day) => {
+					dispatch(deleteCard(id, trip, day))
+			},
+			deleteCardLive: (id) => {
+				dispatch(deleteCardLive(id))
+			},
+			fetchSuggestions: (lat, long, categories=null) => {
+					dispatch(fetchSuggestions(lat, long, categories))
+			},
+			clearSuggestions: () => {
+				dispatch(clearSuggestions())
+			}
 		}
 }
 
