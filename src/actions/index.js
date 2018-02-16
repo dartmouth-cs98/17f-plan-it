@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import _ from 'lodash'
 
 export const ROOT_URL = 'http://localhost:4000/api/v1'
 // export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
@@ -45,7 +45,8 @@ export const ActionTypes = {
   CREATE_USER_ERROR: 'CREATE_USER_ERROR',
 
   FETCH_SUGGESTIONS: 'FETCH_SUGGESTIONS',
-  FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR'
+  FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR',
+  CLEAR_SUGGESTIONS: 'CLEAR_SUGGESTIONS'
 }
 
 export function resetTripId(id) {
@@ -152,13 +153,31 @@ export function fetchPublishedTrips() {
   }
 }
 
-
 export function fetchCards(id, day=null) {
   return (dispatch) => {
     let query = `${ROOT_URL}/cards?trip_id=${id}`
     if (day) { query += `&day=${day}` }
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
+    }).catch((error) => {
+      console.log(error)
+      dispatch({ type: ActionTypes.FETCH_CARDS_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchDay(id, day) {
+  return (dispatch) => {
+    let query = `${ROOT_URL}/cards?trip_id=${id}&day=${day}`
+    axios.get(query).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
+
+      // get the new city and fetch suggestions from that city
+      const city = _.find(response.data, (card) => {
+        return card.type === 'city'
+      })
+
+      dispatch(fetchSuggestions(city.lat, city.long))
     }).catch((error) => {
       console.log(error)
       dispatch({ type: ActionTypes.FETCH_CARDS_ERROR, payload: error })
@@ -293,6 +312,7 @@ export function createCard(cards) {
 }
 
 export function fetchSuggestions(lat, long, category=null) {
+  console.log(lat, long)
   return (dispatch) => {
     let query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}`
 
@@ -303,5 +323,11 @@ export function fetchSuggestions(lat, long, category=null) {
     }).catch((error) => {
       dispatch({ type: ActionTypes.FETCH_SUGGESTIONS_ERROR, payload: error })
     })
+  }
+}
+
+export function clearSuggestions() {
+  return (dispatch) => {
+    dispatch({ type: ActionTypes.CLEAR_SUGGESTIONS })
   }
 }
