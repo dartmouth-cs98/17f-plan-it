@@ -250,7 +250,6 @@ export default class Itinerary extends Component {
 			return (
 				<div id='itinerary-box'>
 					{this.renderHeader()}
-					{this.renderStartTimeDialog()}
 					<div className='body-container'>
 						<div className='itinerary-body'>
 							<div className='itinerary-list'>
