@@ -517,6 +517,12 @@ class Workspace extends Component {
 		const card = itinerary[index]
 		const endTime = new Date((new Date(card.start_time)).getTime() + duration)
 
+		if (endTime.getTime() > dayEnd.getTime()) {
+			console.log(endTime, dayEnd)
+			// if the card would overlap into the next day, prevent updating
+			return
+		}
+
 		_.assign(card, { 'end_time': endTime })
 
 		let diff
