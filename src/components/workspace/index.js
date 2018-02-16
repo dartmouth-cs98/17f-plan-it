@@ -250,9 +250,7 @@ class Workspace extends Component {
 
 					// adjust for date conversion in order to compare
 					let endTime = new Date(card.end_time)
-					console.log("end-time-date", endTime)
 					endTime = new Date(endTime.getTime() + endTime.getTimezoneOffset()*60*1000 + DEFAULT_DURATION)
-					console.log("end-time-tz", endTime)
 					let dayEnd  = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
 					dayEnd.setHours(24, 0, 0, 0)
 
