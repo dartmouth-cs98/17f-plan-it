@@ -14,7 +14,7 @@
 
     .suggestions-title {
       color: #FFFFFF;
-      margin-left: 10px;
+      margin-left: 50px;
       font-size: 14px;
       font-family: Roboto, sans-serif;
       font-weight: 500;
@@ -42,7 +42,24 @@
   }
 }
 
-.filter-icon:hover {
+.filter-icon {
+  float: right;
+  cursor: pointer;
+  height: 100%;
+  min-width: 38px
+}
+
+.filter-icon button {
+  padding: 0px !important;
+  width: 35px !important;
+}
+
+.filter-icon * {
+  height: 100% !important;
+  font-size: 20px !important;
+}
+
+.filter-icon span:hover {
   text-shadow: 0 0 30px grey;
 }
 
