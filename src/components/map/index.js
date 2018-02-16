@@ -68,18 +68,6 @@ const POIMap = compose(
                 style={{marginLeft: '10px'}}
                 onClick={() => {
                   props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })
-                  props.addCard({
-                    name: marker.name,
-                    image_url: marker.image_url,
-                    yelp_url: marker.url,
-                    price: marker.price,
-                    lat: marker.lat,
-                    long: marker.long,
-                    phone: marker.phone,
-                    display_phone: marker.phone,
-                    type: marker.description,
-                    description: marker.description
-                  })
                 }}
               />
             </div>
@@ -135,7 +123,6 @@ const POIMap = compose(
 );
 
 export default class Map extends Component {
-
   constructor(props) {
 		super(props)
 
@@ -179,7 +166,6 @@ export default class Map extends Component {
           center={this.props.center}
           markers={this.props.MarkerClusterArray || []}
           itin_markers={this.props.itin_marker_array || []}
-          addCard={this.props.addCard}
           showSug={this.state.ShowSug}
           showIt={this.state.ShowIt}
           readOnly={this.props.readOnly}

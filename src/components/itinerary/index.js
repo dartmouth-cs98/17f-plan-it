@@ -181,7 +181,7 @@ export default class Itinerary extends Component {
 		const toRender = []
 
 		for (const card of this.props.cards) {
-			if (card.type === 'city' || card.type === 'travel') {
+			if (card.type === 'city') {
 				continue
 			} else if (this.state.readOnly) {
 
@@ -213,6 +213,7 @@ export default class Itinerary extends Component {
 								>
 									<Item
 										key={card.id}
+										cardId={card.id}
 										name={card.name}
 										description={card.description}
 										editCard={() => {
@@ -222,6 +223,8 @@ export default class Itinerary extends Component {
 											this.props.searchSuggestions(card)
 										}}
 										timeScale={TIME_SCALE}
+										updateTime={this.props.updateTime}
+										updateDuration={this.props.updateDuration}
 										startTime={card.start_time}
 										endTime={card.end_time}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
@@ -240,41 +243,6 @@ export default class Itinerary extends Component {
 		}
 
 		return toRender
-	}
-
-	renderStartTimeDialog() {
-		const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.closeDialog}
-      />,
-      <FlatButton
-        label="Update"
-        primary={true}
-        onClick={this.updateStartTime}
-      />
-    ]
-
-		return (
-			<Dialog
-	      title={`Change start time for: ${this.state.editCard ? this.state.editCard.name : null}`}
-	      actions={actions}
-	      modal={false}
-	      contentStyle={{
-	      	width: '100%',
-	      	maxWidth: '350px'
-	      }}
-	      open={this.state.startTimeDialog}
-	      onRequestClose={this.closeDialog}
-	    >
-	    	<TimePicker
-		      hintText="12hr Format"
-		      defaultTime={this.state.editCard ? new Date(this.state.editCard.start_time) : null}
-		      onChange={this.selectTime}
-		    />
-	    </Dialog>
-    )
 	}
 
 	render() {
@@ -296,7 +264,6 @@ export default class Itinerary extends Component {
 			return (
 				<div id='itinerary-box'>
 					{this.renderHeader()}
-					{this.renderStartTimeDialog()}
 					<div className='body-container'>
 						<div className='itinerary-body'>
 							<div className='itinerary-list'>
@@ -317,29 +284,5 @@ export default class Itinerary extends Component {
 				</div>
 			)
 		}
-	}
-}
-
-class Travel extends Component {
-	render() {
-		const timeScale = scaleLinear()
-			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, TIME_SCALE])
-
-		// subtract 10 for margin
-		const height = timeScale(this.props.duration) - 10
-
-		return (
-			<div className='card-wrapper'>
-				<div
-					className='card travel-card'
-					style={{height}}
-				>
-					<label className='travel-title'>
-						{`Travel to: ${this.props.destination}`}
-					</label>
-				</div>
-			</div>
-		)
 	}
 }
