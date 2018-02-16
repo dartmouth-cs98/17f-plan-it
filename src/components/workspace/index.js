@@ -323,12 +323,21 @@ class Workspace extends Component {
 				const path = window.location.pathname.split(':')
 				const tripId = _.last(path)
 
+				const end = new Date(start.getTime() + DEFAULT_DURATION)
+				const dayEnd = new Date(city.start_time)
+				dayEnd.setHours(24, 0, 0, 0)
+
+				if (end.getTime() > dayEnd.getTime()) {
+					// if the new card would be in the next day, don't update
+					return
+				}
+
 				const inserted = {
 						...item,
 						id: 0,
 						travel_duration: TRAVEL_TIME,
 						start_time: start,
-						end_time: (new Date(start.getTime() + DEFAULT_DURATION)),
+						end_time: end,
 						trip_id: tripId,
 						day_number: this.state.day
 				}
@@ -340,9 +349,6 @@ class Workspace extends Component {
 				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
 					const card = itinerary[i]
 					const endTime = new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
-
-					const dayEnd = new Date(start.getTime())
-					dayEnd.setHours(24, 0, 0, 0)
 
 					// make sure no cards would be pushed into the next day
 					if (endTime.getTime() > dayEnd.getTime()) {
@@ -365,6 +371,7 @@ class Workspace extends Component {
 
 		} else if (result.destination.droppableId === 'itinerary-droppable') {
 			// reorder items in the itinerary
+
 			const itinerary = _.map(Array.from(this.props.cards), _.clone)
 			const [city] = _.remove(itinerary, (card) => {
 				return card.type === 'city'
@@ -374,14 +381,23 @@ class Workspace extends Component {
 			const start = result.destination.index > result.source.index ?
 				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
 
+			const dayEnd = new Date(city.start_time)
+			dayEnd.setHours(24, 0, 0, 0)
+
 			// get the info of the object you're dragging
 			const [removed] = itinerary.splice(result.source.index, 1)
 			const duration = (new Date(removed.end_time)).getTime() - (new Date(removed.start_time)).getTime()
+			const end = new Date(start.getTime() + duration)
+
+			if (end.getTime() > dayEnd.getTime()) {
+				// if card is dragged into the next day, don't update
+				return
+			}
 
 			// update the start and end times of the item being dragged
 			const item = _.assignIn({}, removed, {
 				'start_time': start,
-				'end_time': new Date(start.getTime() + duration)
+				'end_time': end
 			})
 
 			// add the item back into the itinerary in the right place
@@ -400,9 +416,6 @@ class Workspace extends Component {
 			for (let i = result.destination.index + 1; i < endIndex; i++) {
 				const card = itinerary[i]
 				const endTime = new Date((new Date(card.end_time)).getTime() + duration)
-
-				const dayEnd = new Date(start.getTime())
-				dayEnd.setHours(24, 0, 0, 0)
 
 				// make sure no cards would be pushed into the next day
 				if (endTime.getTime() > dayEnd.getTime()) {
