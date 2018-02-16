@@ -36,7 +36,7 @@ export default class Suggestions extends Component {
 										onChange={this.props.selectCategory}
 										value={this.props.category}
 										multiple={false}
-										style={{float: 'right', marginRight: '10px', cursor: 'pointer'}}
+										style={{float: 'right', paddingRight: '10px', paddingLeft: '10px', cursor: 'pointer'}}
 									>
 										<MenuItem value="0" primaryText="All" />
 										<MenuItem value="1" primaryText="Food" />

@@ -110,7 +110,7 @@ class Workspace extends Component {
     getLatLng(results).then(({ lat, lng }) => {
       let address = results.formatted_address
 
-      let custom_card = { 
+      let custom_card = {
         type,
         address,
         lat,
@@ -190,7 +190,7 @@ class Workspace extends Component {
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-			this.props.fetchCards(tripId, newDay + 1)
+			this.props.fetchCards(tripId, newDay)
 
 		}
 	}
@@ -207,7 +207,7 @@ class Workspace extends Component {
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-			this.props.fetchCards(tripId, newDay - 1)
+			this.props.fetchCards(tripId, newDay)
 		}
 	}
 
