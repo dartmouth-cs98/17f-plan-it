@@ -3,7 +3,9 @@ import _ from 'lodash'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import IconMenu from 'material-ui/IconMenu'
+import IconButton from 'material-ui/IconButton';
 import MenuItem from 'material-ui/MenuItem'
+import FontIcon from 'material-ui/FontIcon';
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import Item from '../item/index.js'
 import './index.scss'
@@ -24,73 +26,82 @@ const getListStyle = isDraggingOver => ({
 		padding: grid,
 })
 
+const menuItems = ['All Attractions', 'Food', 'Hotels', 'Rentals', 'Fitness & Instruction', 'Parks']
+
 export default class Suggestions extends Component {
-		renderHeader() {
-				return (
-						<div className='suggestions-header'>
-								<label className='suggestions-title'>
-									ATTRACTIONS
-									<IconMenu
-										className='filter-icon'
-										iconButtonElement={<i className='fa fa-filter' style={{color: '#FFFFFF'}} />}
-										onChange={this.props.selectCategory}
-										value={this.props.category}
-										multiple={false}
-										style={{float: 'right', paddingRight: '10px', paddingLeft: '10px', cursor: 'pointer'}}
-									>
-										<MenuItem value="0" primaryText="All" />
-										<MenuItem value="1" primaryText="Food" />
-										<MenuItem value="2" primaryText="Hotels" />
-										<MenuItem value="3" primaryText="Rentals" />
-										<MenuItem value="4" primaryText="Fitness & Instruction" />
-										<MenuItem value="5" primaryText="Parks" />
-									</IconMenu>
-									<i
-										className='fa fa-plus add-icon'
-										style={{color: '#FFFFFF'}}
-										onClick={this.props.onModalOpen}
-									/>
-								</label>
-						</div>
-				)
+	renderHeader() {
+		return (
+			<div className='suggestions-header'>
+				<label className='suggestions-title'>
+					{menuItems[this.props.category]}
+				</label>
+				<IconMenu
+					className='filter-icon'
+					iconButtonElement={
+						<IconButton>
+							<FontIcon 
+								className='fa fa-filter'
+								color={'#FFFFFF'}
+							/>
+						</IconButton>
+					}
+					onChange={this.props.selectCategory}
+					value={this.props.category}
+					multiple={false}
+				>
+					<MenuItem value="0" primaryText="All" />
+					<MenuItem value="1" primaryText="Food" />
+					<MenuItem value="2" primaryText="Hotels" />
+					<MenuItem value="3" primaryText="Rentals" />
+					<MenuItem value="4" primaryText="Fitness & Instruction" />
+					<MenuItem value="5" primaryText="Parks" />
+				</IconMenu>
+				<i
+					className='fa fa-plus add-icon'
+					style={{color: '#FFFFFF'}}
+					onClick={this.props.onModalOpen}
+				/>
+				
+				</div>
+			)
 		}
 
 		renderList() {
-				let index = 0
-				const suggestions = _.map(this.props.suggestions, (card) => {
-						// keys and id's have a 'sugg' prefix to differentiate from itinerary items
-						return (
-								<Draggable key={`sugg${index}`} draggableId={`sugg${index}`} index={index++}>
-										{(provided, snapshot) => (
-												<div>
-														<div
-																ref={provided.innerRef}
-																{...provided.draggableProps}
-																{...provided.dragHandleProps}
-																style={getItemStyle(
-																		snapshot.isDragging,
-																		provided.draggableProps.style,
-																)}
-														>
-																<Item
-																		key={card.id}
-																		name={card.name}
-																		description={card.description}
-																		timeScale={TIME_SCALE}
-																		startTime={card.start_time}
-																		endTime={card.end_time}
-																		duration={DURATION}
-																		buttons={false}
-																/>
-														</div>
-														{provided.placeholder}
-												</div>
-										)}
-								</Draggable>
-						)
-				})
+			let index = 0
+			const suggestions = _.map(this.props.suggestions, (card) => {
+				// keys and id's have a 'sugg' prefix to differentiate from itinerary items
+				return (
+					<Draggable key={`sugg${index}`} draggableId={`sugg${index}`} index={index++}>
+						{(provided, snapshot) => (
+							<div>
+								<div
+									ref={provided.innerRef}
+									{...provided.draggableProps}
+									{...provided.dragHandleProps}
+									style={getItemStyle(
+											snapshot.isDragging,
+											provided.draggableProps.style,
+									)}
+								>
+									<Item
+											key={card.id}
+											name={card.name}
+											description={card.description}
+											timeScale={TIME_SCALE}
+											startTime={card.start_time}
+											endTime={card.end_time}
+											duration={DURATION}
+											buttons={false}
+									/>
+								</div>
+							{provided.placeholder}
+							</div>
+						)}
+					</Draggable>
+				)
+			})
 
-				return suggestions
+			return suggestions
 		}
 
 		render() {
