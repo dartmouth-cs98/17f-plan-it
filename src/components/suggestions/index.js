@@ -45,14 +45,9 @@ export default class Suggestions extends Component {
 										<MenuItem value="4" primaryText="Fitness & Instruction" />
 										<MenuItem value="5" primaryText="Parks" />
 									</IconMenu>
-									<FlatButton
-										className='add-icon'
-										icon={
-											<i
-												className='fa fa-plus'
-												style={{color: '#FFFFFF'}}
-											/>
-										}
+									<i
+										className='fa fa-plus add-icon'
+										style={{color: '#FFFFFF'}}
 										onClick={this.props.onModalOpen}
 									/>
 								</label>

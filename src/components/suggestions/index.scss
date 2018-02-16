@@ -32,7 +32,12 @@
 
     .add-icon {
       float: right;
-      min-width: 40px !important;
+      cursor: pointer;
+      padding: 10px;
+    }
+
+    .add-icon:hover {
+      text-shadow: 0 0 30px grey;
     }
   }
 }
