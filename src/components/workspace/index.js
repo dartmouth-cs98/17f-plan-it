@@ -11,6 +11,9 @@ import Itinerary from '../itinerary/index.js'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
 import DownloadTrip from '../download_trip/index.js'
+import OnboardingInput from '../onboarding_input'
+import Modal from 'react-modal'
+import { getLatLng } from 'react-places-autocomplete'
 
 require('./index.scss')
 
@@ -31,10 +34,14 @@ class Workspace extends Component {
 				super(props)
 
 				this.state = {
-						day: DAY_NUMBER,
-						category: 0,
-						pinLat: null,
-						pinLong: null,
+					day: DAY_NUMBER,
+					category: 0,
+					pinLat: null,
+					pinLong: null,
+					modal_open: false,
+					custom_card_name: '',
+					custom_card_address: '',
+					custom_card: {}
 				}
 
 				this.dayForward = this.dayForward.bind(this)
@@ -50,6 +57,14 @@ class Workspace extends Component {
 				this.sendUpdates = this.sendUpdates.bind(this)
 				this.sendDelete = this.sendDelete.bind(this)
 				this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+
+				// custom card functions
+				this.onModalOpen = this.onModalOpen.bind(this)
+				this.onModalClose = this.onModalClose.bind(this)
+				this.onNameChange = this.onNameChange.bind(this)
+				this.onOtherNameChange = this.onOtherNameChange.bind(this)
+				this.onHandleSelect = this.onHandleSelect.bind(this)
+				this.onExitCustomCreate = this.onExitCustomCreate.bind(this)
 		}
 
 	componentDidMount() {
@@ -103,6 +118,62 @@ class Workspace extends Component {
 		this.props.updateCardsLive(itinerary)
 	}
 
+	/****** custom card functions *******/
+	onModalOpen() {
+		this.setState({ modal_open: true })
+	}
+
+	onModalClose() {
+		this.setState({ modal_open: false })
+		this.onExitCustomCreate(false)
+	}
+
+	onNameChange(event) {
+		this.setState({ custom_card_name: event.target.value })
+	}
+
+	onHandleSelect(index, type, results, name) {
+		const path = window.location.pathname.split(':')
+		const trip_id = _.last(path)
+
+		getLatLng(results).then(({ lat, lng }) => {
+			let address = results.formatted_address
+
+			let custom_card = {
+				type,
+				address,
+				lat,
+				long: lng,
+				day_number: this.state.day,
+				place_id: results.place_id,
+				trip_id,
+				travel_duration: 900
+			}
+			this.setState({ custom_card, custom_card_address: name })
+		})
+	}
+
+	onOtherNameChange(index, type, name) {
+		this.setState({ custom_card_address: name})
+	}
+
+	onExitCustomCreate(addingCard) {
+		if(addingCard) {
+			//create and insert card
+			// add custom_card_name
+			// add start and end date
+			// add travel_duration
+			// add to 'your queue'
+		}
+
+		//reset card, name, and address
+		this.setState({
+			custom_card_address: '',
+			custom_card_name: '',
+			custom_card: {}
+		})
+	}
+
 	dayForward() {
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
@@ -119,6 +190,7 @@ class Workspace extends Component {
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.fetchCards(tripId, newDay)
+
 		}
 	}
 
@@ -127,7 +199,9 @@ class Workspace extends Component {
 			const newDay = this.state.day - 1
 			this.setState({
 				day: newDay,
-				category: 0
+				category: 0,
+				pinLat: null,
+				pinLong: null
 			})
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
@@ -486,7 +560,6 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
@@ -496,12 +569,38 @@ class Workspace extends Component {
 					tripId={tripId}
 					readOnly={false}
 				/>
+				<Modal
+					isOpen={this.state.modal_open}
+					onRequestClose={this.onModalClose}
+					className='card horizontal center no_outline'>
+					<div className="card-content date_modal">
+						<p>Card Name</p>
+						<OnboardingInput placeholder={'Name your card'}
+							onNameChange={this.onNameChange}
+							name={this.state.custom_card_name}
+						/>
+						<p>Card Address</p>
+						<OnboardingInput placeholder={'Enter address or attraction name'}
+							index={0}
+							name={this.state.custom_card_address}
+							input_type='custom'
+							onOtherNameChange={this.onOtherNameChange}
+							onHandleSelect={this.onHandleSelect}
+						/>
+						<div className='button_container start-onboarding-button'
+							onClick={() => this.onExitCustomCreate(true)}>
+							Add Card
+						</div>
+					</div>
+				</Modal>
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<div className='planner'>
 						<Suggestions
 							suggestions={suggestions}
 							category={this.state.category}
 							selectCategory={this.selectCategory}
+							selectCategory={this.selectCategory}
+							onModalOpen={this.onModalOpen}
 						/>
 						<Itinerary
 							tripId={tripId}
