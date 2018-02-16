@@ -102,9 +102,7 @@ class Onboarding extends Component {
 		
 		let start = new Date(startDate)
 		start.setHours(0, 0, 0, 0)
-		console.log("start", start)
 		start = new Date(start.getTime() - start.getTimezoneOffset()*60*1000)
-		console.log("start2", start)
 
 		let end = null
 		if (endDate) {

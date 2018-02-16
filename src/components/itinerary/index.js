@@ -161,7 +161,9 @@ export default class Itinerary extends Component {
 		let dayLabel = `Day ${this.props.day}`
 
 		if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
-			const date = new Date(this.props.cards[0].start_time)
+			
+			let date = new Date(this.props.cards[0].start_time)
+			date = new Date(date.getTime() + date.getTimezoneOffset()*60*1000)
 			dayLabel += `: ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
 		}
 
@@ -185,19 +187,26 @@ export default class Itinerary extends Component {
 				continue
 			} else if (this.state.readOnly) {
 
+				let start = new Date(card.start_time)
+				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
+
 				toRender.push(
 					<Item
 						key={card.id}
 						name={card.name}
 						description={card.description}
 						timeScale={TIME_SCALE}
-						startTime={card.start_time}
+						startTime={start}
 						endTime={card.end_time}
 						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 						buttons={false}
 					/>
 				)
 			} else {
+
+				let start = new Date(card.start_time)
+				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
+
 				toRender.push(
 					<Draggable key={card.id} draggableId={card.id} index={index++}>
 						{(provided, snapshot) => (
@@ -224,7 +233,7 @@ export default class Itinerary extends Component {
 										}}
 										timeScale={TIME_SCALE}
 										updateTime={this.props.updateTime}
-										startTime={card.start_time}
+										startTime={start}
 										endTime={card.end_time}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 										remove={() => {
