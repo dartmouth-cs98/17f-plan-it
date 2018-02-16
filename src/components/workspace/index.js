@@ -167,21 +167,21 @@ class Workspace extends Component {
 				cityLat = card.lat
 				cityLong = card.long
 				cityStart = new Date(card.start_time)
-				cityStart = new Date(cityStart + cityStart.getTimezoneOffset())
+				cityStart = new Date(cityStart.getTime() + cityStart.getTimezoneOffset()*60*1000)
 				cityEnd = new Date(card.end_time)
-				cityEnd = new Date(cityEnd + cityEnd.getTimezoneOffset())
+				cityEnd = new Date(cityEnd.getTime() + cityEnd.getTimezoneOffset()*60*1000)
 				cardList.push(card)
 				// set the base location
 				return
 			}
 
 			let cardStart = new Date(card.start_time)
-			cardStart = new Date(cardStart + cardStart.getTimezoneOffset())
+			cardStart = new Date(cardStart + cardStart.getTimezoneOffset()*60*1000)
 
 			cardList.push(card)
 
 			prevEnd = new Date(card.end_time)
-			prevEnd = new Date(prevEnd + prevEnd.getTimezoneOffset())
+			prevEnd = new Date(prevEnd + prevEnd.getTimezoneOffset()*60*1000)
 		})
 
 		// If there are no cards in the day, search for suggestions based on the city
@@ -194,12 +194,10 @@ class Workspace extends Component {
 				})
 			}
 		}
-
 		return cardList
 	}
 
 	formatSuggestions() {
-		
 		return this.props.suggestions
 	}
 
@@ -249,22 +247,27 @@ class Workspace extends Component {
 				// shift each card back by the duration of the card removed
 				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
 					const card = itinerary[i]
-					const endTime = new Date((new Date(card.end_time)).getTime() + DEFAULT_DURATION)
 
-					let dayEnd = new Date(start.getTime() - start.getTimezoneOffset())
-					console.log("DAYEND2", start)
+					// adjust for date conversion in order to compare
+					let endTime = new Date(card.end_time)
+					console.log("end-time-date", endTime)
+					endTime = new Date(endTime.getTime() + endTime.getTimezoneOffset()*60*1000 + DEFAULT_DURATION)
+					console.log("end-time-tz", endTime)
+					let dayEnd  = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
 					dayEnd.setHours(24, 0, 0, 0)
-					console.log("DAYEND2-1", dayEnd)
-					dayEnd = new Date(dayEnd - dayEnd.getTimezoneOffset())
-					console.log("DAYEND2-2", dayEnd)
 
 					// make sure no cards would be pushed into the next day
 					if (endTime.getTime() > dayEnd.getTime()) {
 						return
 					}
 
+					// adjust times so that correct times are inserted into database
+					let startTime = new Date(card.start_time)
+					startTime = new Date(startTime.getTime() + DEFAULT_DURATION)
+					endTime = new Date(endTime.getTime() - endTime.getTimezoneOffset()*60*1000)
+
 					_.assign(card, {
-						'start_time': new Date((new Date(card.start_time)).getTime() + DEFAULT_DURATION),
+						'start_time': startTime,
 						'end_time': endTime
 					})
 				}
@@ -272,7 +275,7 @@ class Workspace extends Component {
 				// add the city card back
 				itinerary.splice(0, 0, city)
 
-        this.sendUpdates(itinerary, tripId)
+        		this.sendUpdates(itinerary, tripId)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -285,7 +288,7 @@ class Workspace extends Component {
 			})
 
 			// get the start time of the item you're trying to replace
-			const start = result.destination.index > result.source.index ?
+			let start = result.destination.index > result.source.index ?
 				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
 
 			// get the info of the object you're dragging
@@ -313,24 +316,24 @@ class Workspace extends Component {
 			// shift each card back by the duration of the card removed
 			for (let i = result.destination.index + 1; i < endIndex; i++) {
 				const card = itinerary[i]
-				const endTime = new Date((new Date(card.end_time)).getTime() + duration)
 
-				// const dayEnd = new Date(start.getTime())
-				// dayEnd.setHours(24, 0, 0, 0)
-				console.log("DAYEND1",start)
-				let dayEnd = new Date(start.getTime() - start.getTimezoneOffset())
+				let endTime = new Date(card.end_time)
+				endTime = new Date(endTime.getTime() + endTime.getTimezoneOffset()*60*1000 + duration)
+
+				const dayEnd = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
 				dayEnd.setHours(24, 0, 0, 0)
-				console.log("DAYEND1", dayEnd)
-				dayEnd = new Date(dayEnd - dayEnd.getTimezoneOffset())
-				console.log(dayEnd)
 
 				// make sure no cards would be pushed into the next day
 				if (endTime.getTime() > dayEnd.getTime()) {
 					return
 				}
 
+				let startTime = new Date(card.start_time)
+				startTime = new Date(startTime.getTime() + duration)
+				endTime = new Date(endTime.getTime() - endTime.getTimezoneOffset()*60*1000)
+
 				_.assign(card, {
-					'start_time': new Date((new Date(card.start_time)).getTime() + duration),
+					'start_time': startTime,
 					'end_time': endTime
 				})
 			}
@@ -340,77 +343,118 @@ class Workspace extends Component {
 
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
-      this.sendUpdates(itinerary, tripId)
+      		this.sendUpdates(itinerary, tripId)
 		}
 	}
 
 	updateStartTime(cardId, time) {
 		const itinerary = _.map(Array.from(this.props.cards), _.clone)
+		// reorder items in the itinerary
+		const [city] = _.remove(itinerary, (card) => {
+				return card.type === 'city'
+			})
 		const index = _.findIndex(itinerary, (card) => {
 			return card.id === cardId
 		})
 
 		// get a value representing the end of the day
-		const dayEnd = new Date(itinerary[index].start_time)
-		console.log("DAYEND3", itinerary[index].start_time)
+		let dayEnd  = new Date(itinerary[index].start_time)
+		dayEnd = new Date(dayEnd.getTime() + dayEnd.getTimezoneOffset()*60*1000)
 		dayEnd.setHours(24, 0, 0, 0)
-		console.log("DAYEND3-1", dayEnd)
-		// let dayEnd = new Date(start.getTime() - start.getTimezoneOffset())
-		// dayEnd.setHours(24, 0, 0, 0)
-		// dayEnd = new Date(dayEnd - dayEnd.getTimezoneOffset())
-		// console.log("DAYEND3-2", dayEnd)
+
+		// adjust start time for date conversion
+		let start_date = new Date(itinerary[index].start_time)
+		start_date = new Date(start_date.getTime() + start_date.getTimezoneOffset()*60*1000)
 
 		// calculate the change in time to update
-		const diff = (new Date(itinerary[index].start_time)).getTime() - (new Date(time)).getTime()
+		const diff = (start_date.getTime() - time.getTime())
 
 		if (diff < 0) {
-			console.log(index, itinerary.length)
+
 			// increase the start time of the card and all cards after it
 			for (let i = index; i < itinerary.length; i++) {
+
 				const card = itinerary[i]
-				const endTime = new Date((new Date(card.end_time)).getTime() - diff)
+
+				let endTime = new Date(card.end_time)
+				endTime = new Date(endTime.getTime() + endTime.getTimezoneOffset()*60*1000 - diff)
 
 				if (endTime.getTime() > dayEnd.getTime()) {
 					// if the later cards would get pushed back to the next day, don't edit the start time
 					return
 				}
 
+				// get start_time of card 
+				let startTime = new Date(card.start_time)
+				startTime = new Date(startTime.getTime() - diff)
+				endTime = new Date(endTime.getTime() - endTime.getTimezoneOffset()*60*1000)
+
 				_.assign(card, {
-					'start_time': new Date((new Date(card.start_time)).getTime() - diff),
+					'start_time': startTime,
 					'end_time': endTime
 				})
 
 				// stop updating following cards if there is no conflict
-				if (i < itinerary.length - 1 && endTime.getTime() <= (new Date(itinerary[i + 1].start_time)).getTime()) {
-					break
+				if (i < itinerary.length - 1){
+					let nextStartTime = new Date(itinerary[i + 1].start_time)
+					nextStartTime = new Date(nextStartTime.getTime())
+
+					if (endTime.getTime() <= nextStartTime.getTime()){
+						break
+					}
+
 				}
 			}
 		} else if (diff > 0) {
+
 			// shift card backwards in time if possible
-			const startTime = new Date((new Date(itinerary[index].start_time)).getTime() - diff)
 
-			if (index > 0 && itinerary[index - 1].type !== 'city' && startTime.getTime() >= (new Date(itinerary[index - 1].end_time)).getTime()) {
-				_.assign(itinerary[index], {
-					'start_time': startTime,
-					'end_time': new Date((new Date(itinerary[index].end_time)).getTime() - diff)
-				})
-			} else if (index === 0 || itinerary[index - 1].type === 'city') {
-				// check if it goes before midnight
-				const dayStart = new Date(itinerary[index].start_time)
-				dayStart.setHours(0, 0, 0, 0)
+			// get new start time of card
+			let startTime = new Date(itinerary[index].start_time)
+			startTime = new Date(startTime.getTime() - diff)
 
-				if (startTime.getTime() >= dayStart.getTime()) {
+			if (index > 0 && itinerary[index - 1].type !== 'city') {
+
+				// get end time of the card in front of it
+				let prevEndTime = new Date(itinerary[index - 1].end_time)
+
+				if (startTime.getTime() >= prevEndTime.getTime()) {
+					let endTime = new Date(itinerary[index].end_time)
+					endTime = new Date(endTime.getTime() - diff)
+
 					_.assign(itinerary[index], {
 						'start_time': startTime,
-						'end_time': new Date((new Date(itinerary[index].end_time)).getTime() - diff)
+						'end_time': endTime
+					})
+
+				}
+
+			} else if (index === 0 || itinerary[index - 1].type === 'city') {
+				// check if it goes before midnight
+				let dayStart = new Date(itinerary[index].start_time)
+				dayStart = new Date(dayStart.getTime() + dayStart.getTimezoneOffset()*60*1000)
+				dayStart.setHours(0, 0, 0, 0)
+
+				let endTime = new Date(itinerary[index].end_time)
+				endTime = new Date(endTime.getTime() - diff)
+
+				if (new Date(startTime.getTime() + startTime.getTimezoneOffset()*60*1000) >= dayStart.getTime()) {
+
+					startTime = 
+					_.assign(itinerary[index], {
+						'start_time': startTime,
+						'end_time': endTime
 					})
 				}
 			}
 		}
 
+		// add the city card back
+		itinerary.splice(0, 0, city)
+
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
-    this.sendUpdates(itinerary, tripId)		
+    	this.sendUpdates(itinerary, tripId)		
 	}
 
 	render() {
@@ -424,8 +468,6 @@ class Workspace extends Component {
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
-
-		console.log(this.props.trips)
 
 		return (
 			<div id='workspace'>
