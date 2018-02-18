@@ -39,7 +39,7 @@ class NavBar extends Component {
 				<div className='options'>
 					<Link to='/explore'><div>Explore</div></Link>
 					<Link to='/' onClick={this.reloadPage}><div>New Trip</div></Link>
-					<Link to='/dashboard'><div>Dashboard</div></Link>
+					<Link to='/dashboard'><div>My Trips</div></Link>
 					<Link to='/'><div><this.buttonDecision /></div></Link>
 				</div>
 			)
