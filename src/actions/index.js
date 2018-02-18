@@ -230,7 +230,7 @@ export function updateCards(cards, trip, day) {
 }
 
 export function updateCardsLive(cards) {
-  console.log(cards)
+  //console.log(cards)
 
   return (dispatch) => {
     dispatch({ type: ActionTypes.UPDATE_CARDS_LIVE, payload: cards})

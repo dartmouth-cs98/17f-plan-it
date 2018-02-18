@@ -81,7 +81,7 @@ class Workspace extends Component {
 		if (this.props.user.email) {
 			mainChannel.connect(tripId, this.props.user.email)
 		} else { //connect anon
-			console.log("connecting anon")
+			//console.log("connecting anon")
 			mainChannel.connect(tripId, "foobar")
 		}
 
@@ -228,7 +228,7 @@ class Workspace extends Component {
 	}
 
 	formatCards(cards) {
-		console.log('format')
+		//console.log('format')
 		let cardList = []
 		let startCard
 		let prevEnd
@@ -240,7 +240,7 @@ class Workspace extends Component {
 
 		_.each(cards, (card) => {
 			if (card.type === 'city') {
-				console.log(card.address)
+				//console.log(card.address)
 				cityLat = card.lat
 				cityLong = card.long
 				cityStart = new Date(card.start_time)
@@ -291,10 +291,13 @@ class Workspace extends Component {
 	onDragEnd(result) {
 		// dropped outside the list
 		if (!result.destination) {
+			console.log("destination")
 			return
 		} else if (result.destination.droppableId !== result.source.droppableId) {
+			console.log("here")
 			if (result.destination.droppableId === 'suggestions-droppable') {
 				// remove an item from the itinerary
+				console.log("remove?")
 
 			} else {
 				// add an item to the itinerary by dragging
@@ -309,6 +312,7 @@ class Workspace extends Component {
 				let start
 				if (itinerary.length === 0) {
 					start = new Date(city.start_time)
+					console.log("start itienrary length 0")
 				} else {
 					start = result.destination.index === itinerary.length ?
 						new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
@@ -318,12 +322,16 @@ class Workspace extends Component {
 				const path = window.location.pathname.split(':')
 				const tripId = _.last(path)
 
-				const end = new Date(start.getTime() + DEFAULT_DURATION)
-				const dayEnd = new Date(city.start_time)
+				const end = new Date(start.getTime() + start.getTimezoneOffset()*60*1000 + DEFAULT_DURATION)
+				const city_starttime = new Date(city.start_time)
+				let dayEnd  = new Date(city_starttime.getTime() + city_starttime.getTimezoneOffset()*60*1000)
 				dayEnd.setHours(24, 0, 0, 0)
+
+				console.log(end.getTime())
 
 				if (end.getTime() > dayEnd.getTime()) {
 					// if the new card would be in the next day, don't update
+					console.log("next day?")
 					return
 				}
 
@@ -332,7 +340,7 @@ class Workspace extends Component {
 						id: 0,
 						travel_duration: TRAVEL_TIME,
 						start_time: start,
-						end_time: end,
+						end_time: new Date(end.getTime() - end.getTimezoneOffset()*60*1000),
 						trip_id: tripId,
 						day_number: this.state.day
 				}
@@ -343,6 +351,7 @@ class Workspace extends Component {
 				// shift each card back by the duration of the card removed
 				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
 					const card = itinerary[i]
+					console.log("for loop")
 
 					// adjust for date conversion in order to compare
 					let endTime = new Date(card.end_time)
@@ -352,6 +361,7 @@ class Workspace extends Component {
 
 					// make sure no cards would be pushed into the next day
 					if (endTime.getTime() > dayEnd.getTime()) {
+						console.log("next day 2?")
 						return
 					}
 
@@ -633,7 +643,6 @@ class Workspace extends Component {
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 
 		const suggestions = this.props.suggestions
-		console.log(suggestions)
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
