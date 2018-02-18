@@ -207,6 +207,9 @@ export default class Itinerary extends Component {
 				let start = new Date(card.start_time)
 				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
 
+				let end = new Date(card.end_time)
+				end = new Date(end.getTime() + end.getTimezoneOffset()*60*1000)
+
 				toRender.push(
 					<Draggable key={card.id} draggableId={card.id} index={index++}>
 						{(provided, snapshot) => (
@@ -233,8 +236,10 @@ export default class Itinerary extends Component {
 										}}
 										timeScale={TIME_SCALE}
 										updateTime={this.props.updateTime}
+
 										startTime={start}
-										endTime={card.end_time}
+										updateDuration={this.props.updateDuration}
+										endTime={end}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 										remove={() => {
 											this.props.removeCard(card.id, this.props.tripId, this.props.day)
@@ -258,7 +263,6 @@ export default class Itinerary extends Component {
 			return (
 				<div id='itinerary-box'>
 					{this.renderHeader()}
-					{this.renderStartTimeDialog()}
 					<div className='body-container'>
 						<div className='itinerary-body'>
 							<div className='itinerary-list'>
