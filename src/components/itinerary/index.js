@@ -169,11 +169,15 @@ export default class Itinerary extends Component {
 
 		return (
 			<div className='itinerary-header'>
-				{this.renderBackButton()}
+				<div className= 'left-wrapper'>
+					{this.renderBackButton()}
+				</div>
 				<label className='itinerary-title'>
 					{dayLabel}
 				</label>
-				{this.renderForwardButton()}
+				<div className = 'right-wrapper'>
+					{this.renderForwardButton()}
+				</div>
 			</div>
 		)
 	}
