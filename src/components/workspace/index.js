@@ -291,13 +291,10 @@ class Workspace extends Component {
 	onDragEnd(result) {
 		// dropped outside the list
 		if (!result.destination) {
-			console.log("destination")
 			return
 		} else if (result.destination.droppableId !== result.source.droppableId) {
-			console.log("here")
 			if (result.destination.droppableId === 'suggestions-droppable') {
 				// remove an item from the itinerary
-				console.log("remove?")
 
 			} else {
 				// add an item to the itinerary by dragging
@@ -308,16 +305,14 @@ class Workspace extends Component {
 				const suggestions = Array.from(this.formatSuggestions())
 				const [item] = suggestions.splice(result.source.index, 1)
 
-				// get the start time of the card that you're pushing down
+				// get the end time of the previous card to be the start time of the new card
 				let start
-				if (itinerary.length === 0) {
+				if (itinerary.length === 0 || result.destination.index === 0) {
 					start = new Date(city.start_time)
-					console.log("start itienrary length 0")
 				} else {
-					start = result.destination.index === itinerary.length ?
-						new Date(itinerary[itinerary.length - 1].end_time) : new Date(itinerary[result.destination.index].start_time)
+					start = new Date(itinerary[result.destination.index - 1].end_time)	
 				}
-
+				
 				// replace start time
 				const path = window.location.pathname.split(':')
 				const tripId = _.last(path)
@@ -327,11 +322,8 @@ class Workspace extends Component {
 				let dayEnd  = new Date(city_starttime.getTime() + city_starttime.getTimezoneOffset()*60*1000)
 				dayEnd.setHours(24, 0, 0, 0)
 
-				console.log(end.getTime())
-
 				if (end.getTime() > dayEnd.getTime()) {
 					// if the new card would be in the next day, don't update
-					console.log("next day?")
 					return
 				}
 
@@ -350,8 +342,17 @@ class Workspace extends Component {
 
 				// shift each card back by the duration of the card removed
 				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
+
+					// stop updating following cards if there is no conflict
+					let nextStartTime = new Date(itinerary[i].start_time)
+					nextStartTime = new Date(nextStartTime.getTime())
+					let prevEndTime = new Date(itinerary[i - 1].end_time)
+
+					if (prevEndTime.getTime() <= nextStartTime.getTime()){
+						break
+					}
+
 					const card = itinerary[i]
-					console.log("for loop")
 
 					// adjust for date conversion in order to compare
 					let endTime = new Date(card.end_time)
@@ -361,7 +362,6 @@ class Workspace extends Component {
 
 					// make sure no cards would be pushed into the next day
 					if (endTime.getTime() > dayEnd.getTime()) {
-						console.log("next day 2?")
 						return
 					}
 
@@ -374,6 +374,7 @@ class Workspace extends Component {
 						'start_time': startTime,
 						'end_time': endTime
 					})
+
 				}
 
 				// add the city card back
