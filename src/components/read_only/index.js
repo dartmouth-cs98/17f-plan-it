@@ -64,8 +64,8 @@ class ReadOnly extends Component {
 			let offset = this.getDayOffset(new Date(this.state.start_date).getTime(), new Date(this.props.trips[0].start_time).getTime())
 
 			_.forEach(this.props.all_cards, (card) => {
-  				let start_date = this.addDays(new Date(card.start_time), offset)
-  				let end_date = this.addDays(new Date(card.end_time), offset)
+  				let start_date = this.addDays(new Date(new Date(card.start_time).getTime() - 17*60*60*1000), offset)
+  				let end_date = this.addDays(new Date(new Date(card.end_time).getTime() - 17*60*60*1000), offset)
 
 				const updated_card = _.assign(card, {
 					trip_id: nextProps.trip_id,
@@ -123,8 +123,18 @@ class ReadOnly extends Component {
 	}
 
 	onImportTrip() {
-		let trip_name = (_.isUndefined(this.state.trip_name) || this.state.trip_name === '')? `${this.state.cities[0].name.split(',')[0]} Trip` : this.state.trip_name
-		let start_date = _.isUndefined(this.state.start_date)? new Date(this.state.start_date) : new Date()
+
+		let trip_name
+		if (_.isUndefined(this.state.trip_name) || this.state.trip_name === '') {
+			if (this.props.cards[0].type === 'city'){ // if the first card is a city card get the name of the card, which is the city name
+				trip_name = `${this.props.cards[0].name.split(',')[0]} Trip` 
+			}	else {
+				trip_name = `${this.props.cards[0].city.split(',')[0]} Trip` 
+			}
+		} else{ 
+			trip_name = this.state.trip_name
+		}
+		let start_date = _.isUndefined(this.state.start_date)? new Date() : new Date(new Date(this.state.start_date).getTime() - 17*60*60*1000)
 		let end_date = this.props.trips[0].end_time? this.addDays(new Date(this.props.trips[0].end_time), 
 			this.getDayOffset(start_date, new Date(this.props.trips[0].start_time))) : null
 

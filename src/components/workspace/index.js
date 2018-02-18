@@ -81,7 +81,7 @@ class Workspace extends Component {
 		if (this.props.user.email) {
 			mainChannel.connect(tripId, this.props.user.email)
 		} else { //connect anon
-			//console.log("connecting anon")
+			console.log("connecting anon")
 			mainChannel.connect(tripId, "foobar")
 		}
 
@@ -228,7 +228,6 @@ class Workspace extends Component {
 	}
 
 	formatCards(cards) {
-		//console.log('format')
 		let cardList = []
 		let startCard
 		let prevEnd
@@ -240,7 +239,6 @@ class Workspace extends Component {
 
 		_.each(cards, (card) => {
 			if (card.type === 'city') {
-				//console.log(card.address)
 				cityLat = card.lat
 				cityLong = card.long
 				cityStart = new Date(card.start_time)
