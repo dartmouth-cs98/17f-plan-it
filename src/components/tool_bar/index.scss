@@ -10,6 +10,16 @@
   	overflow: hidden;
 }
 
+.left-wrapper {
+	flex: 1;
+	display: flex;
+}
+.right-wrapper{
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+}
+
 .toolbar-items {
 	text-align: center;
 	display: flex;
@@ -34,15 +44,7 @@
 	font-weight: lighter;
 	font-size: 30px;
 	color: #FFFFFF;
-	
-	position: static;
-
-	left: 0; 
-  	right: 0; 
-  	margin-left: auto; 
-  	margin-right: auto;
-   
-  	width: 100px; /* Need a specific value to work */
+	text-align: center;
 
 }
 

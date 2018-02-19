@@ -113,9 +113,11 @@ class ReadOnly extends Component {
 	}
 
 	onNameChange(event) {
-		if (event.target.value.length < 20) {
-			this.setState({ trip_name: event.target.value })
-		}
+		// if (event.target.value.length < 20) {
+		// 	this.setState({ trip_name: event.target.value })
+		// }
+
+		this.setState({ trip_name: event.target.value })
 	}
 
 	onImageChange(event) {
