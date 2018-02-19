@@ -80,9 +80,23 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
-			return
+			return			
 		}
 	}
+
+	renderImage() {
+		if (!this.props.buttons) {
+			const photo_url = (this.props.photo_url != null)? this.props.photo_url : "https://vignette.wikia.nocookie.net/bokunoheroacademia/images/d/d5/NoPicAvailable.png/revision/latest?cb=20160326222204"
+			const url = this.props.url
+			return (
+				<a href= {`${url}`}>
+					<img src= {`${photo_url}`} alt="Test" height="84" width="84">
+					</img>
+				</a>
+			)
+		}
+	}
+
 	render() {
 		const buttons = this.props.buttons ? [
 			<FlatButton
@@ -113,24 +127,58 @@ export default class Item extends Component {
 
 		// subtract 10 for padding
 		const height = timeScale(this.props.duration) - 10
+		const title = (this.props.name.length > 43) ? this.props.name.substring(0, 42) + "..." : this.props.name
 
-		return (
-			<div className='card-wrapper'>
-				<div
-					className='card item-card'
-					style={{height: `${height}px`}}
-				>
-					<div className='card-header'>
-						<label className='item-title'>
-							{this.props.name}
-						</label>
-						{buttons}
-					</div>
-					<div className='card-body'>
-						{this.renderBody()}
+		if (this.props.buttons) {
+			return (
+				<div className='card-wrapper'>
+					<div
+						className='card item-card'
+						style={{height: `${height}px`}}
+					>
+						<div className='card-header'>
+							<label className='item-title'>
+								{title}
+							</label>
+							{buttons}					
+						</div>
+						<div className='card-body'>
+							{this.renderBody()}
+						</div>
 					</div>
 				</div>
-			</div>
-		)
+			)
+		} else {
+			const line1 = this.props.type
+			const line2 = this.props.rating + " • " + this.props.price
+			// display state if the location is US. otherwise, display city and country name
+			const line3 = (this.props.country === "United States" | this.props.country === "US")?
+				this.props.address + ", " + this.props.city + ", " + this.props.state : 
+				this.props.address + ", " + this.props.city + ", " + this.props.country
+			const line4 = "Source: " + this.props.source
+			return (
+				<div className='card-wrapper'>
+					<div
+						className='card item-card2'
+						style={{height: `${height}px`}}>
+						<div className='card-header2'>
+							<label className='item-title2'>
+								{title}
+							</label>
+							<div className='card-body2'>
+								<div class = "textrow">{line1}</div>
+								<div class = "textrow">{line2}</div>
+								<div class = "textrow">{line3}</div>
+								<div class = "textrow">{line4}</div>
+							</div>					
+						</div>
+						<div id="imageContainer">
+							{this.renderImage()}
+						</div>
+					</div>
+				
+				</div>
+			)
+		}
 	}
 }

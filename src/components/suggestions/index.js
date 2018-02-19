@@ -92,6 +92,16 @@ export default class Suggestions extends Component {
 											endTime={card.end_time}
 											duration={DURATION}
 											buttons={false}
+											photo_url={card.photo_url}
+											url={card.url}
+											type={card.type}
+											address={card.address}
+											city={card.city}
+											state={card.state}
+											country={card.country}
+											rating={card.rating}
+											price={card.price}
+											source={card.source}
 									/>
 								</div>
 							{provided.placeholder}

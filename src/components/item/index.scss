@@ -41,3 +41,42 @@
 	float: right;
 	min-width: 40px !important;
 }
+
+div#imageContainer {
+    vertical-align: center;
+    horizontal-align: right;
+    display: table-cell;
+    padding-top: 5px;
+}
+
+.item-card2 {
+	flex-direction: column !important;
+	display: flex;
+	align-items: right;
+	flex-flow: column wrap;
+
+	.card-header2 {
+		width: 240px;
+
+		.item-title2 {
+			padding-left: 10px;
+			color: #000000;
+		}
+		.card-body2 {
+			font-size: 11px;
+			display: flex;
+			flex-direction: row !important;
+			padding-left: 10px;
+			flex-flow: wrap;
+		}
+	
+	} 
+}
+
+.textrow {
+	width: 240px;
+	height: 16px;
+	padding: 0px;
+}
+
+
