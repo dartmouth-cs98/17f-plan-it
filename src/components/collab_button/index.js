@@ -1,21 +1,28 @@
 import React from 'react'
-import { generateUUID } from '../../util/random'
+import axios from 'axios'
+import { ROOT_URL } from '../../actions/'
+
 
 //This should only be rendered if the user is not an annon
 class CollabButton extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      showButton: true
+      showButton: true,
+      url: "loading"
     }
   }
 
-  generateURL() {
-    const id = generateUUID()
-    return window.location.href + "?" + id
+  async generateURL() {
+    const response = await axios.get(`${ROOT_URL}/sharecode`);
+    const url = window.location.href + "?" + response.data
+    this.setState({url})
   }
 
   onClickHandler() {
+    if (this.state.showButton) {
+      this.generateURL()
+    }
     this.setState({showButton: !this.state.showButton })
   }
 
@@ -23,9 +30,8 @@ class CollabButton extends React.Component {
     if (this.state.showButton) {
       return "Invite Friends to Edit"
     } else {
-      return this.generateURL()
+      return this.state.url
     }
-
   }
 
   render() {
