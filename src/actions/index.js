@@ -1,7 +1,7 @@
 import axios from 'axios'
 import _ from 'lodash'
 
-export const ROOT_URL = 'http://localhost:4000/api/v1'
+export const ROOT_URL = 'http://localhost:4000/api/v2'
 // export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
 
 // keys for actiontypes
@@ -155,7 +155,7 @@ export function fetchPublishedTrips() {
 
 export function fetchCards(id, day=null) {
   return (dispatch) => {
-    let query = `${ROOT_URL}/cards?trip_id=${id}`
+    let query = `${ROOT_URL}/cards/itinerary?trip_id=${id}`
     if (day) { query += `&day=${day}` }
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
@@ -168,7 +168,7 @@ export function fetchCards(id, day=null) {
 
 export function fetchDay(id, day) {
   return (dispatch) => {
-    let query = `${ROOT_URL}/cards?trip_id=${id}&day=${day}`
+    let query = `${ROOT_URL}/cards/itinerary?trip_id=${id}&day=${day}`
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
 
@@ -187,7 +187,7 @@ export function fetchDay(id, day) {
 
 export function fetchAllCards(id) {
   return (dispatch) => {
-    let query = `${ROOT_URL}/cards?trip_id=${id}`
+    let query = `${ROOT_URL}/cards/itinerary?trip_id=${id}`
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_ALL_CARDS, payload: response.data })
     }).catch((error) => {
@@ -200,7 +200,7 @@ export function fetchAllCards(id) {
 
 export function insertCard(cards, trip, day) {
   return (dispatch) => {
-    axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
+    axios.post(`${ROOT_URL}/cards/itinerary`, cards).then((response) => {
       dispatch(fetchCards(trip, day))
     }).catch((error) => {
       dispatch({ type: ActionTypes.TRIP_ERROR, payload: error })
@@ -210,7 +210,7 @@ export function insertCard(cards, trip, day) {
 
 export function updateCard(id, attributes, trip, day) {
   return (dispatch) => {
-    axios.put(`${ROOT_URL}/cards/${id}`, attributes).then((response) => {
+    axios.put(`${ROOT_URL}/cards/itinerary/${id}`, attributes).then((response) => {
       dispatch(fetchCards(trip, day))
     }).catch((error) => {
       dispatch({ type: ActionTypes.UPDATE_CARD_ERROR, payload: error })
@@ -220,7 +220,7 @@ export function updateCard(id, attributes, trip, day) {
 
 export function updateCards(cards, trip, day) {
   return (dispatch) => {
-    axios.post(`${ROOT_URL}/cards?trip_id=${trip}`, Array.from(cards)).then((response) => {
+    axios.post(`${ROOT_URL}/cards/itinerary?trip_id=${trip}`, Array.from(cards)).then((response) => {
       console.log("this is reposen data", response.data)
       dispatch({ type: ActionTypes.UPDATE_CARDS, payload: response.data })
     }).catch((error) => {
@@ -252,7 +252,7 @@ export function updateUsersLive(users) {
 
 export function deleteCard(id, trip, day) {
   return (dispatch) => {
-    axios.delete(`${ROOT_URL}/cards/${id}`).then((response) => {
+    axios.delete(`${ROOT_URL}/cards/itinerary/${id}`).then((response) => {
       dispatch({ type: ActionTypes.DELETE_CARD, payload: id })
     }).catch((error) => {
       console.log(error)
@@ -303,7 +303,7 @@ export function createUser(user) {
 
 export function createCard(cards) {
   return (dispatch) => {
-    axios.post(`${ROOT_URL}/cards`, cards).then((response) => {
+    axios.post(`${ROOT_URL}/cards/itinerary`, cards).then((response) => {
         dispatch({ type: ActionTypes.CREATE_CARD, payload: response.data });
       }).catch((error) => {
         dispatch({ type: ActionTypes.CREATE_CARD_ERROR, payload: error });
