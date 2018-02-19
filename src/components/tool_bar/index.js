@@ -101,7 +101,7 @@ class Toolbar extends Component {
 			return (
 				<div id='tool-bar'>
 					<div className='toolbar-items'>
-            <LiveUsers />
+            <LiveUsers tripId={this.props.tripId}/>
             {this.renderCollabButton()}
 						<div className='toolbar-trip-title'>
 							{this.props.tripName}
