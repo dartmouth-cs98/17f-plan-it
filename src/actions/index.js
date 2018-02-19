@@ -168,7 +168,7 @@ export function fetchCards(id, day=null) {
 
 export function fetchDay(id, day) {
   return (dispatch) => {
-    let query = `${ROOT_URL}/cards?trip_id=${id}&day=${day}`
+    let query = `${ROOT_URL}/cards/itinerary?trip_id=${id}&day=${day}`
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_CARDS, payload: response.data })
 
