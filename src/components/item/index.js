@@ -127,7 +127,7 @@ export default class Item extends Component {
 
 		// subtract 10 for padding
 		const height = timeScale(this.props.duration) - 10
-		const title = (this.props.name.length > 43) ? this.props.name.substring(0, 42) + "..." : this.props.name
+		const title = (this.props.name.length > 38) ? this.props.name.substring(0, 37) + "..." : this.props.name
 
 		if (this.props.buttons) {
 			return (
@@ -163,7 +163,7 @@ export default class Item extends Component {
 						style={{height: `${height}px`}}>
 						<div className='card-header2'>
 							<label className='item-title2'>
-								{title}
+								{this.props.name}
 							</label>
 							<div className='card-body2'>
 								<div class = "textrow">{line1}</div>
