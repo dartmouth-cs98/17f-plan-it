@@ -88,7 +88,7 @@ const POIMap = compose(
         position={{ lat: marker.lat, lng: marker.long }}
         onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.lat, lng: marker.long })}
         >
-        {props.isOpen === index && 
+        {props.isOpen === index &&
           <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })}>
             <div className='pin-label'>
               <label className='pin-title'>{marker.name}</label>
@@ -98,18 +98,7 @@ const POIMap = compose(
                   style={{marginLeft: '10px'}}
                   onClick={() => {
                     props.onToggleOpen(-1, { lat: marker.clat, lng: marker.long })
-                    props.removeCard({
-                      name: marker.name,
-                      image_url: marker.image_url,
-                      yelp_url: marker.url,
-                      price: marker.price,
-                      lat: marker.lat,
-                      long: marker.long,
-                      phone: marker.phone,
-                      display_phone: marker.phone,
-                      type: marker.description,
-                      description: marker.description
-                    })
+                    props.removeCard(marker.id)
                   }}
                 />
               }
@@ -150,7 +139,6 @@ export default class Map extends Component {
 
 	render() {
 		return (
-
 			<div id='map-container'>
         <div className='map-suggestions-header'>
           <FlatButton
@@ -169,6 +157,7 @@ export default class Map extends Component {
           showSug={this.state.ShowSug}
           showIt={this.state.ShowIt}
           readOnly={this.props.readOnly}
+          removeCard={this.props.removeCard}
         />
 			</div>
 		)
