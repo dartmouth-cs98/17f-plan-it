@@ -1,8 +1,8 @@
 import axios from 'axios'
 import _ from 'lodash'
 
-export const ROOT_URL = 'http://localhost:4000/api/v2'
-// export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v1'
+//export const ROOT_URL = 'http://localhost:4000/api/v2'
+export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v2'
 
 // keys for actiontypes
 export const ActionTypes = {
