@@ -730,6 +730,8 @@ class Workspace extends Component {
 							input_type='Custom'
 							onOtherNameChange={this.onOtherNameChange}
 							onHandleSelect={this.onHandleSelect}
+							lat={this.state.pinLat}
+							long={this.state.pinLong}
 						/>
 						<p>Card Description</p>
 						<OnboardingInput placeholder={'Enter a description'}
