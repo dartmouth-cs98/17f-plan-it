@@ -256,7 +256,7 @@ class ReadOnly extends Component {
 	        		</div>
 				</Modal>
 				<Toolbar
-					tripName={this.props.trips[0] ? this.props.trips[0].name : `${this.state.cities[0].name.split(',')[0]} Trip`}
+					tripName={this.props.trips[0] ? this.props.trips[0].name : `${this.props.cards[0].name.split(',')[0]} Trip`}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
 					favorited={this.isFavorited()}
