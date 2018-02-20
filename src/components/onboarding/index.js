@@ -23,7 +23,7 @@ class Onboarding extends Component {
 			cities: [],
 			modal_open: false, 
 			err_msg: '',
-			image_url: 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
+			image_url: ''
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -99,6 +99,11 @@ class Onboarding extends Component {
 		if (_.isUndefined(trip_name) || trip_name === '') { 
 			trip_name = `${this.state.cities[0].name.split(',')[0]} Trip`
 		}
+
+		let photo_url = this.state.image_url
+		if (_.isUndefined(photo_url) || photo_url === '') {
+			photo_url = 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
+		}
 		
 		let start = new Date(startDate)
 		start.setHours(0, 0, 0, 0)
@@ -116,7 +121,7 @@ class Onboarding extends Component {
 			user_id: cookie.load('auth'),
 			start_time: start,
 			end_time: end,
-			photo_url: this.state.image_url
+			photo_url
 		})
 	}
 
@@ -397,9 +402,9 @@ class Onboarding extends Component {
 	image_slide() {
 		return (
 			<div className='name_wrapper'>
-				<OnboardingInput placeholder={'Enter trip image URL'}
+				<OnboardingInput placeholder={'Enter image URL'}
 					onImageChange={this.onImageChange}
-					name={this.state.image_url}
+					image_url={this.state.image_url}
 				/>
 			</div>
 		)
