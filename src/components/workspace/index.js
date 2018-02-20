@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { fetchTrip, fetchCards, fetchDay, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions, 
+import { fetchTrip, fetchCards, fetchDay, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions,
 	clearSuggestions, createQueueCard } from '../../actions/index.js'
 import { mainChannel } from '../../channels'
 import Toolbar from '../tool_bar/index.js'
@@ -186,6 +186,7 @@ class Workspace extends Component {
 		this.setState({ name_error, image_url_error, address_error })
 
 		if (custom_card.name && custom_card.photo_url && custom_card.lat && custom_card.long) {
+			console.log(custom_card)
 			this.props.createQueueCard(custom_card)
 
 			const path = window.location.pathname.split(':')
@@ -208,6 +209,7 @@ class Workspace extends Component {
 			modal_open: false
 		})
 	}
+	/****** end custom card functions *******/
 
 	dayForward() {
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
@@ -223,7 +225,6 @@ class Workspace extends Component {
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.fetchDay(tripId, newDay)
-			// this.props.clearSuggestions()
 		}
 	}
 
@@ -237,7 +238,6 @@ class Workspace extends Component {
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			this.props.fetchDay(tripId, newDay)
-			// this.props.clearSuggestions()
 		}
 	}
 
@@ -348,9 +348,9 @@ class Workspace extends Component {
 				if (itinerary.length === 0 || result.destination.index === 0) {
 					start = new Date(city.start_time)
 				} else {
-					start = new Date(itinerary[result.destination.index - 1].end_time)	
+					start = new Date(itinerary[result.destination.index - 1].end_time)
 				}
-				
+
 				// replace start time
 				const path = window.location.pathname.split(':')
 				const tripId = _.last(path)
@@ -541,7 +541,7 @@ class Workspace extends Component {
 					return
 				}
 
-				// get start_time of card 
+				// get start_time of card
 				let startTime = new Date(card.start_time)
 				startTime = new Date(startTime.getTime() - diff)
 				endTime = new Date(endTime.getTime() - endTime.getTimezoneOffset()*60*1000)
@@ -597,7 +597,7 @@ class Workspace extends Component {
 
 				if (new Date(startTime.getTime() + startTime.getTimezoneOffset()*60*1000) >= dayStart.getTime()) {
 
-					startTime = 
+					startTime =
 					_.assign(itinerary[index], {
 						'start_time': startTime,
 						'end_time': endTime
@@ -758,6 +758,7 @@ class Workspace extends Component {
 							MarkerClusterArray={this.props.suggestions}
 							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
+							addCard={this.props.createQueueCard}
 							removeCard={this.sendDelete}
 						/>
 					</div>

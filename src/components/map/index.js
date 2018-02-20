@@ -2,6 +2,7 @@
 // Docs found here: https://tomchentw.github.io/react-google-maps
 
 import React, { Component } from 'react'
+import _ from 'lodash'
 import { compose, withProps, withHandlers, withStateHandlers, lifecycle } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
@@ -67,7 +68,16 @@ const POIMap = compose(
                 label='Add'
                 style={{marginLeft: '10px'}}
                 onClick={() => {
+                  const path = window.location.pathname.split(':')
+                  const tripId = _.last(path)
+
+                  _.assign(marker, {
+                    trip_id: tripId
+                  })
+
                   props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })
+                  props.addCard(marker)
+                  console.log(marker)
                 }}
               />
             </div>
@@ -157,6 +167,7 @@ export default class Map extends Component {
           showSug={this.state.ShowSug}
           showIt={this.state.ShowIt}
           readOnly={this.props.readOnly}
+          addCard={this.props.addCard}
           removeCard={this.props.removeCard}
         />
 			</div>
