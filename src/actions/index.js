@@ -34,6 +34,12 @@ export const ActionTypes = {
   UPDATE_CARDS: 'UPDATE_CARDS',
   UPDATE_CARDS_ERROR: 'UPDATE_CARDS_ERROR',
 
+  FETCH_DAY_QUEUE_CARDS: 'FETCH_DAY_QUEUE_CARDS',
+  CREATE_QUEUE_CARD: 'CREATE_QUEUE_CARD',
+  UPDATE_QUEUE_CARD: 'UPDATE_QUEUE_CARD',
+  DELETE_QUEUE_CARD: 'DELETE_QUEUE_CARD',
+  QUEUE_CARDS_ERROR: 'QUEUE_CARDS_ERROR',
+
   UPDATE_CARDS_LIVE: 'UPDATE_CARDS_LIVE',
   UPDATE_USERS_LIVE: 'UPDATE_USERS_LIVE',
   DELETE_CARD_LIVE: 'DELETE_CARD_LIVE',
@@ -177,7 +183,7 @@ export function fetchDay(id, day) {
         return card.type === 'city'
       })
 
-      dispatch(fetchSuggestions(city.lat, city.long))
+      dispatch(fetchSuggestions(city.lat, city.long, id))
     }).catch((error) => {
       console.log(error)
       dispatch({ type: ActionTypes.FETCH_CARDS_ERROR, payload: error })
@@ -311,12 +317,57 @@ export function createCard(cards) {
   };
 }
 
-export function fetchSuggestions(lat, long, category=null) {
-  console.log(lat, long)
+export function fetchDayQueueCards(id, day) {
   return (dispatch) => {
-    let query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}`
+    axios.get(`${ROOT_URL}/cards/queue?trip_id=${id}&day=${day}`).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_DAY_QUEUE_CARDS, payload: response.data })
+    }).catch((error) => {
+      console.log(error)
+      dispatch({ type: ActionTypes.QUEUE_CARDS_ERROR, payload: error })
+    })
+  }
+}
 
-    if (category) { query += `&categories=${category}` }
+export function createQueueCard(card) {
+  return (dispatch) => {
+    axios.post(`${ROOT_URL}/cards/queue`, card).then((response) => {
+        dispatch({ type: ActionTypes.CREATE_QUEUE_CARD, payload: response.data });
+      }).catch((error) => {
+        dispatch({ type: ActionTypes.QUEUE_CARDS_ERROR, payload: error });
+      });
+  };
+}
+
+export function updateQueueCard(id, card) {
+  return (dispatch) => {
+    axios.put(`${ROOT_URL}/cards/queue/${id}`, card).then((response) => {
+      dispatch({ type: ActionTypes.UPDATE_QUEUE_CARD, payload: response.data });
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.QUEUE_CARDS_ERROR, payload: error })
+    })
+  }
+}
+
+export function deleteQueueCard(id) {
+  return (dispatch) => {
+    axios.delete(`${ROOT_URL}/cards/queue/${id}`).then((response) => {
+      dispatch({ type: ActionTypes.DELETE_QUEUE_CARD, payload: response.data })
+    }).catch((error) => {
+      console.log(error)
+      dispatch({ type: ActionTypes.QUEUE_CARDS_ERROR, payload: error })
+    })
+  }
+}
+
+export function fetchSuggestions(lat, long, tripId, category=null) {
+  return (dispatch) => {
+    let query
+    if (category && tripId && category === 'queue') {
+      query = `${ROOT_URL}/cards/queue?trip_id=${tripId}`
+    } else {
+      query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}`
+      if (category) { query += `&categories=${category}` }
+    }
 
     axios.get(query).then((response) => {
       dispatch({ type: ActionTypes.FETCH_SUGGESTIONS, payload: response.data })
@@ -325,6 +376,7 @@ export function fetchSuggestions(lat, long, category=null) {
     })
   }
 }
+
 
 export function clearSuggestions() {
   return (dispatch) => {

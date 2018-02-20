@@ -4,12 +4,35 @@ import _ from 'lodash'
 const initialState = {
 	all: [],
 	card: {},
+	queue_day_cards: [],
+	queue_result: null,
+	queue_cards_error: null,
 	all_cards: [],
 	error: null
 };
 
 const CardsReducer = (state = initialState, action) => {
 	switch (action.type) {
+		case ActionTypes.FETCH_DAY_QUEUE_CARDS:
+			return Object.assign({}, state, {
+				queue_day_cards: action.payload
+			})
+		case ActionTypes.CREATE_QUEUE_CARD:
+			return Object.assign({}, state, {
+				queue_result: action.payload
+			})
+		case ActionTypes.UPDATE_QUEUE_CARD:
+			return Object.assing({}, state, {
+				queue_result: action.payload
+			})
+		case ActionTypes.DELETE_QUEUE_CARD:
+			return Object.assing({}, state, {
+				queue_result: action.payload
+			})
+		case ActionTypes.QUEUE_CARDS_ERROR:
+			return Object.assign({}, state, {
+				queue_cards_error: action.payload,
+			})
 		case ActionTypes.FETCH_CARDS:
 			return Object.assign({}, state, {
 				all: action.payload,

@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { fetchTrip, fetchCards, fetchDay, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions, clearSuggestions } from '../../actions/index.js'
+import { fetchTrip, fetchCards, fetchDay, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions, 
+	clearSuggestions, createQueueCard } from '../../actions/index.js'
 import { mainChannel } from '../../channels'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
@@ -26,7 +27,8 @@ const CATEGORIES = [
 		'hotels',
 		'rentals',
 		'fitness & instruction',
-		'parks'
+		'parks',
+		'queue'
 ]
 
 class Workspace extends Component {
@@ -43,7 +45,11 @@ class Workspace extends Component {
 					modal_open: false,
 					custom_card_name: '',
 					custom_card_address: '',
-					custom_card: {}
+					custom_card_img_url: '',
+					custom_card: {},
+					name_error: '',
+					address_error: '',
+					image_url_error: ''
 				}
 
 				this.dayForward = this.dayForward.bind(this)
@@ -65,8 +71,10 @@ class Workspace extends Component {
 				this.onModalClose = this.onModalClose.bind(this)
 				this.onNameChange = this.onNameChange.bind(this)
 				this.onOtherNameChange = this.onOtherNameChange.bind(this)
+				this.onImageChange = this.onImageChange.bind(this)
 				this.onHandleSelect = this.onHandleSelect.bind(this)
-				this.onExitCustomCreate = this.onExitCustomCreate.bind(this)
+				this.onCustomCreate = this.onCustomCreate.bind(this)
+				this.onResetCustomValues = this.onResetCustomValues.bind(this)
 		}
 
 	componentDidMount() {
@@ -128,7 +136,7 @@ class Workspace extends Component {
 
 	onModalClose() {
 		this.setState({ modal_open: false })
-		this.onExitCustomCreate(false)
+		this.onResetCustomValues()
 	}
 
 	onNameChange(event) {
@@ -160,20 +168,44 @@ class Workspace extends Component {
 		this.setState({ custom_card_address: name})
 	}
 
-	onExitCustomCreate(addingCard) {
-		if(addingCard) {
-			//create and insert card
-			// add custom_card_name
-			// add start and end date
-			// add travel_duration
-			// add to 'your queue'
-		}
+	onImageChange(event) {
+		this.setState({ custom_card_img_url: event.target.value })
+	}
 
-		//reset card, name, and address
+	onCustomCreate() {
+		let custom_card = Object.assign({}, this.state.custom_card)
+		custom_card.name = this.state.custom_card_name
+		custom_card.photo_url = this.state.custom_card_img_url
+		custom_card.start_time = new Date()
+		custom_card.end_time = new Date()
+
+		let name_error = custom_card.name? '' : 'Please name your card'
+		let image_url_error = custom_card.photo_url? '' : 'Please enter an image url'
+		let address_error = custom_card.lat && custom_card.long? '' : 'Please choose an address from the drop down'
+
+		this.setState({ name_error, image_url_error, address_error })
+
+		if (custom_card.name && custom_card.photo_url && custom_card.lat && custom_card.long) {
+			this.props.createQueueCard(custom_card)
+
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			const { pinLat, pinLong } = this.state
+			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
+				this.props.fetchSuggestions(pinLat, pinLong, tripId, 'queue')
+			}
+
+			this.onResetCustomValues()
+		}
+	}
+
+	onResetCustomValues() {
 		this.setState({
 			custom_card_address: '',
 			custom_card_name: '',
-			custom_card: {}
+			custom_card_img_url: '',
+			custom_card: {},
+			modal_open: false
 		})
 	}
 
@@ -210,17 +242,22 @@ class Workspace extends Component {
 	}
 
 	selectCategory(event, val) {
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+
 		if (0 <= val < CATEGORIES.length) {
 			this.setState({ category: val })
 			const { pinLat, pinLong } = this.state
 			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
-				this.props.fetchSuggestions(pinLat, pinLong, CATEGORIES[val])
+				this.props.fetchSuggestions(pinLat, pinLong, tripId, CATEGORIES[val])
 			}
 		}
 	}
 
 	searchSuggestions(card) {
-		this.props.fetchSuggestions(card.lat, card.long, CATEGORIES[this.state.category])
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+		this.props.fetchSuggestions(card.lat, card.long, tripId, CATEGORIES[this.state.category])
 		this.setState({
 			pinLat: card.lat,
 			pinLong: card.long
@@ -269,9 +306,12 @@ class Workspace extends Component {
 			})
 		}
 
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+
 		// If there are no cards in the day, search for suggestions based on the city
 		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0 || _.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
-			this.props.fetchSuggestions(cityLat, cityLong, CATEGORIES[this.state.category])
+			this.props.fetchSuggestions(cityLat, cityLong, tripId, CATEGORIES[this.state.category])
 			if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
 				this.setState({
 					pinLat: cityLat,
@@ -668,6 +708,13 @@ class Workspace extends Component {
 							onNameChange={this.onNameChange}
 							name={this.state.custom_card_name}
 						/>
+						<div className='custom_error'>{this.state.name_error}</div>
+						<p>Card Image</p>
+						<OnboardingInput placeholder={'Enter trip image URL'}
+							onImageChange={this.onImageChange}
+							name={this.state.custom_card_image_url}
+						/>
+						<div className='custom_error'>{this.state.image_url_error}</div>
 						<p>Card Address</p>
 						<OnboardingInput placeholder={'Enter address or attraction name'}
 							index={0}
@@ -676,8 +723,9 @@ class Workspace extends Component {
 							onOtherNameChange={this.onOtherNameChange}
 							onHandleSelect={this.onHandleSelect}
 						/>
+						<div className='custom_error'>{this.state.address_error}</div>
 						<div className='button_container start-onboarding-button'
-							onClick={() => this.onExitCustomCreate(true)}>
+							onClick={this.onCustomCreate}>
 							Add Card
 						</div>
 					</div>
@@ -687,7 +735,6 @@ class Workspace extends Component {
 						<Suggestions
 							suggestions={suggestions}
 							category={this.state.category}
-							selectCategory={this.selectCategory}
 							selectCategory={this.selectCategory}
 							onModalOpen={this.onModalOpen}
 						/>
@@ -721,50 +768,53 @@ class Workspace extends Component {
 }
 
 const mapStateToProps = (state) => {
-		return {
-				user: state.users,
-				trips: state.trips.trip,
-				cards: state.cards.all,
-				suggestions: state.cards.suggestions
-		}
+	return {
+		user: state.users,
+		trips: state.trips.trip,
+		cards: state.cards.all,
+		suggestions: state.cards.suggestions
+	}
 }
 
 const mapDispatchToProps = (dispatch) => {
-		return {
-			fetchTrip: (id) => {
-					dispatch(fetchTrip(id))
-			},
-			fetchCards: (id, day) => {
-					dispatch(fetchCards(id, day))
-			},
-			fetchDay: (id, day) => {
-				dispatch(fetchDay(id, day))
-			},
-			insertCard: (cards, trip, id) => {
-					dispatch(insertCard(cards, trip, id))
-			},
-			updateCard: (cards, trip, id, day) => {
-					dispatch(updateCard(cards, trip, id, day))
-			},
-			updateCardsLive: (cards) => {
-				dispatch(updateCardsLive(cards))
-			},
-			updateCards: (cards, trip, day) => {
-					dispatch(updateCards(cards, trip, day))
-			},
-			deleteCard: (id, trip, day) => {
-					dispatch(deleteCard(id, trip, day))
-			},
-			deleteCardLive: (id) => {
-				dispatch(deleteCardLive(id))
-			},
-			fetchSuggestions: (lat, long, categories=null) => {
-					dispatch(fetchSuggestions(lat, long, categories))
-			},
-			clearSuggestions: () => {
-				dispatch(clearSuggestions())
-			}
+	return {
+		fetchTrip: (id) => {
+			dispatch(fetchTrip(id))
+		},
+		fetchCards: (id, day) => {
+			dispatch(fetchCards(id, day))
+		},
+		fetchDay: (id, day) => {
+			dispatch(fetchDay(id, day))
+		},
+		insertCard: (cards, trip, id) => {
+			dispatch(insertCard(cards, trip, id))
+		},
+		updateCard: (cards, trip, id, day) => {
+			dispatch(updateCard(cards, trip, id, day))
+		},
+		updateCardsLive: (cards) => {
+			dispatch(updateCardsLive(cards))
+		},
+		updateCards: (cards, trip, day) => {
+			dispatch(updateCards(cards, trip, day))
+		},
+		deleteCard: (id, trip, day) => {
+			dispatch(deleteCard(id, trip, day))
+		},
+		deleteCardLive: (id) => {
+			dispatch(deleteCardLive(id))
+		},
+		fetchSuggestions: (lat, long, tripId, categories=null) => {
+			dispatch(fetchSuggestions(lat, long, tripId, categories))
+		},
+		clearSuggestions: () => {
+			dispatch(clearSuggestions())
+		},
+		createQueueCard: (card) => {
+			dispatch(createQueueCard(card))
 		}
+	}
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Workspace))
