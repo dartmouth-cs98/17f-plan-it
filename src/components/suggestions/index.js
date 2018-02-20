@@ -116,27 +116,27 @@ export default class Suggestions extends Component {
 		}
 
 		render() {
-				return (
-						<div id='suggestions-box'>
-								{this.renderHeader()}
-								<div className='suggestions-container'>
-										<div className='suggestions-body'>
-												<div className='suggestions-list'>
-														<Droppable droppableId='suggestions-droppable'>
-														{(provided, snapshot) => (
-																<div
-																		ref={provided.innerRef}
-																		style={getListStyle(snapshot.isDraggingOver)}
-																>
-																		{this.renderList()}
-																		{provided.placeholder}
-																</div>
-														)}
-												</Droppable>
-												</div>
-										</div>
-								</div>
+			return (
+				<div id='suggestions-box'>
+					{this.renderHeader()}
+					<div className='suggestions-container'>
+						<div className='suggestions-body'>
+							<div className='suggestions-list'>
+								<Droppable droppableId='suggestions-droppable'>
+								{(provided, snapshot) => (
+									<div
+										ref={provided.innerRef}
+										style={getListStyle(snapshot.isDraggingOver)}
+									>
+										{this.renderList()}
+										{provided.placeholder}
+									</div>
+								)}
+								</Droppable>
+							</div>
 						</div>
-				)
+					</div>
+				</div>
+			)
 		}
 }
