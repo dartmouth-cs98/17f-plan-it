@@ -26,7 +26,7 @@ const getListStyle = isDraggingOver => ({
 		padding: grid,
 })
 
-const menuItems = ['All Attractions', 'Food', 'Hotels', 'Rentals', 'Fitness & Instruction', 'Parks']
+const menuItems = ['All Attractions', 'Food', 'Hotels', 'Rentals', 'Fitness & Instruction', 'Parks', 'Your Added Cards']
 
 export default class Suggestions extends Component {
 	renderHeader() {
@@ -55,6 +55,7 @@ export default class Suggestions extends Component {
 					<MenuItem value="3" primaryText="Rentals" />
 					<MenuItem value="4" primaryText="Fitness & Instruction" />
 					<MenuItem value="5" primaryText="Parks" />
+					<MenuItem value="6" primaryText="Your Added Cards" />
 				</IconMenu>
 				<i
 					className='fa fa-plus add-icon'
