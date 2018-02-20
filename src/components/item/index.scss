@@ -43,11 +43,13 @@
 	min-width: 40px !important;
 }
 
-div#imageContainer {
+.imageContainer {
     vertical-align: center;
-    horizontal-align: right;
+    position: absolute;
+    right: 0px;
     display: table-cell;
     padding-top: 5px;
+    padding-right: 5px;
 }
 
 .item-card2 {
@@ -60,11 +62,12 @@ div#imageContainer {
 		width: 240px;
 
 		.item-title2 {
+			margin-top: 6px;
 			padding-left: 10px;
 			color: #000000;
 			white-space: nowrap;
 		    text-overflow: ellipsis;
-		    width: 240px;
+		    width: 225px;
 		    display: block;
 		    overflow: hidden;
 		}	
@@ -80,7 +83,7 @@ div#imageContainer {
 }
 
 .textrow {
-	width: 230px;
+	width: 225px;
 	height: 16px;
 	padding: 0px;
 	text-overflow: ellipsis;
