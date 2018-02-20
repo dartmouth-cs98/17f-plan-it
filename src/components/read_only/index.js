@@ -76,7 +76,7 @@ class ReadOnly extends Component {
 
 				cards.push(updated_card)
 
-				if (card.type === 'custom' && !seen_custom_set.has(card.name)) {
+				if (card.type === 'Custom' && !seen_custom_set.has(card.name)) {
 					this.props.createQueueCard(updated_card)
 					seen_custom_set.add(card.name)
 				}
