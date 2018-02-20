@@ -9,7 +9,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export async function download(trip_id) {
 
   const queries = [
-    `${ROOT_URL}/cards?trip_id=${trip_id}`,
+    `${ROOT_URL}/cards/itinerary?trip_id=${trip_id}`,
     `${ROOT_URL}/trips/${trip_id}`
   ]
 
