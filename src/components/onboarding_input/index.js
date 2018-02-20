@@ -26,7 +26,7 @@ class OnboardingInput extends Component {
         onChange: (name) => this.props.onOtherNameChange(this.state.index, this.state.input_type, name),
         type: 'text',
         placeholder: this.state.placeholder,
-        autoFocus: true,
+        autoFocus: false,
       }
       const handleSelect = (address, placeId) => {
         geocodeByPlaceId(placeId)
