@@ -22,60 +22,59 @@ const DEFAULT_DURATION = 3600000
 const DAY_NUMBER = 1
 const TRAVEL_TIME = 900000
 const CATEGORIES = [
-		null,
-		'food',
-		'hotels',
-		'rentals',
-		'fitness & instruction',
-		'parks',
-		'queue'
+	null,
+	'food',
+	'hotels',
+	'rentals',
+	'fitness & instruction',
+	'parks',
+	'queue'
 ]
 
 class Workspace extends Component {
-		constructor(props) {
-				super(props)
+	constructor(props) {
+		super(props)
 
-				this.state = {
-					day: DAY_NUMBER,
-					category: 0,
-					pinLat: null,
-					pinLong: null,
-					cityLat: null,
-					cityLong: null,
-					modal_open: false,
-					custom_card_name: '',
-					custom_card_address: '',
-					custom_card_img_url: '',
-					custom_card: {},
-					name_error: '',
-					address_error: '',
-					image_url_error: ''
-				}
-
-				this.dayForward = this.dayForward.bind(this)
-				this.dayBackward = this.dayBackward.bind(this)
-				this.selectCategory = this.selectCategory.bind(this)
-				this.searchSuggestions = this.searchSuggestions.bind(this)
-				this.formatCards = this.formatCards.bind(this)
-				this.formatSuggestions = this.formatSuggestions.bind(this)
-				this.onDragEnd = this.onDragEnd.bind(this)
-				this.updateStartTime = this.updateStartTime.bind(this)
-				this.updateDuration = this.updateDuration.bind(this)
-				this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
-				this.sendUpdates = this.sendUpdates.bind(this)
-				this.sendDelete = this.sendDelete.bind(this)
-				this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
-
-				// custom card functions
-				this.onModalOpen = this.onModalOpen.bind(this)
-				this.onModalClose = this.onModalClose.bind(this)
-				this.onNameChange = this.onNameChange.bind(this)
-				this.onOtherNameChange = this.onOtherNameChange.bind(this)
-				this.onImageChange = this.onImageChange.bind(this)
-				this.onHandleSelect = this.onHandleSelect.bind(this)
-				this.onCustomCreate = this.onCustomCreate.bind(this)
-				this.onResetCustomValues = this.onResetCustomValues.bind(this)
+		this.state = {
+			day: DAY_NUMBER,
+			category: 0,
+			pinLat: null,
+			pinLong: null,
+			cityLat: null,
+			cityLong: null,
+			modal_open: false,
+			custom_card_name: '',
+			custom_card_address: '',
+			custom_card_img_url: '',
+			custom_card: {},
+			name_error: '',
+			address_error: ''
 		}
+
+		this.dayForward = this.dayForward.bind(this)
+		this.dayBackward = this.dayBackward.bind(this)
+		this.selectCategory = this.selectCategory.bind(this)
+		this.searchSuggestions = this.searchSuggestions.bind(this)
+		this.formatCards = this.formatCards.bind(this)
+		this.formatSuggestions = this.formatSuggestions.bind(this)
+		this.onDragEnd = this.onDragEnd.bind(this)
+		this.updateStartTime = this.updateStartTime.bind(this)
+		this.updateDuration = this.updateDuration.bind(this)
+		this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
+		this.sendUpdates = this.sendUpdates.bind(this)
+		this.sendDelete = this.sendDelete.bind(this)
+		this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+
+		// custom card functions
+		this.onModalOpen = this.onModalOpen.bind(this)
+		this.onModalClose = this.onModalClose.bind(this)
+		this.onNameChange = this.onNameChange.bind(this)
+		this.onOtherNameChange = this.onOtherNameChange.bind(this)
+		this.onImageChange = this.onImageChange.bind(this)
+		this.onHandleSelect = this.onHandleSelect.bind(this)
+		this.onCustomCreate = this.onCustomCreate.bind(this)
+		this.onResetCustomValues = this.onResetCustomValues.bind(this)
+	}
 
 	componentDidMount() {
 		const path = window.location.pathname.split(':')
@@ -180,12 +179,11 @@ class Workspace extends Component {
 		custom_card.end_time = new Date()
 
 		let name_error = custom_card.name? '' : 'Please name your card'
-		let image_url_error = custom_card.photo_url? '' : 'Please enter an image url'
 		let address_error = custom_card.lat && custom_card.long? '' : 'Please choose an address from the drop down'
 
-		this.setState({ name_error, image_url_error, address_error })
+		this.setState({ name_error, address_error })
 
-		if (custom_card.name && custom_card.photo_url && custom_card.lat && custom_card.long) {
+		if (custom_card.name && custom_card.lat && custom_card.long) {
 			console.log(custom_card)
 			this.props.createQueueCard(custom_card)
 
@@ -716,7 +714,6 @@ class Workspace extends Component {
 							onImageChange={this.onImageChange}
 							name={this.state.custom_card_image_url}
 						/>
-						<div className='custom_error'>{this.state.image_url_error}</div>
 						<p>Card Address</p>
 						<OnboardingInput placeholder={'Enter address or attraction name'}
 							index={0}
