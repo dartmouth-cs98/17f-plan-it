@@ -62,6 +62,7 @@ class ReadOnly extends Component {
 		if (nextProps.trip_id) {
 			let cards = []
 			let offset = this.getDayOffset(new Date(this.state.start_date).getTime(), new Date(this.props.trips[0].start_time).getTime())
+			let seen_custom_set = new Set()
 
 			_.forEach(this.props.all_cards, (card) => {
   				let start_date = this.addDays(new Date(new Date(card.start_time).getTime() - 12*60*60*1000 - new Date(this.state.start_date).getTimezoneOffset()*60*1000), offset)
@@ -75,8 +76,9 @@ class ReadOnly extends Component {
 
 				cards.push(updated_card)
 
-				if (card.type === 'custom') {
+				if (card.type === 'custom' && !seen_custom_set.has(card.name)) {
 					this.props.createQueueCard(updated_card)
+					seen_custom_set.add(card.name)
 				}
 			})
 			
