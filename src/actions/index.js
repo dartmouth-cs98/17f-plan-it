@@ -51,6 +51,7 @@ export const ActionTypes = {
   CREATE_USER_ERROR: 'CREATE_USER_ERROR',
 
   FETCH_SUGGESTIONS: 'FETCH_SUGGESTIONS',
+  RECEIVE_SUGGESTIONS: 'RECEIVE_SUGGESTIONS',
   FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR',
   CLEAR_SUGGESTIONS: 'CLEAR_SUGGESTIONS'
 }
@@ -361,6 +362,8 @@ export function deleteQueueCard(id) {
 
 export function fetchSuggestions(lat, long, tripId, category=null) {
   return (dispatch) => {
+    dispatch({ type: ActionTypes.FETCH_SUGGESTIONS })
+
     let query
     if (category && tripId && category === 'queue') {
       query = `${ROOT_URL}/cards/queue?trip_id=${tripId}`
@@ -370,7 +373,7 @@ export function fetchSuggestions(lat, long, tripId, category=null) {
     }
 
     axios.get(query).then((response) => {
-      dispatch({ type: ActionTypes.FETCH_SUGGESTIONS, payload: response.data })
+      dispatch({ type: ActionTypes.RECEIVE_SUGGESTIONS, payload: response.data })
     }).catch((error) => {
       dispatch({ type: ActionTypes.FETCH_SUGGESTIONS_ERROR, payload: error })
     })

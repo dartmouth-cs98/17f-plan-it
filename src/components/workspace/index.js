@@ -192,7 +192,7 @@ class Workspace extends Component {
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 			const { pinLat, pinLong } = this.state
-			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
+			if (!_.isNil(pinLat) && !_.isNil(pinLong)) {
 				this.props.fetchSuggestions(pinLat, pinLong, tripId, 'queue')
 			}
 
@@ -248,7 +248,7 @@ class Workspace extends Component {
 		if (0 <= val < CATEGORIES.length) {
 			this.setState({ category: val })
 			const { pinLat, pinLong } = this.state
-			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
+			if (!_.isNil(pinLat) && !_.isNil(pinLong)) {
 				this.props.fetchSuggestions(pinLat, pinLong, tripId, CATEGORIES[val])
 			}
 		}
@@ -311,12 +311,14 @@ class Workspace extends Component {
 
 		// If there are no cards in the day, search for suggestions based on the city
 		if (_.isNil(this.props.suggestions) || this.props.suggestions.length === 0 || _.isNull(this.state.pinLat) || _.isNull(this.state.pinLong)) {
-			this.props.fetchSuggestions(cityLat, cityLong, tripId, CATEGORIES[this.state.category])
-			if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
-				this.setState({
-					pinLat: cityLat,
-					pinLong: cityLong
-				})
+			if (!_.isNil(cityLat) && !_.isNil(cityLong) && !this.props.fetchingSuggestions) {
+				this.props.fetchSuggestions(cityLat, cityLong, tripId, CATEGORIES[this.state.category])
+				if (this.state.pinLat != cityLat && this.state.pinLong != cityLong) {
+					this.setState({
+						pinLat: cityLat,
+						pinLong: cityLong
+					})
+				}
 			}
 		}
 		return cardList
@@ -773,6 +775,7 @@ const mapStateToProps = (state) => {
 		user: state.users,
 		trips: state.trips.trip,
 		cards: state.cards.all,
+		fetchingSuggestions: state.cards.fetchingSuggestions,
 		suggestions: state.cards.suggestions
 	}
 }

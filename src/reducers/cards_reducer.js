@@ -94,16 +94,20 @@ const CardsReducer = (state = initialState, action) => {
 				})
 			})
 		case ActionTypes.FETCH_SUGGESTIONS:
-			console.log(action.payload)
 			return Object.assign({}, state, {
+				fetchingSuggestions: true,
+			});
+		case ActionTypes.RECEIVE_SUGGESTIONS:
+			return Object.assign({}, state, {
+				fetchingSuggestions: false,
 				suggestions: action.payload,
 			});
 		case ActionTypes.FETCH_SUGGESTIONS_ERROR:
 			return Object.assign({}, state, {
+				fetchingSuggestions: false,
 				error: action.payload,
 			});
 		case ActionTypes.CLEAR_SUGGESTIONS:
-			console.log('clear')
 			return Object.assign({}, state, {
 				suggestions: []
 			})
