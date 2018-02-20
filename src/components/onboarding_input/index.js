@@ -32,9 +32,19 @@ class OnboardingInput extends Component {
         geocodeByPlaceId(placeId)
           .then((results) => { this.props.onHandleSelect(this.state.index, this.state.input_type, results[0], address) })
       }
+
       let types = ['(cities)']
       if (this.state.input_type !== 'city') {
           types = []
+      }
+
+      const google = window.google
+      const location = this.props.lat && this.props.long? new google.maps.LatLng(this.props.lat, this.props.long) : null
+      const radius = location? 100000 : null
+      const options = {
+        types,
+        location,
+        radius
       }
       const AutocompleteItem = ({ formattedSuggestion }) => (
         <div className="suggestion_item">
@@ -50,7 +60,7 @@ class OnboardingInput extends Component {
           onSelect = { handleSelect }
           onEnterKeyDown = { handleSelect }
           autoCompleteItem = { AutocompleteItem }
-          options = {{ types }}
+          options = { options }
           classNames = {{ input: 'other_input' }}
           googleLogo = { false }
         />
