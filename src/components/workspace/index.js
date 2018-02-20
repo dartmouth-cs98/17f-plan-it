@@ -68,7 +68,7 @@ class Workspace extends Component {
 				this.onModalClose = this.onModalClose.bind(this)
 				this.onNameChange = this.onNameChange.bind(this)
 				this.onOtherNameChange = this.onOtherNameChange.bind(this)
-				this.onImageUrlChange = this.onImageUrlChange.bind(this)
+				this.onImageChange = this.onImageChange.bind(this)
 				this.onHandleSelect = this.onHandleSelect.bind(this)
 				this.onExitCustomCreate = this.onExitCustomCreate.bind(this)
 		}
@@ -164,7 +164,7 @@ class Workspace extends Component {
 		this.setState({ custom_card_address: name})
 	}
 
-	onImageUrlChange(event) {
+	onImageChange(event) {
 		this.setState({ custom_card_img_url: event.target.value })
 	}
 
@@ -176,6 +176,13 @@ class Workspace extends Component {
 			custom_card.start_time = new Date()
 			custom_card.end_time = new Date()
 			this.props.createQueueCard(custom_card)
+
+			const path = window.location.pathname.split(':')
+			const tripId = _.last(path)
+			const { pinLat, pinLong } = this.state
+			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
+				this.props.fetchSuggestions(pinLat, pinLong, tripId, 'queue')
+			}
 		}
 
 		//reset custom card values
@@ -687,6 +694,11 @@ class Workspace extends Component {
 							onNameChange={this.onNameChange}
 							name={this.state.custom_card_name}
 						/>
+						<p>Card Image</p>
+						<OnboardingInput placeholder={'Enter trip image URL'}
+							onImageChange={this.onImageChange}
+							name={this.state.custom_card_image_url}
+						/>
 						<p>Card Address</p>
 						<OnboardingInput placeholder={'Enter address or attraction name'}
 							index={0}
@@ -706,7 +718,6 @@ class Workspace extends Component {
 						<Suggestions
 							suggestions={suggestions}
 							category={this.state.category}
-							selectCategory={this.selectCategory}
 							selectCategory={this.selectCategory}
 							onModalOpen={this.onModalOpen}
 						/>

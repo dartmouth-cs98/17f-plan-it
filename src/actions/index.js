@@ -360,9 +360,6 @@ export function deleteQueueCard(id) {
 }
 
 export function fetchSuggestions(lat, long, tripId, category=null) {
-  console.log(lat, long)
-  console.log(`this is tripId ${tripId}`)
-  console.log(`this is category ${category}`)
   return (dispatch) => {
     let query
     if (category && tripId && category === 'queue') {
