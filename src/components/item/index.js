@@ -84,12 +84,13 @@ export default class Item extends Component {
 		}
 	}
 
+
 	renderImage() {
 		if (!this.props.buttons) {
 			const photo_url = (this.props.photo_url != null)? this.props.photo_url : "https://vignette.wikia.nocookie.net/bokunoheroacademia/images/d/d5/NoPicAvailable.png/revision/latest?cb=20160326222204"
 			const url = this.props.url
 			return (
-				<a href= {`${url}`}>
+				<a target="_blank" href= {`http://${url}`}>
 					<img src= {`${photo_url}`} alt="Test" height="84" width="84">
 					</img>
 				</a>
@@ -149,12 +150,19 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
-			const line1 = this.props.type
-			const line2 = this.props.rating + " • " + this.props.price
+			const line1 = this.props.type == null ? "Description not available" : this.props.type
+			const rating = this.props.rating == null ? "Rating not available" : this.props.rating
+			const price = this.props.price == null ? "Price not available" : this.props.price
+			const line2 = rating + " • " + price
 			// display state if the location is US. otherwise, display city and country name
-			const line3 = (this.props.country === "United States" | this.props.country === "US")?
+			let line3
+			if (this.props.address == null) {
+				line3 = "No address available"
+			} else {
+				line3 = (this.props.country === "United States" | this.props.country === "US")?
 				this.props.address + ", " + this.props.city + ", " + this.props.state : 
 				this.props.address + ", " + this.props.city + ", " + this.props.country
+			}				
 			const line4 = "Source: " + this.props.source
 			return (
 				<div className='card-wrapper'>
