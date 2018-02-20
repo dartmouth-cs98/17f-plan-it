@@ -46,7 +46,10 @@ class Workspace extends Component {
 					custom_card_name: '',
 					custom_card_address: '',
 					custom_card_img_url: '',
-					custom_card: {}
+					custom_card: {},
+					name_error: '',
+					address_error: '',
+					image_url_error: ''
 				}
 
 				this.dayForward = this.dayForward.bind(this)
@@ -70,7 +73,8 @@ class Workspace extends Component {
 				this.onOtherNameChange = this.onOtherNameChange.bind(this)
 				this.onImageChange = this.onImageChange.bind(this)
 				this.onHandleSelect = this.onHandleSelect.bind(this)
-				this.onExitCustomCreate = this.onExitCustomCreate.bind(this)
+				this.onCustomCreate = this.onCustomCreate.bind(this)
+				this.onResetCustomValues = this.onResetCustomValues.bind(this)
 		}
 
 	componentDidMount() {
@@ -132,7 +136,7 @@ class Workspace extends Component {
 
 	onModalClose() {
 		this.setState({ modal_open: false })
-		this.onExitCustomCreate(false)
+		this.onResetCustomValues()
 	}
 
 	onNameChange(event) {
@@ -168,13 +172,20 @@ class Workspace extends Component {
 		this.setState({ custom_card_img_url: event.target.value })
 	}
 
-	onExitCustomCreate(addingCard) {
-		if(addingCard) {
-			let custom_card = Object.assign({}, this.state.custom_card)
-			custom_card.name = this.state.custom_card_name
-			custom_card.photo_url = this.state.custom_card_img_url
-			custom_card.start_time = new Date()
-			custom_card.end_time = new Date()
+	onCustomCreate() {
+		let custom_card = Object.assign({}, this.state.custom_card)
+		custom_card.name = this.state.custom_card_name
+		custom_card.photo_url = this.state.custom_card_img_url
+		custom_card.start_time = new Date()
+		custom_card.end_time = new Date()
+
+		let name_error = custom_card.name? '' : 'Please name your card'
+		let image_url_error = custom_card.photo_url? '' : 'Please enter an image url'
+		let address_error = custom_card.lat && custom_card.long? '' : 'Please choose an address from the drop down'
+
+		this.setState({ name_error, image_url_error, address_error })
+
+		if (custom_card.name && custom_card.photo_url && custom_card.lat && custom_card.long) {
 			this.props.createQueueCard(custom_card)
 
 			const path = window.location.pathname.split(':')
@@ -183,9 +194,12 @@ class Workspace extends Component {
 			if (!_.isNull(pinLat) && !_.isNull(pinLong)) {
 				this.props.fetchSuggestions(pinLat, pinLong, tripId, 'queue')
 			}
-		}
 
-		//reset custom card values
+			this.onResetCustomValues()
+		}
+	}
+
+	onResetCustomValues() {
 		this.setState({
 			custom_card_address: '',
 			custom_card_name: '',
@@ -694,11 +708,13 @@ class Workspace extends Component {
 							onNameChange={this.onNameChange}
 							name={this.state.custom_card_name}
 						/>
+						<div className='custom_error'>{this.state.name_error}</div>
 						<p>Card Image</p>
 						<OnboardingInput placeholder={'Enter trip image URL'}
 							onImageChange={this.onImageChange}
 							name={this.state.custom_card_image_url}
 						/>
+						<div className='custom_error'>{this.state.image_url_error}</div>
 						<p>Card Address</p>
 						<OnboardingInput placeholder={'Enter address or attraction name'}
 							index={0}
@@ -707,8 +723,9 @@ class Workspace extends Component {
 							onOtherNameChange={this.onOtherNameChange}
 							onHandleSelect={this.onHandleSelect}
 						/>
+						<div className='custom_error'>{this.state.address_error}</div>
 						<div className='button_container start-onboarding-button'
-							onClick={() => this.onExitCustomCreate(true)}>
+							onClick={this.onCustomCreate}>
 							Add Card
 						</div>
 					</div>
