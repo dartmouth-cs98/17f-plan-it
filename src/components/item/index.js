@@ -139,6 +139,8 @@ export default class Item extends Component {
 		const title = (this.props.name.length > 38) ? this.props.name.substring(0, 37) + "..." : this.props.name
 
 		if (this.props.buttons) {
+			// this is an itinerary card
+
 			return (
 				<div className='card-wrapper'>
 					<div
@@ -158,6 +160,7 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
+
 			if (this.props.source === "Custom") { // display custom card
 				return (
 					<div className='card-wrapper'>
@@ -217,6 +220,7 @@ export default class Item extends Component {
 							<div id="imageContainer">
 								{this.renderImage()}
 							</div>
+
 						</div>
 					
 					</div>

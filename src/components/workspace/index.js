@@ -46,6 +46,7 @@ class Workspace extends Component {
 			custom_card_name: '',
 			custom_card_address: '',
 			custom_card_img_url: '',
+			custom_card_description: '',
 			custom_card: {},
 			name_error: '',
 			address_error: ''
@@ -73,6 +74,7 @@ class Workspace extends Component {
 		this.onImageChange = this.onImageChange.bind(this)
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onCustomCreate = this.onCustomCreate.bind(this)
+		this.onDescriptionChange = this.onDescriptionChange.bind(this)
 		this.onResetCustomValues = this.onResetCustomValues.bind(this)
 	}
 
@@ -171,12 +173,19 @@ class Workspace extends Component {
 		this.setState({ custom_card_img_url: event.target.value })
 	}
 
+	onDescriptionChange(event) {
+		console.log(event.target.value)
+		this.setState({ custom_card_description: event.target.value })
+	}
+
 	onCustomCreate() {
 		let custom_card = Object.assign({}, this.state.custom_card)
 		custom_card.name = this.state.custom_card_name
 		custom_card.photo_url = this.state.custom_card_img_url
 		custom_card.start_time = new Date()
 		custom_card.end_time = new Date()
+		custom_card.description = this.state.custom_card_description
+		custom_card.source = 'Custom'
 
 		let name_error = custom_card.name? '' : 'Please name your card'
 		let address_error = custom_card.lat && custom_card.long? '' : 'Please choose an address from the drop down'
@@ -203,6 +212,7 @@ class Workspace extends Component {
 			custom_card_name: '',
 			custom_card_img_url: '',
 			custom_card: {},
+			custom_card_description: '',
 			modal_open: false
 		})
 	}
@@ -365,13 +375,13 @@ class Workspace extends Component {
 				}
 
 				const inserted = {
-						...item,
-						id: 0,
-						travel_duration: TRAVEL_TIME,
-						start_time: start,
-						end_time: new Date(end.getTime() - end.getTimezoneOffset()*60*1000),
-						trip_id: tripId,
-						day_number: this.state.day
+					...item,
+					id: 0,
+					travel_duration: TRAVEL_TIME,
+					start_time: start,
+					end_time: new Date(end.getTime() - end.getTimezoneOffset()*60*1000),
+					trip_id: tripId,
+					day_number: this.state.day
 				}
 
 				// add the new card to the itinerary
@@ -709,17 +719,22 @@ class Workspace extends Component {
 						/>
 						<div className='custom_error'>{this.state.name_error}</div>
 						<p>Card Image</p>
-						<OnboardingInput placeholder={'Enter trip image URL'}
+						<OnboardingInput placeholder={'Enter image URL'}
 							onImageChange={this.onImageChange}
-							name={this.state.custom_card_image_url}
+							image_url={this.state.custom_card_image_url}
 						/>
 						<p>Card Address</p>
 						<OnboardingInput placeholder={'Enter address or attraction name'}
 							index={0}
 							name={this.state.custom_card_address}
-							input_type='custom'
+							input_type='Custom'
 							onOtherNameChange={this.onOtherNameChange}
 							onHandleSelect={this.onHandleSelect}
+						/>
+						<p>Card Description</p>
+						<OnboardingInput placeholder={'Enter a description'}
+							description={this.state.custom_card_description}
+							onDescriptionChange={this.onDescriptionChange}
 						/>
 						<div className='custom_error'>{this.state.address_error}</div>
 						<div className='button_container start-onboarding-button'
@@ -754,7 +769,7 @@ class Workspace extends Component {
 							isInfoOpen={false}
 							isMarkerShown={true}
 							MarkerClusterArray={this.props.suggestions}
-							itin_marker_array={this.props.cards.filter(function(item, idx) {return item.type !== 'city';})}
+							itin_marker_array={this.props.cards.filter(function(item, idx) { return item.type !== 'city' })}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
 							addCard={this.props.createQueueCard}
 							removeCard={this.sendDelete}

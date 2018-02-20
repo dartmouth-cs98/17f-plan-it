@@ -7,30 +7,30 @@ import './index.scss'
 
 class OnboardingInput extends Component {
     constructor(props) {
-        super(props)
+      super(props)
 
-        this.state = {
-            placeholder: this.props.placeholder,
-            input_type: this.props.input_type,
-            index: this.props.index,
-            start_focused: false,
-            end_focused: false,
-        }
+      this.state = {
+        placeholder: this.props.placeholder,
+        input_type: this.props.input_type,
+        index: this.props.index,
+        start_focused: false,
+        end_focused: false,
+      }
 
-        this.renderAutocomplete = this.renderAutocomplete.bind(this)
+      this.renderAutocomplete = this.renderAutocomplete.bind(this)
     }
 
     renderAutocomplete() {
       const inputProps = {
-          value: this.props.name,
-          onChange: (name) => this.props.onOtherNameChange(this.state.index, this.state.input_type, name),
-          type: 'text',
-          placeholder: this.state.placeholder,
-          autoFocus: true,
+        value: this.props.name,
+        onChange: (name) => this.props.onOtherNameChange(this.state.index, this.state.input_type, name),
+        type: 'text',
+        placeholder: this.state.placeholder,
+        autoFocus: false,
       }
       const handleSelect = (address, placeId) => {
-          geocodeByPlaceId(placeId)
-            .then((results) => { this.props.onHandleSelect(this.state.index, this.state.input_type, results[0], address) })
+        geocodeByPlaceId(placeId)
+          .then((results) => { this.props.onHandleSelect(this.state.index, this.state.input_type, results[0], address) })
       }
       let types = ['(cities)']
       if (this.state.input_type !== 'city') {
@@ -61,20 +61,28 @@ class OnboardingInput extends Component {
         const index = this.props.index
 
         if (this.state.placeholder === 'Name your trip' || this.state.placeholder === 'Name your card') {
-            return (
-                <input type='text' className='name_input' placeholder={this.props.placeholder}
-                    value={this.props.name}
-                    onChange={this.props.onNameChange}
-                />
-            )
-        } else if (this.state.placeholder === 'Enter trip image URL') {
-            return (
-                <input type='text' className='name_input' placeholder={this.props.placeholder}
-                    value={this.props.image_url}
-                    onChange={this.props.onImageChange}
-                />
-            )
-        } else if (this.state.placeholder === 'Enter address or attraction name') {
+          return (
+            <input type='text' className='name_input' placeholder={this.props.placeholder}
+              value={this.props.name}
+              onChange={this.props.onNameChange}
+            />
+          )
+        } else if (this.state.placeholder === 'Enter image URL') {
+          return (
+            <input type='text' className='name_input' placeholder={this.props.placeholder}
+              value={this.props.image_url}
+              onChange={this.props.onImageChange}
+            />
+          )
+        } else if (this.state.placeholder === 'Enter a description') {
+          return (
+            <input type='text' className='name_input' placeholder={this.props.placeholder}
+              value={this.props.description}
+              onChange={this.props.onDescriptionChange}
+            />
+          )
+        }
+        else if (this.state.placeholder === 'Enter address or attraction name') {
             return this.renderAutocomplete()
         }
         else {
