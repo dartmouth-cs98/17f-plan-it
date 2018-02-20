@@ -7,7 +7,7 @@ import Itinerary from '../itinerary/index.js'
 import { DragDropContext } from 'react-beautiful-dnd'
 import NavBar from '../nav_bar/index.js'
 import Map from '../map/index.js'
-import { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards, fetchFavoritedTrips } from '../../actions/index.js'
+import { fetchTrip, fetchCards, createTrip, createCard, fetchAllCards, fetchFavoritedTrips, createQueueCard } from '../../actions/index.js'
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import OnboardingInput from '../onboarding_input'
@@ -74,7 +74,12 @@ class ReadOnly extends Component {
 				})
 
 				cards.push(updated_card)
+
+				if (card.type === 'custom') {
+					this.props.createQueueCard(updated_card)
+				}
 			})
+			
 			this.props.createCard(cards)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
 		}
@@ -314,4 +319,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default withRouter(connect(mapStateToProps, { fetchTrip, fetchCards, createTrip, createCard, fetchFavoritedTrips, fetchAllCards })(ReadOnly))
+export default withRouter(connect(mapStateToProps, { fetchTrip, fetchCards, createTrip, createCard, fetchFavoritedTrips, fetchAllCards, createQueueCard })(ReadOnly))

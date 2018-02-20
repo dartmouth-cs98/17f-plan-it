@@ -184,7 +184,6 @@ class Workspace extends Component {
 		this.setState({ name_error, address_error })
 
 		if (custom_card.name && custom_card.lat && custom_card.long) {
-			console.log(custom_card)
 			this.props.createQueueCard(custom_card)
 
 			const path = window.location.pathname.split(':')
