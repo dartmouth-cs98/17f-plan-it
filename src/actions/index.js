@@ -368,8 +368,8 @@ export function fetchSuggestions(lat, long, tripId, category=null) {
     if (category && tripId && category === 'queue') {
       query = `${ROOT_URL}/cards/queue?trip_id=${tripId}`
     } else {
-      query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}`
-      if (category) { query += `&categories=${category}` }
+      query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}&trip_id=${tripId}`
+      if (category) { query = `${ROOT_URL}/suggestions?latitude=${lat}&longitude=${long}&categories=${category}` }
     }
 
     axios.get(query).then((response) => {
