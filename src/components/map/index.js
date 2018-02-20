@@ -97,10 +97,10 @@ const POIMap = compose(
       <Marker
         key={marker.id}
         position={{ lat: marker.lat, lng: marker.long }}
-        onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.lat, lng: marker.long })}
+        onClick={() => props.onToggleOpen(props.isOpen === (index + props.markers.length) ? -1 : (index + props.markers.length), { lat: marker.lat, lng: marker.long })}
         icon={itinMarkerIcon}
         >
-        {props.isOpen === index &&
+        {props.isOpen === (index + props.markers.length) &&
           <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })}>
             <div className='pin-label'>
               <label className='pin-title'>{marker.name}</label>
@@ -109,7 +109,7 @@ const POIMap = compose(
                   label='Remove'
                   style={{marginLeft: '10px'}}
                   onClick={() => {
-                    props.onToggleOpen(-1, { lat: marker.clat, lng: marker.long })
+                    props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })
                     props.removeCard(marker.id)
                   }}
                 />
