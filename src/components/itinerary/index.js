@@ -204,6 +204,16 @@ export default class Itinerary extends Component {
 						endTime={card.end_time}
 						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 						buttons={false}
+						photo_url={card.photo_url}
+						url={card.url}
+						type={card.type}
+						address={card.address}
+						city={card.city}
+						state={card.state}
+						country={card.country}
+						rating={card.rating}
+						price={card.price}
+						source={card.source}
 					/>
 				)
 			} else {

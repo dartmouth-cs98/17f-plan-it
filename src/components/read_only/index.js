@@ -213,6 +213,7 @@ class ReadOnly extends Component {
 	}
 
 	render() {
+
 		const cards = this.formatCards(this.props.cards)
 		const [city] = _.filter(cards, (card) => {
 			return card.type === 'city'
