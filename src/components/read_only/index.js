@@ -64,8 +64,8 @@ class ReadOnly extends Component {
 			let offset = this.getDayOffset(new Date(this.state.start_date).getTime(), new Date(this.props.trips[0].start_time).getTime())
 
 			_.forEach(this.props.all_cards, (card) => {
-  				let start_date = this.addDays(new Date(new Date(card.start_time).getTime() - 17*60*60*1000), offset)
-  				let end_date = this.addDays(new Date(new Date(card.end_time).getTime() - 17*60*60*1000), offset)
+  				let start_date = this.addDays(new Date(new Date(card.start_time).getTime() - 12*60*60*1000 - new Date(this.state.start_date).getTimezoneOffset()*60*1000), offset)
+  				let end_date = this.addDays(new Date(new Date(card.end_time).getTime() - 12*60*60*1000 - new Date(this.state.start_date).getTimezoneOffset()*60*1000), offset)
 
 				const updated_card = _.assign(card, {
 					trip_id: nextProps.trip_id,
@@ -136,7 +136,19 @@ class ReadOnly extends Component {
 		} else{ 
 			trip_name = this.state.trip_name
 		}
-		let start_date = _.isUndefined(this.state.start_date)? new Date() : new Date(new Date(this.state.start_date).getTime() - 17*60*60*1000)
+		console.log(new Date(this.state.start_date))
+		console.log(new Date(this.state.start_date).getTime())
+		console.log(new Date(this.state.start_date).getTimezoneOffset()/(60))
+
+		let day_now = new Date()
+
+
+		console.log(day_now)
+		console.log(day_now.getTimezoneOffset()/60)
+
+		console.log(new Date(new Date(this.state.start_date).getTime() - 12*60*60*1000 - day_now.getTimezoneOffset()*60*1000))
+
+		let start_date = _.isUndefined(this.state.start_date)? new Date() : new Date(new Date(this.state.start_date).getTime() - 12*60*60*1000 - new Date(this.state.start_date).getTimezoneOffset()*60*1000)
 		let end_date = this.props.trips[0].end_time? this.addDays(new Date(this.props.trips[0].end_time), 
 			this.getDayOffset(start_date, new Date(this.props.trips[0].start_time))) : null
 

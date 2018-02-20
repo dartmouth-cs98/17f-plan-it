@@ -220,7 +220,7 @@ export default class Itinerary extends Component {
 
 				let start = new Date(card.start_time)
 				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
-
+				
 				let end = new Date(card.end_time)
 				end = new Date(end.getTime() + end.getTimezoneOffset()*60*1000)
 
