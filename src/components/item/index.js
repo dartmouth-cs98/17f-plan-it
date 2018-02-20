@@ -131,6 +131,8 @@ export default class Item extends Component {
 		const title = (this.props.name.length > 38) ? this.props.name.substring(0, 37) + "..." : this.props.name
 
 		if (this.props.buttons) {
+			// this is an itinerary card
+
 			return (
 				<div className='card-wrapper'>
 					<div
@@ -150,6 +152,7 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
+
 			const line1 = this.props.type == null ? "Description not available" : this.props.type
 			const rating = this.props.rating == null ? "Rating not available" : this.props.rating
 			const price = this.props.price == null ? "Price not available" : this.props.price
@@ -164,6 +167,7 @@ export default class Item extends Component {
 				this.props.address + ", " + this.props.city + ", " + this.props.country
 			}				
 			const line4 = "Source: " + this.props.source
+
 			return (
 				<div className='card-wrapper'>
 					<div
@@ -180,7 +184,7 @@ export default class Item extends Component {
 								<div class = "textrow">{line4}</div>
 							</div>					
 						</div>
-						<div id="imageContainer">
+						<div className="imageContainer">
 							{this.renderImage()}
 						</div>
 					</div>
