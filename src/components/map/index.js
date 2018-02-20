@@ -8,6 +8,7 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "reac
 import MarkerClusterer from "react-google-maps/lib/components/addons/MarkerClusterer"
 import FlatButton from 'material-ui/FlatButton'
 import './index.scss'
+import itinMarkerIcon from './itinMarker.png'
 
 const POIMap = compose(
   withProps({
@@ -97,6 +98,7 @@ const POIMap = compose(
         key={marker.id}
         position={{ lat: marker.lat, lng: marker.long }}
         onClick={() => props.onToggleOpen(props.isOpen === index ? -1 : index, { lat: marker.lat, lng: marker.long })}
+        icon={itinMarkerIcon}
         >
         {props.isOpen === index &&
           <InfoWindow onCloseClick={() => props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })}>
