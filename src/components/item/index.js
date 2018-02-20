@@ -172,7 +172,7 @@ export default class Item extends Component {
 									{this.props.name}
 								</label>
 								<div className='card-body2'>
-									<div class = "textrow">Custom Location</div>
+									<div class = "textrow">Custom</div>
 									<div class = "textrow">{this.props.address}</div>
 									<div class = "commentrow">Comment: {this.props.description}</div>
 								</div>					 
