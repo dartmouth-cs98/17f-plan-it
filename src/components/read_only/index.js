@@ -224,12 +224,6 @@ class ReadOnly extends Component {
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
-		let trip_name = 'My Trip'
-		if (this.props.cards[0].type === 'city'){ // if the first card is a city card get the name of the card, which is the city name
-				trip_name = `${this.props.cards[0].name.split(',')[0]} Trip` 
-			}	else {
-				trip_name = `${this.props.cards[0].city.split(',')[0]} Trip` 
-			}
 
 		return (
 			<div id='workspace'>
@@ -262,7 +256,7 @@ class ReadOnly extends Component {
 	        		</div>
 				</Modal>
 				<Toolbar
-					tripName={this.props.trips[0] ? this.props.trips[0].name : trip_name}
+					tripName={this.props.trips[0] ? this.props.trips[0].name : `${city.name.split(',')[0]} Trip`}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
 					tripId={tripId}
 					favorited={this.isFavorited()}
