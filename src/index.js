@@ -15,8 +15,10 @@ import { PersistGate } from 'redux-persist/integration/react'
 
 const persistConfig = {
   key: 'root',
+  blacklist: ['trips', 'cards'],
   storage
 }
+
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
