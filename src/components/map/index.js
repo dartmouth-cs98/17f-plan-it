@@ -152,6 +152,7 @@ export default class Map extends Component {
 	render() {
 		return (
 			<div id='map-container'>
+      {!this.props.readOnly &&
         <div className='map-suggestions-header'>
           <FlatButton
             label={<span className='toggle-pin'>Toggle Suggestion Pins</span>}
@@ -162,6 +163,7 @@ export default class Map extends Component {
             onClick={this.toggleIt}
           />
   			</div>
+      }
 				<POIMap
           center={this.props.center}
           markers={this.props.MarkerClusterArray || []}
