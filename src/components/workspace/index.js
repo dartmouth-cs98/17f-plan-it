@@ -94,7 +94,7 @@ class Workspace extends Component {
 			this.props.fetchDay(tripId, DAY_NUMBER)
 		}
     this.connectToChannel(tripId);
-    mainChannel.setCardUpdateFunction(this.componentWillReceiveChannelUpdates)
+    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates)
 	}
 
   connectToChannel(tripId) {

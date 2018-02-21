@@ -20,7 +20,7 @@ class Toolbar extends Component {
 	}
 
 	componentWillReceiveProps(nextProps){
-		this.setState({ 
+		this.setState({
 			published: nextProps.published,
 			favorited: nextProps.favorited })
 	}
@@ -54,9 +54,7 @@ class Toolbar extends Component {
 	}
 
   renderCollabButton() {
-    if (this.props.authenticated) {
       return <CollabButton />
-    }
   }
 
 	render() {
@@ -95,6 +93,7 @@ class Toolbar extends Component {
 		} else {
 			return (
 				<div id='tool-bar'>
+          <LiveUsers tripId={this.props.tripId} />
 					<div className='toolbar-trip-title'>
 						{this.props.tripName}
 					</div>
