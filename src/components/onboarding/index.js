@@ -21,7 +21,7 @@ class Onboarding extends Component {
 			landing_page: true,
 			trip_name: '',
 			cities: [],
-			modal_open: false, 
+			modal_open: false,
 			err_msg: '',
 			image_url: 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
 		}
@@ -40,7 +40,7 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
-	} 
+	}
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.trip_id) {
@@ -87,19 +87,18 @@ class Onboarding extends Component {
 					})
 				}
 			})
-			
+
 			this.props.createCard(cityCards)
-			this.props.fetchCards(nextProps.trip_id, 1)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
 		}
 	}
 
 	onCreateTrip(startDate, endDate) {
 		let trip_name = this.state.trip_name
-		if (_.isUndefined(trip_name) || trip_name === '') { 
+		if (_.isUndefined(trip_name) || trip_name === '') {
 			trip_name = `${this.state.cities[0].name.split(',')[0]} Trip`
 		}
-		
+
 		let start = new Date(startDate)
 		start.setHours(0, 0, 0, 0)
 		start = new Date(start.getTime() - start.getTimezoneOffset()*60*1000)
@@ -170,8 +169,8 @@ class Onboarding extends Component {
 			let newCities = this.state.cities
 			const first_city = _.assign(newCities[0], {
 				name,
-				lat, 
-				long: lng, 
+				lat,
+				long: lng,
 				place_id,
 				address
 			})
@@ -189,10 +188,10 @@ class Onboarding extends Component {
 				let place_id = results.place_id
 				let newCities = this.state.cities
 				const newCity = _.assign(this.state.cities[index], {
-					name, 
+					name,
 					address,
 					day_number,
-					lat, 
+					lat,
 					long: lng,
 					place_id
 				})
@@ -211,10 +210,10 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { start_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
-		} 
+		}
 
 		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
-		{	
+		{
 			this.setState({ modal_open: true, err_msg: 'Start date after end date'})
 		}
 	}
@@ -244,7 +243,7 @@ class Onboarding extends Component {
 		}
 
 		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
-		{	
+		{
 			this.setState({ modal_open: true, err_msg: 'End date before start date'})
 		}
 	}
@@ -505,10 +504,10 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		createTrip: (name, user_id, start_time, end_time) => {
 			dispatch(createTrip(name, user_id, start_time, end_time))
-		}, 
+		},
 		createCard: (cityCards) => {
 			dispatch(createCard(cityCards))
-		}, 
+		},
 		fetchCards: (id, day) => {
 			dispatch(fetchCards(id, day))
 		}
