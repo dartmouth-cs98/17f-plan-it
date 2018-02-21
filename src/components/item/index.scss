@@ -47,7 +47,6 @@
     vertical-align: center;
     position: absolute;
     right: 0px;
-    display: table-cell;
     padding-top: 5px;
     padding-right: 5px;
 }
@@ -67,7 +66,7 @@
 			color: #000000;
 			white-space: nowrap;
 		    text-overflow: ellipsis;
-		    width: 225px;
+		    width: 210px;
 		    display: block;
 		    overflow: hidden;
 		}	
@@ -83,9 +82,10 @@
 }
 
 .textrow {
-	width: 225px;
+	width: 210px;
 	height: 16px;
 	padding: 0px;
+	white-space: nowrap;
 	text-overflow: ellipsis;
 	display: block;
 	overflow: hidden;

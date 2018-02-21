@@ -91,7 +91,7 @@ export default class Item extends Component {
 			const url = this.props.url
 			return (
 				<a target="_blank" href= {`http://${url}`}>
-					<img src= {`${photo_url}`} alt="Test" height="84" width="84">
+					<img src= {`${photo_url}`} alt="Test" height="84" width="80">
 					</img>
 				</a>
 			)
