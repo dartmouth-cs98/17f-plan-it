@@ -85,7 +85,11 @@ class Workspace extends Component {
 		this.setState({ tripId })
 		this.props.clearSuggestions()
 		this.props.fetchTrip(tripId)
-		this.props.fetchDay(tripId, DAY_NUMBER)
+
+		// if not directed here from onboarding, get the cards
+		if (!this.props.creatingCard) {
+			this.props.fetchDay(tripId, DAY_NUMBER)
+		}
 
 		if (this.props.user.email) {
 			mainChannel.connect(tripId, this.props.user.email)
@@ -788,6 +792,7 @@ const mapStateToProps = (state) => {
 		user: state.users,
 		trips: state.trips.trip,
 		cards: state.cards.all,
+		creatingCard: state.cards.creatingCard,
 		fetchingSuggestions: state.cards.fetchingSuggestions,
 		suggestions: state.cards.suggestions
 	}

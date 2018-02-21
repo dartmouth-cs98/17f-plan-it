@@ -79,8 +79,13 @@ const CardsReducer = (state = initialState, action) => {
 					return card.id !== action.payload
 				})
 			})
+		case ActionTypes.START_CREATING:
+			return Object.assign({}, state, {
+				creatingCard: true,
+			});
 		case ActionTypes.CREATE_CARD:
 			return Object.assign({}, state, {
+				creatingCard: false,
 				card: action.payload,
 			});
 		case ActionTypes.CREATE_CARD_ERROR:
