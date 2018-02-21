@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
+import { createUser, resetTripId } from '../../actions/index.js'
 import storage from 'redux-persist/lib/storage'
-import { createUser, authUser } from '../../actions/index.js'
 import axios from 'axios'
 import cookie from 'react-cookies'
 import './index.scss'
@@ -28,7 +28,13 @@ class NavBar extends Component {
   }
 
   reloadPage() {
+    this.props.resetTripId()
     window.location.reload()
+  }
+
+	reloadPageRoot() {
+    this.props.resetTripId()
+		window.location.href = "/";
   }
 
 	renderOptions() {
@@ -37,7 +43,7 @@ class NavBar extends Component {
 				<div className='options'>
 					<Link to='/explore'><div>Explore</div></Link>
 					<Link to='/' onClick={this.reloadPage}><div>New Trip</div></Link>
-					<Link to='/dashboard'><div>Dashboard</div></Link>
+					<Link to='/dashboard'><div>My Trips</div></Link>
 					<Link to='/'><div><this.buttonDecision /></div></Link>
 				</div>
 			)
@@ -67,7 +73,7 @@ class NavBar extends Component {
     return <div
       className='nav-button'
       onClick={this.processLogout}
-    >Logout</div>;
+      >Logout</div>;
   }
 
   componentWillMount() {
@@ -115,8 +121,9 @@ class NavBar extends Component {
   processLogout(props) {
     cookie.remove('auth', { path: '/' })
 		storage.removeItem('persist:root')
-    this.props.authUser(false)
+    this.props.resetTripId()
     this.setState({ authenticated: false })
+    this.reloadPageRoot()
   }
 
 	render() {
@@ -138,4 +145,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, { createUser, authUser })(NavBar));
+export default withRouter(connect(mapStateToProps, { createUser, resetTripId })(NavBar));

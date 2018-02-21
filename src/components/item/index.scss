@@ -3,13 +3,99 @@
 }
 
 .item-card {
-	.item-title {
-		padding-left: 10px;
-		color: #000000;
+	flex-direction: row;
+
+	.card-header {
+		height: 36px;
+
+		.item-title {
+			padding-left: 10px;
+			color: #000000;
+			
+		}
+	} 
+
+	.card-body {
+		.time-edit {
+			display: inline-block;
+			flex-direction: column;
+			width: 50%;
+
+			.time-label {
+				font-size: 13px;
+				line-height: 30px;
+				margin-left: 5px;
+			}
+
+			.add-time {
+				border: none;
+			}
+		}
 	}
+}
+
+.edit-icon {
+	min-width: 30px !important;
 }
 
 .item-icon {
 	float: right;
 	min-width: 40px !important;
 }
+
+.imageContainer {
+    vertical-align: center;
+    position: absolute;
+    right: 0px;
+    padding-top: 5px;
+    padding-right: 5px;
+}
+
+.item-card2 {
+	flex-direction: column !important;
+	display: flex;
+	align-items: right;
+	flex-flow: column wrap;
+
+	.card-header2 {
+		width: 240px;
+
+		.item-title2 {
+			margin-top: 6px;
+			padding-left: 10px;
+			color: #000000;
+			white-space: nowrap;
+		    text-overflow: ellipsis;
+		    width: 210px;
+		    display: block;
+		    overflow: hidden;
+		}	
+		.card-body2 {
+			font-size: 11px;
+			display: flex;
+			flex-direction: row !important;
+			padding-left: 10px;
+			flex-flow: wrap;
+		}
+	
+	} 
+}
+
+.textrow {
+	width: 210px;
+	height: 16px;
+	padding: 0px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+}
+
+.commentrow {
+	width: 160px;
+	height: 16px;
+	padding: 0px;
+	word-wrap: break-word;
+	text-overflow: ellipsis;
+}
+

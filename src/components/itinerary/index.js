@@ -11,12 +11,12 @@ import './index.scss'
 
 const TIME_SCALE = 2500
 const MONTHS = [
-	'January', 
-	'February', 
-	'March', 
-	'April', 
-	'May', 
-	'June', 
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
 	'July',
 	'August',
 	'September',
@@ -42,12 +42,12 @@ const getListStyle = isDraggingOver => ({
 
 export default class Itinerary extends Component {
 	constructor(props) {
-		super(props) 
+		super(props)
 
 		this.state = {
 			startTimeDialog: false,
-			editCard: null, 
-			shift: false, 
+			editCard: null,
+			shift: false,
 			newTime: null,
 			readOnly: this.props.readOnly
 		}
@@ -79,7 +79,7 @@ export default class Itinerary extends Component {
 	}
 
 	selectTime(event, time) {
-		this.setState({ newTime: time })
+		this.setState({ newTime: time - new Date().getTimezoneOffset() })
 	}
 
 	updateStartTime() {
@@ -117,7 +117,7 @@ export default class Itinerary extends Component {
 
 		this.props.updateCard(this.state.editCard.id, {
 			start_time: this.state.newTime,
-			end_time: new Date(this.state.newTime.getTime() + duration)			
+			end_time: new Date(this.state.newTime.getTime() + duration)
 		}, this.props.tripId, this.props.day)
 
 		this.closeDialog()
@@ -161,54 +161,70 @@ export default class Itinerary extends Component {
 		let dayLabel = `Day ${this.props.day}`
 
 		if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
-			const date = new Date(this.props.cards[0].start_time)
+			
+			let date = new Date(this.props.cards[0].start_time)
+			date = new Date(date.getTime() + date.getTimezoneOffset()*60*1000)
 			dayLabel += `: ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
 		}
 
 		return (
 			<div className='itinerary-header'>
-				{this.renderBackButton()}
+				<div className= 'left-wrapper'>
+					{this.renderBackButton()}
+				</div>
 				<label className='itinerary-title'>
 					{dayLabel}
 				</label>
-				{this.renderForwardButton()}
+				<div className = 'right-wrapper'>
+					{this.renderForwardButton()}
+				</div>
 			</div>
 		)
 	}
 
 	renderList() {
 		let index = 0
-		const toRender = _.map(this.props.cards, (card) => {
+		const toRender = []
+
+		for (const card of this.props.cards) {
 			if (card.type === 'city') {
-				// return (
-				// 	<FreeTime
-				// 		duration={24 * 60 * 60 * 1000}
-				// 		select={() => { this.props.selectTime(card) }}
-				// 		selected={!_.isNull(this.props.selected)}
-				// 	/>
-				// )
-			} else if (card.type === 'travel') {
-				// return <Travel 
-				// 	destination={card.destination}
-				// 	duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-				// />
+				continue
 			} else if (this.state.readOnly) {
-				return (
-					<div>
-						<Item
-							key={card.id}
-							name={card.name}
-							description={card.description}
-							timeScale={TIME_SCALE}
-							startTime={card.start_time}
-							endTime={card.end_time}
-							duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
-							buttons={false}
-						/>
-					</div>
+
+				let start = new Date(card.start_time)
+				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
+
+				toRender.push(
+					<Item
+						key={card.id}
+						name={card.name}
+						description={card.description}
+						timeScale={TIME_SCALE}
+						startTime={start}
+						endTime={card.end_time}
+						duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
+						buttons={false}
+						photo_url={card.photo_url}
+						url={card.url}
+						type={card.type}
+						address={card.address}
+						city={card.city}
+						state={card.state}
+						country={card.country}
+						rating={card.rating}
+						price={card.price}
+						source={card.source}
+					/>
 				)
 			} else {
-				return (
+
+				let start = new Date(card.start_time)
+				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
+				
+				let end = new Date(card.end_time)
+				end = new Date(end.getTime() + end.getTimezoneOffset()*60*1000)
+
+				toRender.push(
 					<Draggable key={card.id} draggableId={card.id} index={index++}>
 						{(provided, snapshot) => (
 							<div>
@@ -223,6 +239,7 @@ export default class Itinerary extends Component {
 								>
 									<Item
 										key={card.id}
+										cardId={card.id}
 										name={card.name}
 										description={card.description}
 										editCard={() => {
@@ -232,8 +249,11 @@ export default class Itinerary extends Component {
 											this.props.searchSuggestions(card)
 										}}
 										timeScale={TIME_SCALE}
-										startTime={card.start_time}
-										endTime={card.end_time}
+										updateTime={this.props.updateTime}
+
+										startTime={start}
+										updateDuration={this.props.updateDuration}
+										endTime={end}
 										duration={(new Date(card.end_time)).getTime() - (new Date(card.start_time)).getTime()}
 										remove={() => {
 											this.props.removeCard(card.id, this.props.tripId, this.props.day)
@@ -247,44 +267,9 @@ export default class Itinerary extends Component {
 					</Draggable>
 				)
 			}
-		})
+		}
 
 		return toRender
-	}
-
-	renderStartTimeDialog() {
-		const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.closeDialog}
-      />,
-      <FlatButton
-        label="Update"
-        primary={true}
-        onClick={this.updateStartTime}
-      />
-    ]
-
-		return (
-			<Dialog
-	      title={`Change start time for: ${this.state.editCard ? this.state.editCard.name : null}`}
-	      actions={actions}
-	      modal={false}
-	      contentStyle={{
-	      	width: '100%',
-	      	maxWidth: '350px'
-	      }}
-	      open={this.state.startTimeDialog}
-	      onRequestClose={this.closeDialog}
-	    >
-	    	<TimePicker
-		      hintText="12hr Format"
-		      defaultTime={this.state.editCard ? new Date(this.state.editCard.start_time) : null}
-		      onChange={this.selectTime}
-		    />
-	    </Dialog>
-    )
 	}
 
 	render() {
@@ -292,7 +277,6 @@ export default class Itinerary extends Component {
 			return (
 				<div id='itinerary-box'>
 					{this.renderHeader()}
-					{this.renderStartTimeDialog()}
 					<div className='body-container'>
 						<div className='itinerary-body'>
 							<div className='itinerary-list'>
@@ -306,7 +290,6 @@ export default class Itinerary extends Component {
 			return (
 				<div id='itinerary-box'>
 					{this.renderHeader()}
-					{this.renderStartTimeDialog()}
 					<div className='body-container'>
 						<div className='itinerary-body'>
 							<div className='itinerary-list'>
@@ -327,29 +310,5 @@ export default class Itinerary extends Component {
 				</div>
 			)
 		}
-	}
-}
-
-class Travel extends Component {
-	render() {
-		const timeScale = scaleLinear()
-			.domain([0, 24 * 60 * 60 * 1000])
-			.range([0, TIME_SCALE])
-
-		// subtract 10 for margin
-		const height = timeScale(this.props.duration) - 10
-
-		return (
-			<div className='card-wrapper'>
-				<div 
-					className='card travel-card'
-					style={{height}}
-				>
-					<label className='travel-title'>
-						{`Travel to: ${this.props.destination}`}
-					</label>
-				</div>
-			</div>
-		)
 	}
 }

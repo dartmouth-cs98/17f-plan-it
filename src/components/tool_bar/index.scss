@@ -1,34 +1,23 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 #tool-bar {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
+	vertical-align: center;
+    position: relative;    
 	margin: 5px;
 	min-height: 50px;
 	background-color: #8ACDF1;
+	white-space: nowrap;
+  	overflow: hidden;
 }
 
-#tool-bar-left {
-	justify-content: flex-start;
+.left-wrapper {
+	flex: 1;
 	display: flex;
-	align-items: center;
-	width: 30%;
 }
-
-#tool-bar-center {
-	justify-content: center;
-	display: flex;
-	align-items: center;
-	padding: 0;
-	width: 40%;
-}
-
-#tool-bar-right {
+.right-wrapper{
+	flex: 1;
 	display: flex;
 	justify-content: flex-end;
-	align-items: center;
-	width: 30%;
 }
 
 .toolbar-items {
@@ -50,44 +39,24 @@
 }
 
 .toolbar-trip-title {
+
 	font-family: 'Source Sans Pro', sans-serif;
 	font-weight: lighter;
 	font-size: 30px;
 	color: #FFFFFF;
-	align-self: center;
+	text-align: center;
 
 }
 
 .toggle-options {
 	display: flex;
+	justify-content: space-between;
 	align-items: center;
-}
-
-
-.tool-bar-left-flex-item {
-	padding-left: 20px;
-	text-align: center;
-}
-
-.tool-bar-right-flex-item {
-	padding-right: 20px;
-	text-align: center;
-	vertical-align: middle;
-}
-
-.tool-bar-header-text {
-	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: bold;
-	font-size: 20px;
-	color: #FFFFFF;
-}
-
-.tool-bar-text {
-	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: lighter;
-	font-size: 16px;
-	line-height: 25px;
-	color: #FFFFFF;
+	justify-content: center;
+	vertical-align: center;
+	position: absolute;
+	right: 0;
+	top: 12.5px;
 }
 
 .toolbar-download{
@@ -97,19 +66,13 @@
 	background-color: #FFFFFF;
 	border: 2px solid #6FCF97;
 	text-align: center;
-	margin-right: 3px;
+	margin-right: 5px;
 }
 
 .toolbar-download:hover {
 	cursor: pointer;
-	text-shadow: 0 0 10px grey;
+	box-shadow: 0 0 10px grey;
 	text-align: center;
-}
-
-.toolbar-favorite {
-	color: #FFFFFF;
-	padding-left: 10px;
-	padding-right: 10px;
 }
 
 .toolbar-favorite:hover {
@@ -124,19 +87,19 @@
 	background-color: #FFFFFF;
 	border: 2px solid #6FCF97;
 	text-align: center;
-	margin-right: 2px;
+	margin-right: 5px;
 }
 
 .toolbar-click:hover {
 	cursor: pointer;
-	text-shadow: 0 0 10px grey;
+	box-shadow: 0 0 10px grey;
 	text-align: center;
 }
 
 .heart {
 	font-weight: bold;
 	margin-right: 10px;
-	color: #6FCF97;
+	color: #FFFFFF;
 }
 
 .user-circle {
@@ -156,5 +119,4 @@
 	vertical-align: center;
 
 	display: inline-block;
-
 }

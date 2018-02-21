@@ -36,7 +36,6 @@ const UsersReducer = (state = initialState, action) => {
       new_user["fname"] = action.payload.fname;
       new_user["lname"] = action.payload.lname;
       new_user["tdd"] = Date.now();
-
       let flag = true;
       for (const user of state.live_users) {
         if (user.email.localeCompare(new_user.email) == 0) {

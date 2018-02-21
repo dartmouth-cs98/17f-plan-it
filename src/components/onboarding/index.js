@@ -21,9 +21,9 @@ class Onboarding extends Component {
 			landing_page: true,
 			trip_name: '',
 			cities: [],
-			modal_open: false, 
+			modal_open: false,
 			err_msg: '',
-			image_url: 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
+			image_url: ''
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -40,23 +40,26 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
-	} 
+	}
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.trip_id) {
 			let cityCards = []
 			let dayNumber = 1
-			let startDate = (new Date(this.state.cities[0].start_date)).getTime()
+			let startDate = new Date(this.state.cities[0].start_date)
+			startDate.setHours(0, 0, 0, 0)
+			startDate = new Date(startDate.getTime() - startDate.getTimezoneOffset()*60*1000)
 
 			_.forEach(this.state.cities, (city) => {
-				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000))
-				for (let i = 1; i <= duration; i++) {
+				const duration = Math.round(((new Date(city.end_date)).getTime() - (new Date(city.start_date)).getTime()) / (24 * 60 * 60 * 1000)) + 1
+
+				for (let i = 0; i < duration; i++) {
 					const cityCard = _.assign(city, {
 						trip_id: nextProps.trip_id,
 						type: 'city'
 					})
 
-					const endDate = startDate + (24 * 60 * 60 * 1000)
+					let endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000 - 1)
 
 					cityCards.push({
 						...cityCard,
@@ -65,10 +68,11 @@ class Onboarding extends Component {
 						end_time: new Date(endDate)
 					})
 
-					startDate = endDate
+					startDate = new Date(endDate.getTime() + 1)
 				}
 
 				if (_.isUndefined(city.end_date)) {
+					console.log('its undefined')
 					const cityCard = _.assign(city, {
 						trip_id: nextProps.trip_id,
 						type: 'city'
@@ -85,22 +89,38 @@ class Onboarding extends Component {
 			})
 
 			this.props.createCard(cityCards)
-			this.props.fetchCards(nextProps.trip_id, 1)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
 		}
 	}
 
 	onCreateTrip(startDate, endDate) {
 		let trip_name = this.state.trip_name
-		if (_.isUndefined(trip_name) || trip_name === '') { 
-			trip_name = 'My Trip' 
+		if (_.isUndefined(trip_name) || trip_name === '') {
+			trip_name = `${this.state.cities[0].name.split(',')[0]} Trip`
 		}
+
+		let photo_url = this.state.image_url
+		if (_.isUndefined(photo_url) || photo_url === '') {
+			photo_url = 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
+		}
+
+		let start = new Date(startDate)
+		start.setHours(0, 0, 0, 0)
+		start = new Date(start.getTime() - start.getTimezoneOffset()*60*1000)
+
+		let end = null
+		if (endDate) {
+			end = new Date(endDate)
+			end.setHours(23, 59, 59, 999)
+			end = new Date(end.getTime() - end.getTimezoneOffset()*60*1000)
+		}
+
 		this.props.createTrip({
 			name: trip_name,
 			user_id: cookie.load('auth'),
-			start_time: startDate,
-			end_time: endDate,
-			photo_url: this.state.image_url
+			start_time: start,
+			end_time: end,
+			photo_url
 		})
 	}
 
@@ -128,9 +148,10 @@ class Onboarding extends Component {
 	}
 
 	onNameChange(event) {
-		if (event.target.value.length < 20) {
-			this.setState({ trip_name: event.target.value })
-		}
+		// if (event.target.value.length < 20) {
+		// 	this.setState({ trip_name: event.target.value })
+		// }
+		this.setState({ trip_name: event.target.value })
 	}
 
 	onImageChange(event) {
@@ -139,7 +160,7 @@ class Onboarding extends Component {
 
 	onOtherNameChange(index, type, name) {
 		let newCities = this.state.cities
-		const newCity = _.assign(newCities[index], {	name })
+		const newCity = _.assign(newCities[index], { name })
 		newCities[index] = newCity
 		this.setState({ cities: newCities })
 	}
@@ -153,8 +174,8 @@ class Onboarding extends Component {
 			let newCities = this.state.cities
 			const first_city = _.assign(newCities[0], {
 				name,
-				lat, 
-				long: lng, 
+				lat,
+				long: lng,
 				place_id,
 				address
 			})
@@ -172,10 +193,10 @@ class Onboarding extends Component {
 				let place_id = results.place_id
 				let newCities = this.state.cities
 				const newCity = _.assign(this.state.cities[index], {
-					name, 
+					name,
 					address,
 					day_number,
-					lat, 
+					lat,
 					long: lng,
 					place_id
 				})
@@ -194,10 +215,10 @@ class Onboarding extends Component {
 			const newCity = _.assign(this.state.cities[index], { start_date })
 			newCities[index] = newCity
 			this.setState({ cities: newCities })
-		} 
+		}
 
 		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
-		{	
+		{
 			this.setState({ modal_open: true, err_msg: 'Start date after end date'})
 		}
 	}
@@ -227,7 +248,7 @@ class Onboarding extends Component {
 		}
 
 		if (!_.isNil(start_date) && !_.isNil(end_date) && new Date(end_date) < new Date(start_date))
-		{	
+		{
 			this.setState({ modal_open: true, err_msg: 'End date before start date'})
 		}
 	}
@@ -380,9 +401,9 @@ class Onboarding extends Component {
 	image_slide() {
 		return (
 			<div className='name_wrapper'>
-				<OnboardingInput placeholder={'Enter trip image URL'}
+				<OnboardingInput placeholder={'Enter image URL'}
 					onImageChange={this.onImageChange}
-					name={this.state.image_url}
+					image_url={this.state.image_url}
 				/>
 			</div>
 		)
@@ -488,10 +509,10 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		createTrip: (name, user_id, start_time, end_time) => {
 			dispatch(createTrip(name, user_id, start_time, end_time))
-		}, 
+		},
 		createCard: (cityCards) => {
 			dispatch(createCard(cityCards))
-		}, 
+		},
 		fetchCards: (id, day) => {
 			dispatch(fetchCards(id, day))
 		}

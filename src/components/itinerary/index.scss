@@ -14,12 +14,20 @@
 
 		.itinerary-title {
 			color: #FFFFFF;
-			margin-left: 10px;
 			font-size: 14px;
 			font-family: Roboto, sans-serif;
 			font-weight: 500;
-			width: 100%;
 			text-align: center;
+		}
+
+		.left-wrapper {
+			flex: 1;
+  			display: flex;
+		}
+		.right-wrapper{
+			flex: 1;
+  			display: flex;
+  			justify-content: flex-end;
 		}
 
 		.left-button {

@@ -7,6 +7,7 @@
 	font-size: 24px;
 	padding-top: 30px;
 	width: 90vw;
+	text-overflow: ellipsis;
 }
 
 .trip_card {
@@ -49,7 +50,12 @@
 
 .card_title {
 	padding: 15px;
-	text-align: center
+	text-align: center;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 160px;
+    display: block;
+    overflow: hidden
 }
 
 .plus_sign {
