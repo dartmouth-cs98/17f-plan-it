@@ -8,7 +8,7 @@ const URL = 'ws://localhost:4000/socket'
 const socket = new Socket(URL, {})
 
 //const heartbeatTimer = 10000; //10 second heartbeat timer
-const heartbeatTimer = 5000; //5 second heartbeat timer
+export const heartbeatTimer = 5000; //5 second heartbeat timer
 
 
 function logger(payload) {
@@ -51,7 +51,6 @@ class Channel {
       this.usersUpdateHandler(payload)
     })
   }
-
 
   setCardFunctions(config) {
     this.cardUpdateHandler = config.update;

@@ -3,15 +3,15 @@ import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
 import { createUser, resetTripId } from '../../actions/index.js'
+import storage from 'redux-persist/lib/storage'
 import axios from 'axios'
 import cookie from 'react-cookies'
 import './index.scss'
-import storage from 'redux-persist/lib/storage'
 
 class NavBar extends Component {
 	constructor(props) {
 		super(props)
-		this.authenticated = true
+		this.authenticated = true //what is this? Do you use this? -Sam
 		this.state = {
       background: this.props.background,
       authenticated: cookie.load('auth'),
@@ -22,6 +22,10 @@ class NavBar extends Component {
     this.processLogout = this.processLogout.bind(this)
     this.buttonDecision = this.buttonDecision.bind(this)
 	}
+
+  componentDidMount() {
+    this.props.authUser(cookie.load('auth'))
+  }
 
   reloadPage() {
     this.props.resetTripId()
@@ -102,6 +106,7 @@ class NavBar extends Component {
             lname: response.data.family_name
 
           })
+          this.props.authUser(true)
           this.setState({ authenticated: true });
        }
      }).catch( (error) => {
@@ -136,6 +141,7 @@ class NavBar extends Component {
 const mapStateToProps = (state) => {
   return {
     user_id: state.users.user_id,
+    authenticated: state.users.authenticated,
   };
 };
 

@@ -6,16 +6,15 @@ import cookie from 'react-cookies'
 import './index.scss'
 import DownloadTrip from '../download_trip/index.js'
 import LiveUsers from '../live_users'
+import CollabButton from '../collab_button'
 
 class Toolbar extends Component {
 	constructor(props) {
 		super(props)
-
 		this.state = {
 			published: this.props.published,
 			favorited: this.props.favorited
 		}
-
 		this.togglePublish = this.togglePublish.bind(this)
 		this.toggleFavorite = this.toggleFavorite.bind(this)
 	}
@@ -53,6 +52,12 @@ class Toolbar extends Component {
 			return ''
 		}
 	}
+
+  renderCollabButton() {
+    if (this.props.authenticated) {
+      return <CollabButton />
+    }
+  }
 
 	render() {
 		let favoriteIconClass = this.state.favorited? 'fa fa-heart fa-2x heart' : 'fa fa-heart-o fa-2x heart'
@@ -110,3 +115,4 @@ class Toolbar extends Component {
 }
 
 export default withRouter(connect(null, { updateTrip, unfavoriteTrip, favoriteTrip })(Toolbar));
+

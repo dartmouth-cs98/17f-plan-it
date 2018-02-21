@@ -2,14 +2,15 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { heartbeatTimer, mainChannel } from '../../channels'
-import { updateUsersLive } from '../../actions'
+import { updateUsersLive, deleteUserLive } from '../../actions'
 
-const USER_EXPIRATION = 1000;
+const USER_EXPIRATION = heartbeatTimer * 2; //if someone is inactive for 2 heartbeats then they are expired
 
 class LiveUsers extends React.Component {
   constructor(props) {
     super(props)
     this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+    setInterval(() => this.removeExpiredUsers(), USER_EXPIRATION)
   }
 
   componentDidMount() {
@@ -20,22 +21,31 @@ class LiveUsers extends React.Component {
     this.props.updateUsersLive(payload)
   }
 
-  renderUsers() {
+  removeExpiredUsers() {
     if (this.props.users) {
-      return this.props.users.map(u => {
+      this.props.users.map(u => {
         if (Date.now() - u.tdd > USER_EXPIRATION) {
-          return
-        } else {
-          const initials = u.fname.slice(0, 1) + u.lname.slice(0, 1);
-          return this.renderUser(initials)
+          this.props.deleteUserLive(u)
         }
       })
     }
   }
 
+  renderUsers() {
+    if (this.props.users instanceof Array) {
+      console.log(this.props.users)
+      const renderedUsers = this.props.users.map(u => {
+        const initials = u.fname.slice(0, 1) + u.lname.slice(0, 1);
+        return this.renderUser(initials)
+      })
+      return renderedUsers
+    }
+
+  }
+
   renderUser(initials) {
     return (
-      <div className='user-circle'>
+      <div className='user-circle' key={initials}>
         {initials}
       </div>
     )
@@ -60,6 +70,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateUsersLive: (users) => {
       dispatch(updateUsersLive(users))
+    },
+    deleteUserLive: (user) => {
+      dispatch(deleteUserLive(user))
     }
   }
 }

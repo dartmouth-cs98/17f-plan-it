@@ -43,6 +43,7 @@
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.6",
     "promise": "8.0.1",
+    "qs": "^6.5.1",
     "react": "^16.2.0",
     "react-addons-shallow-compare": "^15.6.2",
     "react-beautiful-dnd": "^4.0.0",
