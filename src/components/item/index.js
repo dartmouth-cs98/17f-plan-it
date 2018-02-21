@@ -87,14 +87,22 @@ export default class Item extends Component {
 
 	renderImage() {
 		if (!this.props.buttons) {
-			const photo_url = (this.props.photo_url != null)? this.props.photo_url : "https://vignette.wikia.nocookie.net/bokunoheroacademia/images/d/d5/NoPicAvailable.png/revision/latest?cb=20160326222204"
-			const url = this.props.url
-			return (
-				<a target="_blank" href= {`http://${url}`}>
-					<img src= {`${photo_url}`} alt="Test" height="84" width="80">
+			if (this.props.source === "Custom") {
+				const photo_url = (this.props.photo_url != null)? this.props.photo_url : "https://vignette.wikia.nocookie.net/bokunoheroacademia/images/d/d5/NoPicAvailable.png/revision/latest?cb=20160326222204"
+				return (
+					<img src= {`${photo_url}`} alt="Test" height="84" width="84">
 					</img>
-				</a>
-			)
+				)
+			} else {
+				const photo_url = (this.props.photo_url != null)? this.props.photo_url : "https://vignette.wikia.nocookie.net/bokunoheroacademia/images/d/d5/NoPicAvailable.png/revision/latest?cb=20160326222204"
+				const url = this.props.url
+				return (
+					<a target="_blank" href= {`http://${url}`}>
+						<img src= {`${photo_url}`} alt="Test" height="84" width="84">
+						</img>
+					</a>
+				)
+			}
 		}
 	}
 
@@ -153,44 +161,71 @@ export default class Item extends Component {
 			)
 		} else {
 
-			const line1 = this.props.type == null ? "Description not available" : this.props.type
-			const rating = this.props.rating == null ? "Rating not available" : this.props.rating
-			const price = this.props.price == null ? "Price not available" : this.props.price
-			const line2 = rating + " • " + price
-			// display state if the location is US. otherwise, display city and country name
-			let line3
-			if (this.props.address == null) {
-				line3 = "No address available"
-			} else {
-				line3 = (this.props.country === "United States" | this.props.country === "US")?
-				this.props.address + ", " + this.props.city + ", " + this.props.state : 
-				this.props.address + ", " + this.props.city + ", " + this.props.country
-			}				
-			const line4 = "Source: " + this.props.source
-
-			return (
-				<div className='card-wrapper'>
-					<div
-						className='card item-card2'
-						style={{height: `${height}px`}}>
-						<div className='card-header2'>
-							<label className='item-title2'>
-								{this.props.name}
-							</label>
-							<div className='card-body2'>
-								<div class = "textrow">{line1}</div>
-								<div class = "textrow">{line2}</div>
-								<div class = "textrow">{line3}</div>
-								<div class = "textrow">{line4}</div>
-							</div>					
+			if (this.props.source === "Custom") { // display custom card
+				return (
+					<div className='card-wrapper'>
+						<div
+							className='card item-card2'
+							style={{height: `${height}px`}}>
+							<div className='card-header2'>
+								<label className='item-title2'>
+									{this.props.name}
+								</label>
+								<div className='card-body2'>
+									<div class = "textrow">Custom</div>
+									<div class = "textrow">{this.props.address}</div>
+									<div class = "commentrow">Comment: {this.props.description}</div>
+								</div>					 
+							</div>
+							<div id="imageContainer">
+								{this.renderImage()}
+							</div>
 						</div>
-						<div className="imageContainer">
-							{this.renderImage()}
-						</div>
+					
 					</div>
-				
-				</div>
-			)
+				)
+
+
+			} else {
+				const line1 = this.props.type == null ? "Description not available" : this.props.type
+				const rating = this.props.rating == null ? "Rating not available" : this.props.rating
+				const price = this.props.price == null ? "Price not available" : this.props.price
+				const line2 = rating + " • " + price
+				// display state if the location is US. otherwise, display city and country name
+				let line3
+				if (this.props.address == null) {
+					line3 = "No address available"
+				} else {
+					line3 = (this.props.country === "United States" | this.props.country === "US")?
+					this.props.address + ", " + this.props.city + ", " + this.props.state : 
+					this.props.address + ", " + this.props.city + ", " + this.props.country
+				}				
+				const line4 = "Source: " + this.props.source
+				return (
+					<div className='card-wrapper'>
+						<div
+							className='card item-card2'
+							style={{height: `${height}px`}}>
+							<div className='card-header2'>
+								<label className='item-title2'>
+									{this.props.name}
+								</label>
+								<div className='card-body2'>
+									<div class = "textrow">{line1}</div>
+									<div class = "textrow">{line2}</div>
+									<div class = "textrow">{line3}</div>
+									<div class = "textrow">{line4}</div>
+								</div>					
+							</div>
+							<div id="imageContainer">
+								{this.renderImage()}
+							</div>
+
+						</div>
+					
+					</div>
+				)
+			}
 		}
 	}
 }

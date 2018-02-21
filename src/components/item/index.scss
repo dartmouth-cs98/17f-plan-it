@@ -91,4 +91,11 @@
 	overflow: hidden;
 }
 
+.commentrow {
+	width: 160px;
+	height: 16px;
+	padding: 0px;
+	word-wrap: break-word;
+	text-overflow: ellipsis;
+}
 

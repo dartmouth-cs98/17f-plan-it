@@ -103,6 +103,7 @@ export default class Suggestions extends Component {
 											rating={card.rating}
 											price={card.price}
 											source={card.source}
+											description={card.description}
 									/>
 								</div>
 							{provided.placeholder}
