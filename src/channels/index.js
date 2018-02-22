@@ -17,7 +17,6 @@ function logger(payload) {
 
 class Channel {
   constructor() {
-    setInterval(() => this.heartbeat(), heartbeatTimer)
     this.cardUpdateHandler = logger;
     this.cardDeleteHandler = logger;
     this.usersUpdateHandler = logger;
@@ -50,6 +49,8 @@ class Channel {
     this.chan.on("new:user:heartbeat", payload =>  {
       this.usersUpdateHandler(payload)
     })
+
+    setInterval(() => this.heartbeat(), heartbeatTimer)
   }
 
   setCardFunctions(config) {
