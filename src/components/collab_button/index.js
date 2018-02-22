@@ -14,8 +14,11 @@ class CollabButton extends React.Component {
   }
 
   async generateURL() {
+    console.log(this.props.tripId)
     const response = await axios.get(`${ROOT_URL}/sharecode?trip_id=${this.props.tripId}`);
-    const url = window.location.href + "?" + response.data
+    const currentURL = window.location.protocol + window.location.hostname;
+
+    const url = currentURL + "/share" + "?sharecode=" + response.data + "&trip_id=" + this.props.tripId
     this.setState({url})
   }
 

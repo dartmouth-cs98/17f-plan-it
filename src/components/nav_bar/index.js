@@ -23,10 +23,6 @@ class NavBar extends Component {
     this.buttonDecision = this.buttonDecision.bind(this)
 	}
 
-  componentDidMount() {
-    this.props.authUser(cookie.load('auth'))
-  }
-
   reloadPage() {
     this.props.resetTripId()
     window.location.reload()
@@ -106,7 +102,6 @@ class NavBar extends Component {
             lname: response.data.family_name
 
           })
-          this.props.authUser(true)
           this.setState({ authenticated: true });
        }
      }).catch( (error) => {

@@ -45,6 +45,7 @@ export const ActionTypes = {
 	UPDATE_USERS_LIVE: 'UPDATE_USERS_LIVE',
 	DELETE_CARD_LIVE: 'DELETE_CARD_LIVE',
 
+  DELETE_USER_LIVE: 'DELETE_USER_LIVE',
 	AUTH_USER: 'AUTH_USER',
 	DEAUTH_USER: 'DEAUTH_USER',
 	AUTH_ERROR: 'AUTH_ERROR',
@@ -54,7 +55,9 @@ export const ActionTypes = {
 	FETCH_SUGGESTIONS: 'FETCH_SUGGESTIONS',
 	RECEIVE_SUGGESTIONS: 'RECEIVE_SUGGESTIONS',
 	FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR',
-	CLEAR_SUGGESTIONS: 'CLEAR_SUGGESTIONS'
+	CLEAR_SUGGESTIONS: 'CLEAR_SUGGESTIONS',
+
+  CHECK_EDIT_PERMISSION: 'CHECK_EDIT_PERMISSION'
 }
 
 export function resetTripId(id) {
@@ -401,9 +404,38 @@ export function fetchSuggestions(lat, long, tripId, category=null) {
 	}
 }
 
-
 export function clearSuggestions() {
 	return (dispatch) => {
 		dispatch({ type: ActionTypes.CLEAR_SUGGESTIONS })
 	}
+}
+
+export function checkEditPermission(userId, tripId) {
+  return (dispatch) => {
+    const query = `${ROOT_URL}/permissions?user_id=${userId}&trip_id=${tripId}`
+
+    axios.get(query).then((response) => {
+      dispatch({ type: ActionTypes.CHECK_EDIT_PERMISSION, payload: response.data})
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export function giveEditPermission(userId, tripId, shareCode) {
+  return (dispatch) => {
+    const query = `${ROOT_URL}/sharecode?user_id=${userId}&trip_id=${tripId}&verify=${shareCode}`
+    //should do some type of handling with the response eventually
+    axios.get(query).then((response) => {
+      //TODO change api to return true and false instead of yes and no
+      //WARNING deployed api uses yes and no 02/21/18
+      if (response.data == "yes") {
+        dispatch({ type: ActionTypes.CHECK_EDIT_PERMISSION, payload: true})
+      } else {
+        dispatch({ type: ActionTypes.CHECK_EDIT_PERMISSION, payload: false})
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
 }
