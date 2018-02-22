@@ -14,7 +14,7 @@ class ShareCode extends React.Component {
     super(props)
 
     this.state = {
-      notFound: false
+      notFound: false,
     }
   }
 
@@ -31,15 +31,24 @@ class ShareCode extends React.Component {
 
     //if they are logged in, then add them to the edit permissions table
     if (userId && shareCode && tripId) {
-      console.log("User is logged in, giving edit permission")
-      console.log(this.props.user)
+      this.props.checkEditPermission(userId, tripId);
       this.props.giveEditPermission(userId, tripId, shareCode);
     } else if (userId){
       //if they are logged in, but do not have a share code
       //check to see if they have permissions
-      console.log("checking edit permissions")
       this.props.checkEditPermission(userId, tripId)
     }
+    //else there is nothing to check until they log in
+  }
+
+
+  componentWillReceiveProps(nextProps) {
+    const search = qs.parse(this.props.location.search, {ignoreQueryPrefix: true})
+    const userId = nextProps.user.user_id
+    const tripId = search.trip_id
+    const shareCode = search.sharecode
+    this.props.checkEditPermission(userId, tripId);
+    this.props.giveEditPermission(userId, tripId, shareCode);
   }
 
 
@@ -47,6 +56,14 @@ class ShareCode extends React.Component {
     return (
       <div>
         Page not found
+      </div>
+    )
+  }
+
+  renderPromptLogin() {
+    return (
+      <div>
+        Please log in
       </div>
     )
   }
@@ -61,15 +78,13 @@ class ShareCode extends React.Component {
   }
 
   renderFilling() {
-    if (this.state.notFound) {
-      return this.renderNotFound()
+    if (!this.props.user.user_id) {
+      return this.renderPromptLogin()
     }
     if (this.props.permission) {
       return this.renderRedirect()
     }
-    return (
-      <div> Please log in </div>
-    )
+      return this.renderNotFound()
   }
   //I check the permissions
 

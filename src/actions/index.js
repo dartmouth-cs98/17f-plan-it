@@ -425,6 +425,16 @@ export function giveEditPermission(userId, tripId, shareCode) {
   return (dispatch) => {
     const query = `${ROOT_URL}/sharecode?user_id=${userId}&trip_id=${tripId}&verify=${shareCode}`
     //should do some type of handling with the response eventually
-    axios.get(query)
+    axios.get(query).then((response) => {
+      //TODO change api to return true and false instead of yes and no
+      //WARNING deployed api uses yes and no 02/21/18
+      if (response.data == "yes") {
+        dispatch({ type: ActionTypes.CHECK_EDIT_PERMISSION, payload: true})
+      } else {
+        dispatch({ type: ActionTypes.CHECK_EDIT_PERMISSION, payload: false})
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
   }
 }
