@@ -100,7 +100,7 @@ class Toolbar extends Component {
 					        {this.renderCollabButton()}
 						</div>
 					</div>
-				        
+
 					<div className='toolbar-trip-title'>
 						{this.props.tripName}
 					</div>
