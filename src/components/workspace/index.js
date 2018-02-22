@@ -98,7 +98,7 @@ class Workspace extends Component {
 
     //live editing
     this.connectToChannel(tripId);
-    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates)
+    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
 	}
 
   connectToChannel(tripId) {
