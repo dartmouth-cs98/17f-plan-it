@@ -54,7 +54,9 @@ export const ActionTypes = {
 	FETCH_SUGGESTIONS: 'FETCH_SUGGESTIONS',
 	RECEIVE_SUGGESTIONS: 'RECEIVE_SUGGESTIONS',
 	FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR',
-	CLEAR_SUGGESTIONS: 'CLEAR_SUGGESTIONS'
+	CLEAR_SUGGESTIONS: 'CLEAR_SUGGESTIONS',
+
+  CHECK_EDIT_PERMISSION: 'CHECK_EDIT_PERMISSION'
 }
 
 export function resetTripId(id) {
@@ -401,9 +403,28 @@ export function fetchSuggestions(lat, long, tripId, category=null) {
 	}
 }
 
-
 export function clearSuggestions() {
 	return (dispatch) => {
 		dispatch({ type: ActionTypes.CLEAR_SUGGESTIONS })
 	}
+}
+
+export function checkEditPermission(userId, tripId) {
+  return (dispatch) => {
+    const query = `${ROOT_URL}/permissions?user_id=${userId}&trip_id=${tripId}`
+
+    axios.get(query).then((response) => {
+      dispatch({ type: ActionTypes.CHECK_EDIT_PERMISSION, payload: response.data})
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export function giveEditPermission(userId, tripId, shareCode) {
+  return (dispatch) => {
+    const query = `${ROOT_URL}/sharecode?user_id=${userId}&trip_id=${tripId}&verify=${shareCode}`
+    //should do some type of handling with the response eventually
+    axios.get(query)
+  }
 }
