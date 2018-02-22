@@ -6,7 +6,7 @@ import _ from 'lodash'
 import * as qs from 'qs'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { fetchTrip, fetchCards, fetchDay, insertCard, updateCard, updateCards, updateCardsLive, deleteCardLive, deleteCard, fetchSuggestions,
-	clearSuggestions, createQueueCard } from '../../actions/index.js'
+	clearSuggestions, createQueueCard, checkEditPermission } from '../../actions/index.js'
 import { mainChannel } from '../../channels'
 import Toolbar from '../tool_bar/index.js'
 import Suggestions from '../suggestions/index.js'
@@ -88,11 +88,15 @@ class Workspace extends Component {
 		this.props.clearSuggestions()
 		this.props.fetchTrip(tripId)
 
-
 		// if not directed here from onboarding, get the cards
 		if (!this.props.creatingCard) {
 			this.props.fetchDay(tripId, DAY_NUMBER)
 		}
+
+    //check edit permissions
+    this.props.checkEditPermission(this.props.user.user_id, tripId)
+
+    //live editing
     this.connectToChannel(tripId);
     mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates)
 	}
@@ -713,6 +717,19 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
+    if (!this.props.permission) {
+      return (
+			<div id='workspace'>
+				<NavBar background={'globe_background'}/>
+				<Toolbar
+					tripName={'Trip Not Found'}
+					published={false}
+					tripId={tripId}
+					readOnly={false}
+				/>
+      </div>
+      )
+    }
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
@@ -805,7 +822,8 @@ const mapStateToProps = (state) => {
 		cards: state.cards.all,
 		creatingCard: state.cards.creatingCard,
 		fetchingSuggestions: state.cards.fetchingSuggestions,
-		suggestions: state.cards.suggestions
+		suggestions: state.cards.suggestions,
+    permission: state.permission.permission
 	}
 }
 
@@ -846,7 +864,10 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		createQueueCard: (card) => {
 			dispatch(createQueueCard(card))
-		}
+		},
+    checkEditPermission: (userId, tripId) => {
+      dispatch(checkEditPermission(userId, tripId))
+    }
 	}
 }
 
