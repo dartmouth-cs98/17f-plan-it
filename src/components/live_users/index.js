@@ -52,10 +52,8 @@ class LiveUsers extends React.Component {
   }
 
   render() {
-    return (
-      <div className='toolbar-live-users'>
-        {this.renderUsers()}
-      </div>
+    return(
+      this.renderUsers()
     )
   }
 }
