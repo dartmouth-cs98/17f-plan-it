@@ -6,21 +6,20 @@ import cookie from 'react-cookies'
 import * as qs from 'qs'
 import { checkEditPermission, giveEditPermission } from '../../actions'
 
+import NavBar from '../nav_bar'
+import Toolbar from '../tool_bar'
+
 class ShareCode extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
       notFound: false
-
-
     }
-
   }
 
   componentDidMount() {
     const search = qs.parse(this.props.location.search, {ignoreQueryPrefix: true})
-
     const userId = this.props.user.user_id
     const tripId = search.trip_id
     const shareCode = search.sharecode
@@ -31,18 +30,16 @@ class ShareCode extends React.Component {
     }
 
     //if they are logged in, then add them to the edit permissions table
-    if (cookie.load('auth') && shareCode && tripId) {
+    if (userId && shareCode && tripId) {
       console.log("User is logged in, giving edit permission")
       console.log(this.props.user)
       this.props.giveEditPermission(userId, tripId, shareCode);
-    } else {
+    } else if (userId){
       //if they are logged in, but do not have a share code
       //check to see if they have permissions
       console.log("checking edit permissions")
       this.props.checkEditPermission(userId, tripId)
     }
-
-    this.props.checkEditPermission(userId, tripId)
   }
 
 
@@ -63,12 +60,7 @@ class ShareCode extends React.Component {
     )
   }
 
-  //I check the permissions
-
-  // then redirect them to the trip
-  //if the are not logged in, prompt them to log in
-  //this is going to be a seperate page
-  render() {
+  renderFilling() {
     if (this.state.notFound) {
       return this.renderNotFound()
     }
@@ -77,6 +69,27 @@ class ShareCode extends React.Component {
     }
     return (
       <div> Please log in </div>
+    )
+  }
+  //I check the permissions
+
+  // then redirect them to the trip
+  //if the are not logged in, prompt them to log in
+  //this is going to be a seperate page
+  render() {
+    return (
+      <div>
+        <NavBar background={'globe_backround'}/>
+        <Toolbar
+          tripName={"My Trip"}
+          published={false}
+          tripId={null}
+          readOnly={true}
+        />
+        {this.renderFilling()}
+      </div>
+
+
     )
   }
 }
