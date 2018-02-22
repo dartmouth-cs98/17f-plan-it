@@ -93,19 +93,28 @@ class Toolbar extends Component {
 		} else {
 			return (
 				<div id='tool-bar'>
-          <LiveUsers tripId={this.props.tripId} />
-          {this.renderCollabButton()}
+					<div className= 'left-wrapper'>
+						<div className='toolbar-live-users'>
+						
+							<LiveUsers tripId={this.props.tripId} />
+					        {this.renderCollabButton()}
+						</div>
+					</div>
+
 					<div className='toolbar-trip-title'>
 						{this.props.tripName}
 					</div>
-					<div className='toggle-options'>
-						<div className ='toolbar-download'>
-							<DownloadTrip tripId={this.props.tripId} />
-						</div>
-						<div
-							onClick={this.togglePublish}
-							className='toolbar-click'>
-							{this.getPublishedText()}
+
+					<div className= 'right-wrapper'>
+						<div className='toggle-options'>
+							<div className ='toolbar-download'>
+								<DownloadTrip tripId={this.props.tripId} />
+							</div>
+							<div
+								onClick={this.togglePublish}
+								className='toolbar-click'>
+								{this.getPublishedText()}
+							</div>
 						</div>
 					</div>
 				</div>
