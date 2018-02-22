@@ -43,8 +43,8 @@
 	min-width: 40px !important;
 }
 
-.imageContainer {
-    vertical-align: center;
+#imageContainer {
+	vertical-align: center;
     position: absolute;
     right: 0px;
     padding-top: 5px;
@@ -58,7 +58,7 @@
 	flex-flow: column wrap;
 
 	.card-header2 {
-		width: 240px;
+		width: 210px;
 
 		.item-title2 {
 			margin-top: 6px;

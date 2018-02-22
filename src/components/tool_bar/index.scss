@@ -13,39 +13,51 @@
 .left-wrapper {
 	flex: 1;
 	display: flex;
-}
-.right-wrapper{
-	flex: 1;
-	display: flex;
-	justify-content: flex-end;
-}
-
-.toolbar-items {
-	text-align: center;
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
+	justify-content: flex-start;
 }
 
 .toolbar-live-users {
-	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: lighter;
-	font-size: 16px;
-	color: #FFFFFF;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	justify-content: center;
+	vertical-align: center;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
+.user-circle {
+	border-radius: 50%;
+	/* behavior: url(PIE.htc); */
+
+	width: 38px;
+	height: 38px;
+	padding-top: 2px;
+
+	background: #FFFFFF;
+	border: 2px solid #6FCF97;
+	color: #6FCF97;
 	text-align: center;
-	padding-left: 10px;
-	align-self: center;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 20px;
+	vertical-align: center;
+
 	display: inline-block;
+	margin-right: 5px;
 }
 
 .toolbar-trip-title {
-
 	font-family: 'Source Sans Pro', sans-serif;
 	font-weight: lighter;
 	font-size: 30px;
 	color: #FFFFFF;
 	text-align: center;
+}
 
+.right-wrapper{
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
 }
 
 .toggle-options {
@@ -56,7 +68,7 @@
 	vertical-align: center;
 	position: absolute;
 	right: 0;
-	top: 12.5px;
+	top: 10px;
 }
 
 .toolbar-download{
@@ -73,11 +85,6 @@
 	cursor: pointer;
 	box-shadow: 0 0 10px grey;
 	text-align: center;
-}
-
-.toolbar-favorite:hover {
-	cursor: pointer;
-	text-shadow: 0 0 10px grey;
 }
 
 .toolbar-click {
@@ -100,23 +107,10 @@
 	font-weight: bold;
 	margin-right: 10px;
 	color: #FFFFFF;
+	margin-left: 2px;
 }
 
-.user-circle {
-	border-radius: 50%;
-	/* behavior: url(PIE.htc); */
-
-	width: 38px;
-	height: 38px;
-	padding-top: 2px;
-
-	background: #FFFFFF;
-	border: 2px solid #6FCF97;
-	color: #6FCF97;
-	text-align: center;
-	font-family: 'Source Sans Pro', sans-serif;
-	font-size: 20px;
-	vertical-align: center;
-
-	display: inline-block;
+.toolbar-favorite:hover {
+	cursor: pointer;
+	text-shadow: 0 0 10px grey;
 }
