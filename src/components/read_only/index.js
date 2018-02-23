@@ -143,17 +143,8 @@ class ReadOnly extends Component {
 		} else{ 
 			trip_name = this.state.trip_name
 		}
-		console.log(new Date(this.state.start_date))
-		console.log(new Date(this.state.start_date).getTime())
-		console.log(new Date(this.state.start_date).getTimezoneOffset()/(60))
 
 		let day_now = new Date()
-
-
-		console.log(day_now)
-		console.log(day_now.getTimezoneOffset()/60)
-
-		console.log(new Date(new Date(this.state.start_date).getTime() - 12*60*60*1000 - day_now.getTimezoneOffset()*60*1000))
 
 		let start_date = _.isUndefined(this.state.start_date)? new Date() : new Date(new Date(this.state.start_date).getTime() - 12*60*60*1000 - new Date(this.state.start_date).getTimezoneOffset()*60*1000)
 		let end_date = this.props.trips[0].end_time? this.addDays(new Date(this.props.trips[0].end_time), 
@@ -259,7 +250,7 @@ class ReadOnly extends Component {
 							name={this.state.trip_name}
 						/>
 						<p>Give it a photo</p>
-						<OnboardingInput placeholder={'Enter trip image URL'}
+						<OnboardingInput placeholder={'Enter image URL'}
 							onImageChange={this.onImageChange}
 							name={this.state.image_url}
 						/>
