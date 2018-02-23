@@ -48,6 +48,11 @@
 	color: #FFFFFF;
 	text-align: center;
 	justify-content: center;
+
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
 }
 
 
