@@ -102,7 +102,7 @@ class Onboarding extends Component {
 		let photo_url = this.state.image_url
 		if (_.isUndefined(photo_url) || photo_url === '') {
 			photo_url = 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
-		}
+		} 
 
 		let start = new Date(startDate)
 		start.setHours(0, 0, 0, 0)
@@ -148,14 +148,11 @@ class Onboarding extends Component {
 	}
 
 	onNameChange(event) {
-		// if (event.target.value.length < 20) {
-		// 	this.setState({ trip_name: event.target.value })
-		// }
 		this.setState({ trip_name: event.target.value })
 	}
 
 	onImageChange(event) {
-		this.setState({ image_url: event.target.value })
+		this.setState( {image_url: event.target.value} )
 	}
 
 	onOtherNameChange(index, type, name) {
@@ -360,6 +357,15 @@ class Onboarding extends Component {
 		if (!ok) {
 			err_msg = 'Please enter at least one city with a start date'
 		}
+
+		let imageExists = require('image-exists');
+		imageExists(this.state.image_url, function(exists) {
+			if (exists) {
+			}
+			else {
+			    err_msg = 'Invalid image url'
+			}
+		});
 
 		if (!_.isUndefined(err_msg) || !ok) {
 			return (
