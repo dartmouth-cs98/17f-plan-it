@@ -40,6 +40,14 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
+
+		this.defaults = ['http://crosstalk.cell.com/hubfs/Images/Trending/How%20to%20write%20a%20review%20article%20that%20people%20will%20read/thumbnail.jpg?t=1514480830697',
+		'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg',
+		'https://www.vikingcruises.com/oceans/images/Airplane_Clouds_Sunset_754x503_tcm13-69641.jpg',
+		'https://i2.wp.com/punkymoms.com/wp-content/uploads/2017/03/40-ways-to-save-the-world.jpeg?resize=678%2C381',
+		'https://4.bp.blogspot.com/-OqkXUZnYMyQ/Uzlo8M3dA0I/AAAAAAAA_EA/p5m-GTIv_4c/s3200/iStock_000004073677Small.jpg',
+		'http://img-aws.ehowcdn.com/560x560p/photos.demandstudios.com/getty/article/18/140/87452878.jpg'
+		]
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -114,7 +122,7 @@ class Onboarding extends Component {
 		let photo_url = this.state.image_url
 		// If undefined or invalid, make it the default
 		if (_.isUndefined(photo_url) || photo_url === '' || !this.checkImageExists(photo_url)) {
-			photo_url = 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
+			photo_url = this.defaults[Math.floor(Math.random() * 6)]
 		} 
 
 		let start = new Date(startDate)
