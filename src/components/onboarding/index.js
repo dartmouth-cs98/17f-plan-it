@@ -93,6 +93,18 @@ class Onboarding extends Component {
 		}
 	}
 
+	checkImageExists(url) {
+		let imageExists = require('image-exists')
+		imageExists(url, function(exists) {
+			if (exists) {
+				return true
+			}
+			else {
+				return false
+			}
+		});
+	}
+
 	onCreateTrip(startDate, endDate) {
 		let trip_name = this.state.trip_name
 		if (_.isUndefined(trip_name) || trip_name === '') {
@@ -100,7 +112,8 @@ class Onboarding extends Component {
 		}
 
 		let photo_url = this.state.image_url
-		if (_.isUndefined(photo_url) || photo_url === '') {
+		// If undefined or invalid, make it the default
+		if (_.isUndefined(photo_url) || photo_url === '' || !this.checkImageExists(photo_url)) {
 			photo_url = 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
 		} 
 
@@ -357,15 +370,6 @@ class Onboarding extends Component {
 		if (!ok) {
 			err_msg = 'Please enter at least one city with a start date'
 		}
-
-		let imageExists = require('image-exists');
-		imageExists(this.state.image_url, function(exists) {
-			if (exists) {
-			}
-			else {
-			    err_msg = 'Invalid image url'
-			}
-		});
 
 		if (!_.isUndefined(err_msg) || !ok) {
 			return (

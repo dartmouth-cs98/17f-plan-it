@@ -120,15 +120,23 @@ class ReadOnly extends Component {
 	}
 
 	onNameChange(event) {
-		// if (event.target.value.length < 20) {
-		// 	this.setState({ trip_name: event.target.value })
-		// }
-
 		this.setState({ trip_name: event.target.value })
 	}
 
 	onImageChange(event) {
 		this.setState({ image_url: event.target.value })
+	}
+
+	checkImageExists(url) {
+		let imageExists = require('image-exists')
+		imageExists(url, function(exists) {
+			if (exists) {
+				return true
+			}
+			else {
+				return false
+			}
+		});
 	}
 
 	onImportTrip() {
@@ -150,12 +158,18 @@ class ReadOnly extends Component {
 		let end_date = this.props.trips[0].end_time? this.addDays(new Date(this.props.trips[0].end_time), 
 			this.getDayOffset(start_date, new Date(this.props.trips[0].start_time))) : null
 
+		let photo_url = this.state.image_url
+		// If undefined or invalid, make it the default
+		if (_.isUndefined(photo_url) || photo_url === '' || !this.checkImageExists(photo_url)) {
+			photo_url = 'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg'
+		} 
+
 		this.props.createTrip({
 			name: trip_name,
 			user_id: cookie.load('auth'),
 			start_time: start_date,
 			end_time: end_date,
-			photo_url: this.state.image_url
+			photo_url
 		})
 	}
 
