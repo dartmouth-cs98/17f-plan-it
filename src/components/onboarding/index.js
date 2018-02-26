@@ -430,11 +430,12 @@ class Onboarding extends Component {
 	}
 
 	renderStartCity() {
+		let placeholder = cookie.load('auth')?  'Where does your adventure begin' : 'Please sign up or log in'
 		const inputProps = {
 		    value: _.isUndefined(this.state.cities[0]) ? '' : this.state.cities[0].name,
 		    onChange: (name) => { this.onCityChange(name) },
 		    type: 'text',
-		    placeholder: 'Where does your adventure begin?',
+		    placeholder,
 		    autoFocus: true,
 		}
 		const handleSelect = (address, placeId) => {
