@@ -23,7 +23,9 @@ class Onboarding extends Component {
 			cities: [],
 			modal_open: false,
 			err_msg: '',
-			image_url: ''
+			image_url: '',
+			next_disabled: false,
+			prev_disabled: true
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -463,14 +465,20 @@ class Onboarding extends Component {
 	}
 
 	render() {
+
 		const onboarding_settings = {
-	      dots: true,
-	      infinite: false,
-	      speed: 500,
-	      slidesToShow: 1,
-	      slidesToScroll: 1,
-	      nextArrow: <NextArrow/>,
-	      prevArrow: <PrevArrow/>
+			dots: true,
+			infinite: false,
+			speed: 500,
+			slidesToShow: 1,
+			slidesToScroll: 1,
+			afterChange: (currentSlide) => {
+				let next_disabled = currentSlide === 2? true : false
+				let prev_disabled = currentSlide === 0? true : false
+				this.setState({ next_disabled, prev_disabled })
+			},
+			nextArrow: <NextArrow disabled={this.state.next_disabled}/>,
+			prevArrow: <PrevArrow disabled={this.state.prev_disabled}/>
     	};
 
     	if (this.state.landing_page) {
