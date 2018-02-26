@@ -94,6 +94,10 @@ class OnboardingInput extends Component {
         }
         else if (this.state.placeholder === 'Enter address or attraction name') {
             return this.renderAutocomplete()
+        } else if (this.state.placeholder === 'Please sign up or log in' ) {
+          return (
+            <input type='text' className='name_input' placeholder={this.props.placeholder} />
+          )
         }
         else {
             let delete_classes = this.props.index === 0? 'fa fa-trash-o fa-2x delete_disabled' : 'fa fa-trash-o fa-2x delete'
