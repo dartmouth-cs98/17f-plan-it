@@ -30,6 +30,7 @@ const CATEGORIES = [
 	'rentals',
 	'fitness & instruction',
 	'parks',
+	'nightlife',
 	'queue'
 ]
 
