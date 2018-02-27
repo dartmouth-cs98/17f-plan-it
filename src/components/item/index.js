@@ -8,16 +8,16 @@ import './index.scss'
 export default class Item extends Component {
 	renderBody() {
 		if (this.props.buttons) {
-			const hours = (new Date(this.props.startTime)).getHours()
-			const mins = (new Date(this.props.startTime)).getMinutes()
-			const durHours = Math.floor(this.props.duration / (1000 * 60 * 60))
-			const durMins = Math.floor((this.props.duration % (1000 * 60 * 60)) / (1000 * 60))
+			const startHours = (new Date(this.props.startTime)).getHours()
+			const startMins = (new Date(this.props.startTime)).getMinutes()
+			const endHours = (new Date(this.props.endTime)).getHours()
+			const endMins = (new Date(this.props.endTime)).getMinutes()
 
 			return (
 				<div>
 					<div className='time-edit'>
 						<label className='time-label'>
-							{`Starts: ${hours < 10 ? '0' : ''}${hours}:${mins < 10 ? '0' : ''}${mins}`}
+							{`Starts: ${startHours < 10 ? '0' : ''}${startHours}:${startMins < 10 ? '0' : ''}${startMins}`}
 						</label>
 						<FlatButton
 							className='edit-icon'
@@ -48,7 +48,7 @@ export default class Item extends Component {
 					</div>
 					<div className='time-edit'>
 						<label className='time-label'>
-							{`Duration: ${durHours < 10 ? '0' : ''}${durHours}:${durMins < 10 ? '0' : ''}${durMins}`}
+							{`Ends: ${endHours < 10 ? '0' : ''}${endHours}:${endMins < 10 ? '0' : ''}${endMins}`}
 						</label>
 						<FlatButton
 							className='edit-icon'
@@ -80,7 +80,7 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
-			return			
+			return
 		}
 	}
 
@@ -151,7 +151,7 @@ export default class Item extends Component {
 							<label className='item-title'>
 								{title}
 							</label>
-							{buttons}					
+							{buttons}
 						</div>
 						<div className='card-body'>
 							{this.renderBody()}
@@ -175,13 +175,13 @@ export default class Item extends Component {
 									<div class = "textrow">Custom</div>
 									<div class = "textrow">{this.props.address}</div>
 									<div class = "commentrow">Comment: {this.props.description}</div>
-								</div>					 
+								</div>
 							</div>
 							<div id="imageContainer">
 								{this.renderImage()}
 							</div>
 						</div>
-					
+
 					</div>
 				)
 
@@ -197,9 +197,9 @@ export default class Item extends Component {
 					line3 = "No address available"
 				} else {
 					line3 = (this.props.country === "United States" | this.props.country === "US")?
-					this.props.address + ", " + this.props.city + ", " + this.props.state : 
+					this.props.address + ", " + this.props.city + ", " + this.props.state :
 					this.props.address + ", " + this.props.city + ", " + this.props.country
-				}				
+				}
 				const line4 = "Source: " + this.props.source
 				return (
 					<div className='card-wrapper'>
@@ -215,14 +215,14 @@ export default class Item extends Component {
 									<div class = "textrow">{line2}</div>
 									<div class = "textrow">{line3}</div>
 									<div class = "textrow">{line4}</div>
-								</div>					
+								</div>
 							</div>
 							<div id="imageContainer">
 								{this.renderImage()}
 							</div>
 
 						</div>
-					
+
 					</div>
 				)
 			}
