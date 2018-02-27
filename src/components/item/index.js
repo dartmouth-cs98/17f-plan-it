@@ -8,16 +8,25 @@ import './index.scss'
 export default class Item extends Component {
 	renderBody() {
 		if (this.props.buttons) {
-			const startHours = (new Date(this.props.startTime)).getHours()
+			let startHours = (new Date(this.props.startTime)).getHours()
 			const startMins = (new Date(this.props.startTime)).getMinutes()
-			const endHours = (new Date(this.props.endTime)).getHours()
+			let startPm = false
+			if (startHours > 11) startPm = true
+			if (startHours > 12) startHours -= 12
+			if (startHours === 0) startHours = 12
+
+			let endHours = (new Date(this.props.endTime)).getHours()
 			const endMins = (new Date(this.props.endTime)).getMinutes()
+			let endPm = false
+			if (endHours > 11) endPm = true
+			if (endHours > 12) endHours -= 12
+			if (endHours === 0) endHours = 12
 
 			return (
 				<div>
 					<div className='time-edit'>
 						<label className='time-label'>
-							{`Starts: ${startHours < 10 ? '0' : ''}${startHours}:${startMins < 10 ? '0' : ''}${startMins}`}
+							{`Starts: ${startHours < 10 ? '0' : ''}${startHours}:${startMins < 10 ? '0' : ''}${startMins} ${startPm ? 'PM' : 'AM'}`}
 						</label>
 						<FlatButton
 							className='edit-icon'
@@ -48,7 +57,7 @@ export default class Item extends Component {
 					</div>
 					<div className='time-edit'>
 						<label className='time-label'>
-							{`Ends: ${endHours < 10 ? '0' : ''}${endHours}:${endMins < 10 ? '0' : ''}${endMins}`}
+							{`Ends: ${endHours < 10 ? '0' : ''}${endHours}:${endMins < 10 ? '0' : ''}${endMins} ${endPm ? 'PM' : 'AM'}`}
 						</label>
 						<FlatButton
 							className='edit-icon'
@@ -83,7 +92,6 @@ export default class Item extends Component {
 			return
 		}
 	}
-
 
 	renderImage() {
 		if (!this.props.buttons) {
@@ -140,7 +148,6 @@ export default class Item extends Component {
 
 		if (this.props.buttons) {
 			// this is an itinerary card
-
 			return (
 				<div className='card-wrapper'>
 					<div
@@ -160,7 +167,6 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
-
 			if (this.props.source === "Custom") { // display custom card
 				return (
 					<div className='card-wrapper'>
@@ -181,11 +187,8 @@ export default class Item extends Component {
 								{this.renderImage()}
 							</div>
 						</div>
-
 					</div>
 				)
-
-
 			} else {
 				const line1 = this.props.type == null ? "Description not available" : this.props.type
 				const rating = this.props.rating == null ? "Rating not available" : this.props.rating
