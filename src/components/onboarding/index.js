@@ -296,6 +296,7 @@ class Onboarding extends Component {
 
 		if (incomplete) {
 			// need to let user know that they're missing a date input
+			this.setState({ modal_open: true, err_msg: 'Please input dates before adding city'})
 			return
 		}
 
