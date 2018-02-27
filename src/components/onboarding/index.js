@@ -25,7 +25,8 @@ class Onboarding extends Component {
 			err_msg: '',
 			image_url: '',
 			next_disabled: false,
-			prev_disabled: true
+			prev_disabled: true,
+			authenticated: cookie.load('auth')
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -42,6 +43,7 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
+		this.onAuthenticate = this.onAuthenticate.bind(this)
 
 		this.defaults = ['http://crosstalk.cell.com/hubfs/Images/Trending/How%20to%20write%20a%20review%20article%20that%20people%20will%20read/thumbnail.jpg?t=1514480830697',
 		'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg',
@@ -101,6 +103,10 @@ class Onboarding extends Component {
 			this.props.createCard(cityCards)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
 		}
+	}
+
+	onAuthenticate(authenticated) {
+		this.setState({ authenticated })
 	}
 
 	checkImageExists(url) {
@@ -290,6 +296,7 @@ class Onboarding extends Component {
 
 		if (incomplete) {
 			// need to let user know that they're missing a date input
+			this.setState({ modal_open: true, err_msg: 'Please input dates before adding city'})
 			return
 		}
 
@@ -466,7 +473,6 @@ class Onboarding extends Component {
 	}
 
 	render() {
-
 		const onboarding_settings = {
 			dots: true,
 			infinite: false,
@@ -486,7 +492,7 @@ class Onboarding extends Component {
     		return (
 				<div>
 					<div className='landing_page'>
-						<NavBar background={'no_background'} page={'ONBOARDING'}/>
+						<NavBar background={'no_background'} page={'ONBOARDING'} onAuthenticate={this.onAuthenticate} landingPage={true}/>
 						<Modal
 						    isOpen={this.state.modal_open}
 						    onRequestClose={this.onModalClose}

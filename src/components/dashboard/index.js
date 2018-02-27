@@ -46,7 +46,7 @@ class Dashboard extends Component {
 	renderFavoritedTrips() {
 		return this.props.favoritedTrips.map((trip) => {
 			return (
-				<Link to={`/preview/:${trip.id}`} key={trip.id} onClick={()=>this.viewTrip(trip.id)}>
+				<Link to={`/preview/:${trip.trip_id}`} key={trip.id} onClick={()=>this.viewTrip(trip.id)}>
 					<Card 
 						className='trip_card'>
 						<CardMedia className='card_img'>
