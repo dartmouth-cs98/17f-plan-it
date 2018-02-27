@@ -374,7 +374,8 @@ class Workspace extends Component {
 				// get the end time of the previous card to be the start time of the new card
 				let start
 				if (itinerary.length === 0 || result.destination.index === 0) {
-					start = new Date(city.start_time)
+					// the first card inserted into a day should start at 8am
+					start = new Date((new Date(city.start_time)).getTime() + (8 * 60 * 60 * 1000))
 				} else {
 					start = new Date(itinerary[result.destination.index - 1].end_time)
 				}

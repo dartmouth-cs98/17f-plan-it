@@ -8,16 +8,25 @@ import './index.scss'
 export default class Item extends Component {
 	renderBody() {
 		if (this.props.buttons) {
-			const hours = (new Date(this.props.startTime)).getHours()
-			const mins = (new Date(this.props.startTime)).getMinutes()
-			const durHours = Math.floor(this.props.duration / (1000 * 60 * 60))
-			const durMins = Math.floor((this.props.duration % (1000 * 60 * 60)) / (1000 * 60))
+			let startHours = (new Date(this.props.startTime)).getHours()
+			const startMins = (new Date(this.props.startTime)).getMinutes()
+			let startPm = false
+			if (startHours > 11) startPm = true
+			if (startHours > 12) startHours -= 12
+			if (startHours === 0) startHours = 12
+
+			let endHours = (new Date(this.props.endTime)).getHours()
+			const endMins = (new Date(this.props.endTime)).getMinutes()
+			let endPm = false
+			if (endHours > 11) endPm = true
+			if (endHours > 12) endHours -= 12
+			if (endHours === 0) endHours = 12
 
 			return (
 				<div>
 					<div className='time-edit'>
 						<label className='time-label'>
-							{`Starts: ${hours < 10 ? '0' : ''}${hours}:${mins < 10 ? '0' : ''}${mins}`}
+							{`Starts: ${startHours < 10 ? '0' : ''}${startHours}:${startMins < 10 ? '0' : ''}${startMins} ${startPm ? 'PM' : 'AM'}`}
 						</label>
 						<FlatButton
 							className='edit-icon'
@@ -48,7 +57,7 @@ export default class Item extends Component {
 					</div>
 					<div className='time-edit'>
 						<label className='time-label'>
-							{`Duration: ${durHours < 10 ? '0' : ''}${durHours}:${durMins < 10 ? '0' : ''}${durMins}`}
+							{`Ends: ${endHours < 10 ? '0' : ''}${endHours}:${endMins < 10 ? '0' : ''}${endMins} ${endPm ? 'PM' : 'AM'}`}
 						</label>
 						<FlatButton
 							className='edit-icon'
@@ -80,10 +89,9 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
-			return			
+			return
 		}
 	}
-
 
 	renderImage() {
 		if (!this.props.buttons) {
@@ -140,7 +148,6 @@ export default class Item extends Component {
 
 		if (this.props.buttons) {
 			// this is an itinerary card
-
 			return (
 				<div className='card-wrapper'>
 					<div
@@ -151,7 +158,7 @@ export default class Item extends Component {
 							<label className='item-title'>
 								{title}
 							</label>
-							{buttons}					
+							{buttons}
 						</div>
 						<div className='card-body'>
 							{this.renderBody()}
@@ -160,7 +167,6 @@ export default class Item extends Component {
 				</div>
 			)
 		} else {
-
 			if (this.props.source === "Custom") { // display custom card
 				return (
 					<div className='card-wrapper'>
@@ -175,17 +181,14 @@ export default class Item extends Component {
 									<div class = "textrow">Custom</div>
 									<div class = "textrow">{this.props.address}</div>
 									<div class = "commentrow">Comment: {this.props.description}</div>
-								</div>					 
+								</div>
 							</div>
 							<div id="imageContainer">
 								{this.renderImage()}
 							</div>
 						</div>
-					
 					</div>
 				)
-
-
 			} else {
 				const line1 = this.props.type == null ? "Description not available" : this.props.type
 				const rating = this.props.rating == null ? "Rating not available" : this.props.rating
@@ -197,9 +200,9 @@ export default class Item extends Component {
 					line3 = "No address available"
 				} else {
 					line3 = (this.props.country === "United States" | this.props.country === "US")?
-					this.props.address + ", " + this.props.city + ", " + this.props.state : 
+					this.props.address + ", " + this.props.city + ", " + this.props.state :
 					this.props.address + ", " + this.props.city + ", " + this.props.country
-				}				
+				}
 				const line4 = "Source: " + this.props.source
 				return (
 					<div className='card-wrapper'>
@@ -215,14 +218,14 @@ export default class Item extends Component {
 									<div class = "textrow">{line2}</div>
 									<div class = "textrow">{line3}</div>
 									<div class = "textrow">{line4}</div>
-								</div>					
+								</div>
 							</div>
 							<div id="imageContainer">
 								{this.renderImage()}
 							</div>
 
 						</div>
-					
+
 					</div>
 				)
 			}

@@ -125,7 +125,7 @@ class Onboarding extends Component {
 		// If undefined or invalid, make it the default
 		if (_.isUndefined(photo_url) || photo_url === '' || !this.checkImageExists(photo_url)) {
 			photo_url = this.defaults[Math.floor(Math.random() * 6)]
-		} 
+		}
 
 		let start = new Date(startDate)
 		start.setHours(0, 0, 0, 0)
