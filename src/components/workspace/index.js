@@ -410,6 +410,7 @@ class Workspace extends Component {
 				// add the new card to the itinerary
 				itinerary.splice(result.destination.index, 0, inserted)
 
+
 				// shift each card back by the duration of the card removed
 				for (let i = result.destination.index + 1; i < itinerary.length; i++) {
 
@@ -467,7 +468,7 @@ class Workspace extends Component {
 			let start = result.destination.index > result.source.index ?
 				new Date(itinerary[result.destination.index].end_time) : new Date(itinerary[result.destination.index].start_time)
 
-			const dayEnd = new Date(city.start_time)
+			let dayEnd  = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
 			dayEnd.setHours(24, 0, 0, 0)
 
 			// get the info of the object you're dragging
@@ -500,6 +501,7 @@ class Workspace extends Component {
 
 			// shift each card back by the duration of the card removed
 			for (let i = result.destination.index + 1; i < endIndex; i++) {
+
 				const card = itinerary[i]
 
 				let endTime = new Date(card.end_time)
