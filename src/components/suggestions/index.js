@@ -48,7 +48,10 @@ export default class Suggestions extends Component {
 				<IconMenu
 					className='filter-icon'
 					iconButtonElement={
-						<IconButton>
+						<IconButton
+							data-tip
+							data-for='filterInfo'
+						>
 							<FontIcon
 								className='fa fa-filter'
 								color={'#FFFFFF'}
@@ -77,6 +80,9 @@ export default class Suggestions extends Component {
 				/>
 				<ReactTooltip id='customInfo' effect='solid' offset={{ bottom: 13 }}>
 					<span>Create a custom card</span>
+				</ReactTooltip>
+				<ReactTooltip id='filterInfo' effect='solid' offset={{ bottom: 13 }}>
+					<span>Filter suggestions</span>
 				</ReactTooltip>
 			</div>
 		)
