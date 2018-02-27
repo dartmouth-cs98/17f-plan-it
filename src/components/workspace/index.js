@@ -708,7 +708,29 @@ class Workspace extends Component {
 		// add the city card back in
 		itinerary.splice(0, 0, city)
 
+		this.updateTravelTimes(itinerary)
+
 		this.sendUpdates(itinerary, tripId)
+	}
+
+	updateTravelTimes(itinerary) {
+
+		console.log(itinerary)
+
+		for (let i = 0; i < itinerary.length-1; i++) {
+
+			let start_lat = itinerary[i].lat
+			let start_long = itinerary[i].long
+			let end_lat = itinerary[i+1].lat
+			let end_long = itinerary[i+1].long
+			let time = new Date(itinerary[i].end_time).getTime()
+
+			const url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=${start_lat},${start_long}&destinations=${end_lat},${end_long}&departure_time=${time}"
+
+
+		}
+
+		
 	}
 
 	render() {
