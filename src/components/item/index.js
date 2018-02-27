@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import FlatButton from 'material-ui/FlatButton'
 import IconButton from 'material-ui/IconButton'
 import FontIcon from 'material-ui/FontIcon'
+import ReactTooltip from 'react-tooltip'
 import { scaleLinear } from 'd3-scale'
 import './index.scss'
 
@@ -125,6 +126,8 @@ export default class Item extends Component {
 					/>
 				}
 				onClick={this.props.remove}
+				data-tip
+				data-for='deleteTip'
 			/>,
 			<FlatButton
 				className='item-icon'
@@ -135,6 +138,8 @@ export default class Item extends Component {
 					/>
 				}
 				onClick={this.props.search}
+				data-tip
+				data-for='searchTip'
 			/>
 		] : []
 
@@ -159,6 +164,12 @@ export default class Item extends Component {
 								{title}
 							</label>
 							{buttons}
+							<ReactTooltip id='searchTip' effect='solid' offset={{ bottom: 5 }}>
+								<span>Search from this location</span>
+							</ReactTooltip>
+							<ReactTooltip id='deleteTip' effect='solid' offset={{ bottom: 5 }}>
+								<span>Delete this item</span>
+							</ReactTooltip>
 						</div>
 						<div className='card-body'>
 							{this.renderBody()}

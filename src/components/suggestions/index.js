@@ -3,9 +3,10 @@ import _ from 'lodash'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import IconMenu from 'material-ui/IconMenu'
-import IconButton from 'material-ui/IconButton';
+import IconButton from 'material-ui/IconButton'
 import MenuItem from 'material-ui/MenuItem'
-import FontIcon from 'material-ui/FontIcon';
+import FontIcon from 'material-ui/FontIcon'
+import ReactTooltip from 'react-tooltip'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import Item from '../item/index.js'
 import './index.scss'
@@ -71,7 +72,12 @@ export default class Suggestions extends Component {
 					className='fa fa-plus add-icon'
 					style={{color: '#FFFFFF'}}
 					onClick={this.props.onModalOpen}
+					data-tip
+					data-for='customInfo'
 				/>
+				<ReactTooltip id='customInfo' effect='solid' offset={{ bottom: 13 }}>
+					<span>Create a custom card</span>
+				</ReactTooltip>
 			</div>
 		)
 	}
