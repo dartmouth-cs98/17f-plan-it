@@ -213,10 +213,12 @@ class Workspace extends Component {
 		this.setState({ name_error, address_error })
 
 		if (custom_card.name && custom_card.lat && custom_card.long) {
+			console.log(custom_card)
 			this.props.createQueueCard(custom_card)
-
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
+			this.props.fetchSuggestions(this.state.pinLat, this.state.pinLong, tripId, 'queue')
+
 			const { pinLat, pinLong } = this.state
 			if (!_.isNil(pinLat) && !_.isNil(pinLong)) {
 				this.props.fetchSuggestions(pinLat, pinLong, tripId, 'queue')
@@ -782,7 +784,7 @@ class Workspace extends Component {
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<div className='planner'>
 						<Suggestions
-							suggestions={suggestions}
+							suggestions={this.props.suggestions}
 							category={this.state.category}
 							selectCategory={this.selectCategory}
 							onModalOpen={this.onModalOpen}
