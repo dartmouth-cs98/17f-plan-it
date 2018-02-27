@@ -26,7 +26,16 @@ const getListStyle = isDraggingOver => ({
 		padding: grid,
 })
 
-const menuItems = ['All Attractions', 'Food', 'Hotels', 'Rentals', 'Fitness & Instruction', 'Parks', 'Your Added Cards']
+const menuItems = [
+	'All Attractions',
+	'Food',
+	'Hotels',
+	'Rentals',
+	'Fitness & Instruction',
+	'Parks',
+	'Nightlife',
+	'Your Added Cards'
+]
 
 export default class Suggestions extends Component {
 	renderHeader() {
@@ -39,7 +48,7 @@ export default class Suggestions extends Component {
 					className='filter-icon'
 					iconButtonElement={
 						<IconButton>
-							<FontIcon 
+							<FontIcon
 								className='fa fa-filter'
 								color={'#FFFFFF'}
 							/>
@@ -55,89 +64,89 @@ export default class Suggestions extends Component {
 					<MenuItem value="3" primaryText="Rentals" />
 					<MenuItem value="4" primaryText="Fitness & Instruction" />
 					<MenuItem value="5" primaryText="Parks" />
-					<MenuItem value="6" primaryText="Your Added Cards" />
+					<MenuItem value="6" primaryText="Nightlife" />
+					<MenuItem value="7" primaryText="Your Added Cards" />
 				</IconMenu>
 				<i
 					className='fa fa-plus add-icon'
 					style={{color: '#FFFFFF'}}
 					onClick={this.props.onModalOpen}
 				/>
-				
-				</div>
-			)
-		}
+			</div>
+		)
+	}
 
-		renderList() {
-			let index = 0
-			const suggestions = _.map(this.props.suggestions, (card) => {
-				// keys and id's have a 'sugg' prefix to differentiate from itinerary items
-				return (
-					<Draggable key={`sugg${index}`} draggableId={`sugg${index}`} index={index++}>
-						{(provided, snapshot) => (
-							<div>
+	renderList() {
+		let index = 0
+		const suggestions = _.map(this.props.suggestions, (card) => {
+			// keys and id's have a 'sugg' prefix to differentiate from itinerary items
+			return (
+				<Draggable key={`sugg${index}`} draggableId={`sugg${index}`} index={index++}>
+					{(provided, snapshot) => (
+						<div>
+							<div
+								ref={provided.innerRef}
+								{...provided.draggableProps}
+								{...provided.dragHandleProps}
+								style={getItemStyle(
+										snapshot.isDragging,
+										provided.draggableProps.style,
+								)}
+							>
+								<Item
+										key={card.id}
+										name={card.name}
+										description={card.description}
+										timeScale={TIME_SCALE}
+										startTime={card.start_time}
+										endTime={card.end_time}
+										duration={DURATION}
+										buttons={false}
+										photo_url={card.photo_url}
+										url={card.url}
+										type={card.type}
+										address={card.address}
+										city={card.city}
+										state={card.state}
+										country={card.country}
+										rating={card.rating}
+										price={card.price}
+										source={card.source}
+										description={card.description}
+								/>
+							</div>
+						{provided.placeholder}
+						</div>
+					)}
+				</Draggable>
+			)
+		})
+
+		return suggestions
+	}
+
+	render() {
+		return (
+			<div id='suggestions-box'>
+				{this.renderHeader()}
+				<div className='suggestions-container'>
+					<div className='suggestions-body'>
+						<div className='suggestions-list'>
+							<Droppable droppableId='suggestions-droppable'>
+							{(provided, snapshot) => (
 								<div
 									ref={provided.innerRef}
-									{...provided.draggableProps}
-									{...provided.dragHandleProps}
-									style={getItemStyle(
-											snapshot.isDragging,
-											provided.draggableProps.style,
-									)}
+									style={getListStyle(snapshot.isDraggingOver)}
 								>
-									<Item
-											key={card.id}
-											name={card.name}
-											description={card.description}
-											timeScale={TIME_SCALE}
-											startTime={card.start_time}
-											endTime={card.end_time}
-											duration={DURATION}
-											buttons={false}
-											photo_url={card.photo_url}
-											url={card.url}
-											type={card.type}
-											address={card.address}
-											city={card.city}
-											state={card.state}
-											country={card.country}
-											rating={card.rating}
-											price={card.price}
-											source={card.source}
-											description={card.description}
-									/>
+									{this.renderList()}
+									{provided.placeholder}
 								</div>
-							{provided.placeholder}
-							</div>
-						)}
-					</Draggable>
-				)
-			})
-
-			return suggestions
-		}
-
-		render() {
-			return (
-				<div id='suggestions-box'>
-					{this.renderHeader()}
-					<div className='suggestions-container'>
-						<div className='suggestions-body'>
-							<div className='suggestions-list'>
-								<Droppable droppableId='suggestions-droppable'>
-								{(provided, snapshot) => (
-									<div
-										ref={provided.innerRef}
-										style={getListStyle(snapshot.isDraggingOver)}
-									>
-										{this.renderList()}
-										{provided.placeholder}
-									</div>
-								)}
-								</Droppable>
-							</div>
+							)}
+							</Droppable>
 						</div>
 					</div>
 				</div>
-			)
-		}
+			</div>
+		)
+	}
 }
