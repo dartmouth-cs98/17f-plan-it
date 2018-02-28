@@ -215,7 +215,6 @@ class Workspace extends Component {
 		this.setState({ name_error, address_error })
 
 		if (custom_card.name && custom_card.lat && custom_card.long) {
-			console.log(custom_card)
 			this.props.createQueueCard(custom_card)
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
@@ -450,10 +449,9 @@ class Workspace extends Component {
 
 				}
 
+				// Update travel times for affected cards, then add them back to the itinerary
 				const index = Math.max(0, result.destination.index-1)
 				let new_itinerary = itinerary.slice(0, result).concat(this.updateTravelTime(itinerary.slice(result)))
-
-				console.log("drag end new", new_itinerary)
 
 				// add the city card back in
 				new_itinerary.splice(0, 0, city)
@@ -535,8 +533,6 @@ class Workspace extends Component {
 			// Update travel times for affected cards, then add them back to the itinerary
 			const index = Math.max(0, result.destination.index-1)
 			let new_itinerary = itinerary.slice(0, result).concat(this.updateTravelTime(itinerary.slice(result)))
-
-			console.log("drag end reorder", new_itinerary)
 
 			// add the city card back in
 			new_itinerary.splice(0, 0, city)
@@ -656,8 +652,6 @@ class Workspace extends Component {
 		// Update travel times for affected cards, then add them back to the itinera
 		let new_itinerary = itinerary.slice(0, index).concat(this.updateTravelTime(itinerary.slice(index)))
 
-		console.log("start time", new_itinerary)
-
 		// add the city card back in
 		new_itinerary.splice(0, 0, city)
 
@@ -723,10 +717,8 @@ class Workspace extends Component {
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
-		// Update travel times for affected cards, then add them back to the itinera
+		// Update travel times for affected cards, then add them back to the itinerary
 		let new_itinerary = itinerary.slice(0, index).concat(this.updateTravelTime(itinerary.slice(index)))
-
-		console.log("duration", new_itinerary)
 
 		// add the city card back in
 		new_itinerary.splice(0, 0, city)
