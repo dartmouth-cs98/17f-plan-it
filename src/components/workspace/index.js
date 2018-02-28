@@ -17,6 +17,7 @@ import DownloadTrip from '../download_trip/index.js'
 import OnboardingInput from '../onboarding_input'
 import { getLatLng } from 'react-places-autocomplete'
 import { generateUUID } from '../../util/random'
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 
 require('./index.scss')
 
@@ -68,6 +69,7 @@ class Workspace extends Component {
 		this.sendUpdates = this.sendUpdates.bind(this)
 		this.sendDelete = this.sendDelete.bind(this)
 		this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+		this.updateTravelTime = this.updateTravelTime.bind(this)
 
 		// custom card functions
 		this.onModalOpen = this.onModalOpen.bind(this)
@@ -448,10 +450,15 @@ class Workspace extends Component {
 
 				}
 
-				// add the city card back
-				itinerary.splice(0, 0, city)
+				const index = Math.max(0, result.destination.index-1)
+				let new_itinerary = itinerary.slice(0, result).concat(this.updateTravelTime(itinerary.slice(result)))
 
-				this.sendUpdates(itinerary, tripId)
+				console.log("drag end new", new_itinerary)
+
+				// add the city card back in
+				new_itinerary.splice(0, 0, city)
+
+				this.sendUpdates(new_itinerary, tripId)
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -525,13 +532,19 @@ class Workspace extends Component {
 				})
 			}
 
+			// Update travel times for affected cards, then add them back to the itinerary
+			const index = Math.max(0, result.destination.index-1)
+			let new_itinerary = itinerary.slice(0, result).concat(this.updateTravelTime(itinerary.slice(result)))
+
+			console.log("drag end reorder", new_itinerary)
+
 			// add the city card back in
-			itinerary.splice(0, 0, city)
+			new_itinerary.splice(0, 0, city)
 
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 
-			this.sendUpdates(itinerary, tripId)
+			this.sendUpdates(new_itinerary, tripId)
 
 		}
 	}
@@ -640,13 +653,18 @@ class Workspace extends Component {
 			}
 		}
 
-		// add the city card back
-		itinerary.splice(0, 0, city)
+		// Update travel times for affected cards, then add them back to the itinera
+		let new_itinerary = itinerary.slice(0, index).concat(this.updateTravelTime(itinerary.slice(index)))
+
+		console.log("start time", new_itinerary)
+
+		// add the city card back in
+		new_itinerary.splice(0, 0, city)
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
-		this.sendUpdates(itinerary, tripId)
+		this.sendUpdates(new_itinerary, tripId)
 	}
 
 	updateDuration(cardId, duration) {
@@ -705,32 +723,52 @@ class Workspace extends Component {
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
+		// Update travel times for affected cards, then add them back to the itinera
+		let new_itinerary = itinerary.slice(0, index).concat(this.updateTravelTime(itinerary.slice(index)))
+
+		console.log("duration", new_itinerary)
+
 		// add the city card back in
-		itinerary.splice(0, 0, city)
+		new_itinerary.splice(0, 0, city)
 
-		this.updateTravelTimes(itinerary)
-
-		this.sendUpdates(itinerary, tripId)
+		this.sendUpdates(new_itinerary, tripId)
 	}
 
-	updateTravelTimes(itinerary) {
+	updateTravelTime(itinerary) {
 
-		console.log(itinerary)
-
+		// Need to iterate though the list instead of doing bulk request 
+		// because the departure time is different for each card
 		for (let i = 0; i < itinerary.length-1; i++) {
 
-			let start_lat = itinerary[i].lat
-			let start_long = itinerary[i].long
-			let end_lat = itinerary[i+1].lat
-			let end_long = itinerary[i+1].long
-			let time = new Date(itinerary[i].end_time).getTime()
+			let travel_duration
 
-			const url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=${start_lat},${start_long}&destinations=${end_lat},${end_long}&departure_time=${time}"
+			// Use this once API is good to go
+			const end_time = new Date(itinerary[i].end_time).getTime()
 
+			let service = new window.google.maps.DistanceMatrixService()
+			service.getDistanceMatrix(
+			  	{
+			    origins: [`${itinerary[i].lat},${itinerary[i].long}`],
+			    destinations: [`${itinerary[i+1].lat},${itinerary[i+1].long}`],
+			    travelMode: 'DRIVING'
+			  	}, function(response, status) {
 
+				  	if (status === 'OK') {
+				    	let results = response.rows[0].elements
+				    	travel_duration = results[0].duration.value
+			  		} else {
+			  			travel_duration = "No travel information available"
+			  		}
+
+			  		_.assign(itinerary[i], {
+						'travel_type': 'driving',
+						'travel_duration': travel_duration
+					})
+				})
+			
 		}
 
-		
+		return(itinerary)
 	}
 
 	render() {
