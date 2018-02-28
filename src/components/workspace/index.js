@@ -96,27 +96,27 @@ class Workspace extends Component {
 			this.props.fetchDay(tripId, DAY_NUMBER)
 		}
 
-    //check edit permissions
-    this.props.checkEditPermission(this.props.user.user_id, tripId)
+	    //check edit permissions
+	    this.props.checkEditPermission(this.props.user.user_id, tripId)
 
-    //live editing
-    this.connectToChannel(tripId);
-    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
+	    //live editing
+	    this.connectToChannel(tripId);
+	    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
 	}
 
-  connectToChannel(tripId) {
-    if (this.props.user.email) {
-      mainChannel.connect(tripId, this.props.user.email)
-    } else {
-      //connect annon
-      const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
-      if (_.isEmpty(uuid)) {
-        mainChannel.connect(tripId, generateUUID())
-      } else {
-        mainChannel.connect(tripId, uuid.uuid)
-      }
-    }
-  }
+  	connectToChannel(tripId) {
+    	if (this.props.user.email) {
+      		mainChannel.connect(tripId, this.props.user.email)
+    	} else {
+      		//connect annon
+      		const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
+      		if (_.isEmpty(uuid)) {
+        		mainChannel.connect(tripId, generateUUID())
+      		} else {
+        		mainChannel.connect(tripId, uuid.uuid)
+      		}
+    	}
+  	}
 
 
 	componentWillReceiveProps(nextProps) {
@@ -145,11 +145,13 @@ class Workspace extends Component {
 		this.props.deleteCardLive(card_id)
 	}
 
-		// update cards with new itinerary
+	// update cards with new itinerary
 	sendUpdates(itinerary, tripId) {
-		this.setState({cards: itinerary})
 		this.sendLiveUpdate(itinerary)
 		this.props.updateCardsLive(itinerary)
+		this.setState(
+    		{cards: itinerary}, 
+    		function() {this.render()})
 	}
 
 	/****** custom card functions *******/
@@ -180,8 +182,7 @@ class Workspace extends Component {
 				long: lng,
 				day_number: this.state.day,
 				place_id: results.place_id,
-				trip_id,
-				travel_duration: 900
+				trip_id
 			}
 			this.setState({ custom_card, custom_card_address: name })
 		})
@@ -401,7 +402,6 @@ class Workspace extends Component {
 				const inserted = {
 					...item,
 					id: 0,
-					travel_duration: TRAVEL_TIME,
 					start_time: start,
 					end_time: new Date(end.getTime() - end.getTimezoneOffset()*60*1000),
 					trip_id: tripId,
@@ -452,6 +452,7 @@ class Workspace extends Component {
 				// Update travel times for affected cards, then add them back to the itinerary
 				const index = Math.max(0, result.destination.index-1)
 				let new_itinerary = itinerary.slice(0, result).concat(this.updateTravelTime(itinerary.slice(result)))
+				console.log("drag and drop", new_itinerary)
 
 				// add the city card back in
 				new_itinerary.splice(0, 0, city)
@@ -747,7 +748,7 @@ class Workspace extends Component {
 
 				  	if (status === 'OK') {
 				    	let results = response.rows[0].elements
-				    	travel_duration = results[0].duration.value
+				    	travel_duration = results[0].duration.text
 			  		} else {
 			  			travel_duration = "No travel information available"
 			  		}
@@ -764,7 +765,8 @@ class Workspace extends Component {
 	}
 
 	render() {
-		const cards = this.formatCards(this.state.cards)
+		const cards = this.formatCards(this.state.cards) 
+		console.log("state cards", cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 
 		const suggestions = this.props.suggestions
@@ -775,19 +777,19 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-    if (!this.props.permission) {
-      return (
-			<div id='workspace'>
-				<NavBar background={'globe_background'}/>
-				<Toolbar
-					tripName={'Trip Not Found'}
-					published={false}
-					tripId={tripId}
-					readOnly={false}
-				/>
-      </div>
-      )
-    }
+	    if (!this.props.permission) {
+	      return (
+				<div id='workspace'>
+					<NavBar background={'globe_background'}/>
+					<Toolbar
+						tripName={'Trip Not Found'}
+						published={false}
+						tripId={tripId}
+						readOnly={false}
+					/>
+	      </div>
+	      )
+	    }
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>

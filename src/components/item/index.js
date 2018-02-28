@@ -22,6 +22,11 @@ export default class Item extends Component {
 			if (endHours > 12) endHours -= 12
 			if (endHours === 0) endHours = 12
 
+			let travel_text_class = 'travel-estimate'
+			if (this.props.is_last_card) {
+				travel_text_class = 'white-travel-estimate'
+			}
+
 			return (
 				<div>
 					<div className='time-edit'>
@@ -85,6 +90,9 @@ export default class Item extends Component {
 								this.props.updateDuration(this.props.cardId, newDuration)
 							}}
 						/>
+					</div>
+					<div className={travel_text_class}>
+						Estimated travel time to next location is {this.props.travel_duration}
 					</div>
 				</div>
 			)
