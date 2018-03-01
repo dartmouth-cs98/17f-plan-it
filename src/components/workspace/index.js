@@ -108,7 +108,7 @@ class Workspace extends Component {
     	if (this.props.user.email) {
       		mainChannel.connect(tripId, this.props.user.email)
     	} else {
-      		//connect annon
+      		//connect anon
       		const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
       		if (_.isEmpty(uuid)) {
         		mainChannel.connect(tripId, generateUUID())
@@ -120,7 +120,7 @@ class Workspace extends Component {
 
 
 	componentWillReceiveProps(nextProps) {
-		this.setState({ cards: nextProps.cards})
+		this.setState({ cards: nextProps.cards}) 
 	}
 
 	//cleverly named function. Not a react function
@@ -135,6 +135,7 @@ class Workspace extends Component {
 
 	//send card updates through the websocket
 	sendLiveUpdate(cards) {
+		console.log("sendLiveUpdate", cards)
 		const send_package = {cards, tripId: this.state.tripId}
 		mainChannel.sendCards(send_package)
 	}
@@ -147,11 +148,9 @@ class Workspace extends Component {
 
 	// update cards with new itinerary
 	sendUpdates(itinerary, tripId) {
+		console.log("sendUpdates")
+		this.setState({cards: itinerary})
 		this.sendLiveUpdate(itinerary)
-		this.props.updateCardsLive(itinerary)
-		this.setState(
-    		{cards: itinerary}, 
-    		function() {this.render()})
 	}
 
 	/****** custom card functions *******/
@@ -451,8 +450,9 @@ class Workspace extends Component {
 
 				// Update travel times for affected cards, then add them back to the itinerary
 				const index = Math.max(0, result.destination.index-1)
-				let new_itinerary = itinerary.slice(0, result).concat(this.updateTravelTime(itinerary.slice(result)))
-				console.log("drag and drop", new_itinerary)
+				let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
+				let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
+				console.log("updated", updated_itinerary)
 
 				// add the city card back in
 				new_itinerary.splice(0, 0, city)
@@ -533,7 +533,8 @@ class Workspace extends Component {
 
 			// Update travel times for affected cards, then add them back to the itinerary
 			const index = Math.max(0, result.destination.index-1)
-			let new_itinerary = itinerary.slice(0, result).concat(this.updateTravelTime(itinerary.slice(result)))
+			let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
+			let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
 
 			// add the city card back in
 			new_itinerary.splice(0, 0, city)
@@ -641,7 +642,6 @@ class Workspace extends Component {
 
 				if (new Date(startTime.getTime() + startTime.getTimezoneOffset()*60*1000) >= dayStart.getTime()) {
 
-					startTime =
 					_.assign(itinerary[index], {
 						'start_time': startTime,
 						'end_time': endTime
@@ -650,8 +650,9 @@ class Workspace extends Component {
 			}
 		}
 
-		// Update travel times for affected cards, then add them back to the itinera
-		let new_itinerary = itinerary.slice(0, index).concat(this.updateTravelTime(itinerary.slice(index)))
+		// Update travel times for affected cards, then add them back to the itinerary
+		let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
+		let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
 
 		// add the city card back in
 		new_itinerary.splice(0, 0, city)
@@ -719,7 +720,8 @@ class Workspace extends Component {
 		const tripId = _.last(path)
 
 		// Update travel times for affected cards, then add them back to the itinerary
-		let new_itinerary = itinerary.slice(0, index).concat(this.updateTravelTime(itinerary.slice(index)))
+		let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
+		let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
 
 		// add the city card back in
 		new_itinerary.splice(0, 0, city)
@@ -748,14 +750,15 @@ class Workspace extends Component {
 
 				  	if (status === 'OK') {
 				    	let results = response.rows[0].elements
-				    	travel_duration = results[0].duration.text
+				    	travel_duration = results[0].duration.value
 			  		} else {
 			  			travel_duration = "No travel information available"
 			  		}
 
 			  		_.assign(itinerary[i], {
 						'travel_type': 'driving',
-						'travel_duration': travel_duration
+						'travel_duration': travel_duration,
+						'name': "HELLO"
 					})
 				})
 			
@@ -766,7 +769,6 @@ class Workspace extends Component {
 
 	render() {
 		const cards = this.formatCards(this.state.cards) 
-		console.log("state cards", cards)
 		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
 
 		const suggestions = this.props.suggestions
