@@ -81,6 +81,7 @@
 	border: 4px solid #6599B5 !important;
 	background-color: #6599B5 !important;
 }
+
 .start-onboarding-button {
 	border: 4px solid #6FCF97 !important;
 	background-color: #6FCF97 !important;
@@ -111,7 +112,7 @@
 	outline: none;
 }
 
-.landing_page {
+.start_background {
 	height: 100vh;
 	background: url('../../img/globe_compressed.jpg');
 	background-size: cover;
@@ -158,4 +159,36 @@
 .city_input {
 	display: flex;
 	align-items: center;
+}
+
+.titles {
+	margin-left: 15vw;
+	margin-top: 17vh;
+	color: white;
+}
+
+.titles {
+	line-height: 55px;
+	display: table;
+	background-color: #f56764e8;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 7.5px;
+	padding-bottom: 7.5px;
+}
+
+.big_title {
+	font-size: 72px;
+	font-weight: bold;
+	padding-top: 15px;
+}
+
+.subtitle {
+	font-size: 48px;
+}
+
+.small_title {
+	font-size: 48px;
+	font-weight: bold;
+	padding-bottom: 15px;
 }
