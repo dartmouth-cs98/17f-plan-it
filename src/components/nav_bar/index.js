@@ -61,7 +61,7 @@ class NavBar extends Component {
         onSuccess={this.processSuccess}
         onFailure={this.processFailure}
         style={{}}
-        className='nav-button'
+        className='sign-up-button'
         >
         </GoogleLogin>
     }

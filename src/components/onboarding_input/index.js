@@ -104,7 +104,7 @@ class OnboardingInput extends Component {
             />
           )
         }
-        else if (this.state.placeholder === 'Enter address or attraction name') {
+        else if (this.state.placeholder === 'Enter address or attraction name' || this.state.placeholder === 'Enter city') {
             return this.renderAutocomplete()
         } else if (this.state.placeholder === 'Please sign up or log in' ) {
           return (

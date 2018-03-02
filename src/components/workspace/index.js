@@ -83,6 +83,8 @@ class Workspace extends Component {
 		this.onResetCustomValues = this.onResetCustomValues.bind(this)
 		this.onCreatedAlert = this.onCreatedAlert.bind(this)
 		this.onAddMapCard = this.onAddMapCard.bind(this)
+
+		this.onCityUpdate = this.onCityUpdate.bind(this)
 	}
 
 	componentDidMount() {
@@ -106,19 +108,19 @@ class Workspace extends Component {
     mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
 	}
 
-  connectToChannel(tripId) {
-    if (this.props.user.email) {
-      mainChannel.connect(tripId, this.props.user.email)
-    } else {
-      //connect annon
-      const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
-      if (_.isEmpty(uuid)) {
-        mainChannel.connect(tripId, generateUUID())
-      } else {
-        mainChannel.connect(tripId, uuid.uuid)
-      }
-    }
-  }
+	connectToChannel(tripId) {
+		if (this.props.user.email) {
+			mainChannel.connect(tripId, this.props.user.email)
+		} else {
+			//connect annon
+			const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
+			if (_.isEmpty(uuid)) {
+				mainChannel.connect(tripId, generateUUID())
+			} else {
+		    	mainChannel.connect(tripId, uuid.uuid)
+			}
+		}
+	}
 
 
 	componentWillReceiveProps(nextProps) {
@@ -217,7 +219,6 @@ class Workspace extends Component {
 		this.setState({ name_error, address_error })
 
 		if (custom_card.name && custom_card.lat && custom_card.long) {
-			console.log(custom_card)
 			this.props.createQueueCard(custom_card)
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
@@ -247,6 +248,12 @@ class Workspace extends Component {
 		this.setState({ custom_alert: true, added_text: 'Custom card added to \'Your Added Cards\' in the suggestions\' filter menu' })
 	}
 	/****** end custom card functions *******/
+
+	onCityUpdate(lat, long) {
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+		this.props.fetchSuggestions(lat, long, tripId, CATEGORIES[this.state.category])
+	}
 
 	onAddMapCard(map_card) {
 		this.setState({ modal_open: true, custom_alert: true, added_text: 'Map card added to \'Your Added Cards\' in the suggestions\' filter menu'})
@@ -793,19 +800,17 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-    if (!this.props.permission) {
-      return (
+
+	    if (!this.props.permission) {
+	      return (
 			<div id='workspace'>
-				<NavBar background={'globe_background'}/>
-				<Toolbar
-					tripName={'Trip Not Found'}
-					published={false}
-					tripId={tripId}
-					readOnly={false}
-				/>
-      </div>
-      )
-    }
+				<div className='background'>
+	          		<NavBar background={'no_background'} page={'ONBOARDING'}/>
+	          		<div className='text'>Trip not found</div>
+	        	</div>
+	      	</div>
+	      )
+	    }
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
@@ -837,6 +842,7 @@ class Workspace extends Component {
 							updateDuration={this.updateDuration}
 							numDays={tripDuration}
 							readOnly={false}
+							onCityUpdate={this.onCityUpdate}
 						/>
 						<Map
 							isInfoOpen={false}
@@ -905,9 +911,9 @@ const mapDispatchToProps = (dispatch) => {
 		createQueueCard: (card) => {
 			dispatch(createQueueCard(card))
 		},
-    checkEditPermission: (userId, tripId) => {
-      dispatch(checkEditPermission(userId, tripId))
-    }
+    	checkEditPermission: (userId, tripId) => {
+    		dispatch(checkEditPermission(userId, tripId))
+    	}
 	}
 }
 
