@@ -44,6 +44,7 @@ class Onboarding extends Component {
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
 		this.onAuthenticate = this.onAuthenticate.bind(this)
+		this.nextSlide = this.nextSlide.bind(this)
 
 		this.defaults = ['http://crosstalk.cell.com/hubfs/Images/Trending/How%20to%20write%20a%20review%20article%20that%20people%20will%20read/thumbnail.jpg?t=1514480830697',
 		'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg',
@@ -102,6 +103,12 @@ class Onboarding extends Component {
 
 			this.props.createCard(cityCards)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
+		}
+	}
+
+	componentDidUpdate() {
+		if (!_.isNil(this.nameInput) && this.state.prev_disabled) {
+			this.nameInput.focus()
 		}
 	}
 
@@ -420,6 +427,8 @@ class Onboarding extends Component {
 				<OnboardingInput placeholder={'Name your trip'}
 					onNameChange={this.onNameChange}
 					name={this.state.trip_name}
+					next={this.nextSlide}
+					nameRef={el => this.nameInput = el}
 				/>
 			</div>
 		)
@@ -431,9 +440,17 @@ class Onboarding extends Component {
 				<OnboardingInput placeholder={'Enter image URL'}
 					onImageChange={this.onImageChange}
 					image_url={this.state.image_url}
+					next={this.nextSlide}
+					imageRef={el => this.imageInput = el}
 				/>
 			</div>
 		)
+	}
+
+	nextSlide() {
+		if (!_.isNil(this.slider)) {
+			this.slider.slickNext()
+		}
 	}
 
 	renderStartCity() {
@@ -468,6 +485,9 @@ class Onboarding extends Component {
 				options = { options }
 				googleLogo = { false }
 				classNames = {{ root: 'start_input' }}
+				onEnterKeyDown = {() => {
+					this.onLetsGo()
+				}}
 			/>
 		)
 	}
@@ -483,6 +503,11 @@ class Onboarding extends Component {
 				let next_disabled = currentSlide === 2? true : false
 				let prev_disabled = currentSlide === 0? true : false
 				this.setState({ next_disabled, prev_disabled })
+				if (currentSlide === 0) {
+					this.nameInput.focus()
+				} else if (currentSlide === 1) {
+					this.imageInput.focus()
+				}
 			},
 			nextArrow: <NextArrow disabled={this.state.next_disabled}/>,
 			prevArrow: <PrevArrow disabled={this.state.prev_disabled}/>
@@ -520,11 +545,11 @@ class Onboarding extends Component {
 		        			<p>{this.state.err_msg}</p>
 		        		</div>
 					</Modal>
-					<Slider {...onboarding_settings} className='onboarding_slider'>
+					<Slider {...onboarding_settings} className='onboarding_slider' ref={c => this.slider = c }>
 						<div>{this.names_slide()}</div>
 						<div>{this.image_slide()}</div>
 						<div>{this.cities_slide()}</div>
-	      			</Slider>
+    			</Slider>
 				</div>
 				</div>
 			)
