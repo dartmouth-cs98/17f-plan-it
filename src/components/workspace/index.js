@@ -800,32 +800,17 @@ class Workspace extends Component {
 		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
 		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
 
-<<<<<<< HEAD
-    if (!this.props.permission) {
-      return (
-		<div id='workspace'>
-			<div className='background'>
-          		<NavBar background={'no_background'} page={'ONBOARDING'}/>
-          		<div className='text'>Trip not found</div>
-        	</div>
-      	</div>
-      )
-    }
-=======
+
 	    if (!this.props.permission) {
-	    	return (
-				<div id='workspace'>
-					<NavBar background={'globe_background'}/>
-					<Toolbar
-						tripName={'Trip Not Found'}
-						published={false}
-						tripId={tripId}
-						readOnly={false}
-					/>
-		     	 </div>
-	    	)
+	      return (
+			<div id='workspace'>
+				<div className='background'>
+	          		<NavBar background={'no_background'} page={'ONBOARDING'}/>
+	          		<div className='text'>Trip not found</div>
+	        	</div>
+	      	</div>
+	      )
 	    }
->>>>>>> master
 		return (
 			<div id='workspace'>
 				<NavBar background={'globe_background'}/>
