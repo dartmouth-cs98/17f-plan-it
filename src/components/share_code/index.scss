@@ -1,0 +1,20 @@
+
+.background {
+	height: 100vh;
+	background: url('../../img/hand_globe.jpeg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 0;
+}
+
+.text {
+	font-family: 'Roboto';
+  	font-weight: 440;
+
+  	position: absolute; 
+  	width: 100%;
+  	top: 33%;
+  	display: table-cell; 
+  	vertical-align: middle;
+  	text-align: center;
+}
