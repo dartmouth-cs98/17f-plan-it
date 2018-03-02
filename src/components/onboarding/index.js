@@ -473,7 +473,7 @@ class Onboarding extends Component {
 
 	renderLandingPage() {
 		return(
-			<div className='globe_background'>
+			<div className='start_background'>
 				<NavBar background={'no_background'} page={'ONBOARDING'} onAuthenticate={this.onAuthenticate} landingPage={true}/>
 				<div className='titles'>
 					<div className='big_title'>Adventures made easy.</div>
@@ -506,7 +506,7 @@ class Onboarding extends Component {
     	else if (this.state.start_city) {
     		return (
 				<div>
-					<div className='globe_background'>
+					<div className='start_background'>
 						<NavBar background={'no_background'} page={'ONBOARDING'} onAuthenticate={this.onAuthenticate} landingPage={true}/>
 						<Modal
 						    isOpen={this.state.modal_open}
