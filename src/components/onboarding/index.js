@@ -6,12 +6,14 @@ import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
 import Modal from 'react-modal'
-import { createTrip, createCard, fetchCards } from '../../actions/index.js'
+import { createTrip, createCard, fetchCards, createUser } from '../../actions/index.js'
 import cookie from 'react-cookies'
 import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete'
 import moment from 'moment'
 import PrevArrow from '../arrows/prev_arrow.js'
 import NextArrow from '../arrows/next_arrow.js'
+import { GoogleLogin } from 'react-google-login'
+import axios from 'axios'
 import './index.scss'
 
 class Onboarding extends Component {
@@ -25,8 +27,7 @@ class Onboarding extends Component {
 			err_msg: '',
 			image_url: '',
 			next_disabled: false,
-			prev_disabled: true,
-			authenticated: cookie.load('auth')
+			prev_disabled: true
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -43,8 +44,8 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
-		this.onAuthenticate = this.onAuthenticate.bind(this)
 		this.nextSlide = this.nextSlide.bind(this)
+		this.processSuccess = this.processSuccess.bind(this)
 
 		this.defaults = ['http://crosstalk.cell.com/hubfs/Images/Trending/How%20to%20write%20a%20review%20article%20that%20people%20will%20read/thumbnail.jpg?t=1514480830697',
 		'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg',
@@ -56,6 +57,9 @@ class Onboarding extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		if (nextProps.user_id) {
+			cookie.save('auth', this.props.user_id, { path: '/' })
+		}
 		if (nextProps.trip_id) {
 			let cityCards = []
 			let dayNumber = 1
@@ -110,10 +114,6 @@ class Onboarding extends Component {
 		if (!_.isNil(this.nameInput) && this.state.prev_disabled) {
 			this.nameInput.focus()
 		}
-	}
-
-	onAuthenticate(authenticated) {
-		this.setState({ authenticated })
 	}
 
 	checkImageExists(url) {
@@ -491,16 +491,40 @@ class Onboarding extends Component {
 		)
 	}
 
+	processSuccess(response) {
+	    axios.get('https://www.googleapis.com/oauth2/v3/tokeninfo', { params: { id_token: response.tokenId, }}).then( (response) => {
+			var seconds = new Date() / 1000;
+			if ((response.data.aud === "555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com") &&
+				((response.data.iss === "accounts.google.com") || (response.data.iss === "https://accounts.google.com")) &&
+				(response.data.exp > seconds)){
+				this.props.createUser({
+				    email: response.data.email,
+				    fname: response.data.given_name,
+				    lname: response.data.family_name
+			  	})
+			}
+		}).catch( (error) => {
+			console.log(error);
+		});
+  	}
+
 	renderLandingPage() {
 		return(
 			<div className='start_background'>
-				<NavBar background={'no_background'} page={'ONBOARDING'} onAuthenticate={this.onAuthenticate} landingPage={true}/>
+				<NavBar background={'no_background'} page={'ONBOARDING'}/>
 				<div className='titles'>
 					<div className='big_title'>Adventures made easy.</div>
 					<div className='subtitle'>Optimize travel routes.</div>
 					<div className='subtitle'>Share and collaborate with friends.</div>
 					<div className='subtitle'>Explore popular, curated trips.</div>
-					<div className='small_title'>Sign up today.</div>
+					<GoogleLogin
+				        clientId="555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com"
+				        buttonText="Sign up today."
+				        onSuccess={this.processSuccess}
+				        onFailure={() => {}}
+				        style={{}}
+				        className='small_title'
+					></GoogleLogin>
 				</div>
 			</div>
 		)
@@ -576,6 +600,7 @@ class Onboarding extends Component {
 const mapStateToProps = (state) => {
 	return {
 		trip_id: state.trips.trip_id,
+		user_id: state.users.user_id
 	};
 };
 
@@ -589,6 +614,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		fetchCards: (id, day) => {
 			dispatch(fetchCards(id, day))
+		},
+		createUser: (user) => {
+			dispatch(createUser(user))
 		}
 	}
 }
