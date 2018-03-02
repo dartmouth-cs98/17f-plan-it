@@ -316,10 +316,10 @@ export function authUser(is_auth) {
 export function createUser(user) {
 	return (dispatch) => {
 		axios.post(`${ROOT_URL}/users`, user).then((response) => {
-				dispatch({ type: ActionTypes.CREATE_USER, payload: {user_id: response.data, fname: user.fname, lname: user.lname, email: user.email} });
-			}).catch((error) => {
-				dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
-			});
+			dispatch({ type: ActionTypes.CREATE_USER, payload: {user_id: response.data, fname: user.fname, lname: user.lname, email: user.email} });
+		}).catch((error) => {
+			dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
+		});
 	};
 }
 
