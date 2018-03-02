@@ -496,7 +496,7 @@ class Onboarding extends Component {
 			afterChange: (currentSlide) => {
 				let next_disabled = currentSlide === 2? true : false
 				let prev_disabled = currentSlide === 0? true : false
-				this.setState({ next_disabled, prev_disabled })``
+				this.setState({ next_disabled, prev_disabled })
 			},
 			nextArrow: <NextArrow disabled={this.state.next_disabled}/>,
 			prevArrow: <PrevArrow disabled={this.state.prev_disabled}/>
