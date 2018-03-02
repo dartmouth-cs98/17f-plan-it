@@ -63,7 +63,7 @@ class ShareCode extends React.Component {
       <div>
         <div className='background'>
           <NavBar background={'no_background'} page={'ONBOARDING'}/>
-          <div className="text"> Page not found in</div>
+          <div className="text">Page not found in</div>
         </div>
         </div>
     )
@@ -74,7 +74,7 @@ class ShareCode extends React.Component {
         <div>
         <div className='background'>
           <NavBar background={'no_background'} page={'ONBOARDING'}/>
-          <div className="text"> Please sign up or log in</div>
+          <div className="text">Please sign up or log in</div>
         </div>
         </div>
     )
@@ -88,7 +88,7 @@ class ShareCode extends React.Component {
       <div>
         <div className='background'>
           <NavBar background={'no_background'} page={'ONBOARDING'}/>
-          <div className="text"> Loading...</div>
+          <div className="text">Loading...</div>
         </div>
         <Redirect to={url}/>
       </div>

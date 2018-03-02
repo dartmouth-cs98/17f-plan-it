@@ -795,15 +795,12 @@ class Workspace extends Component {
 
     if (!this.props.permission) {
       return (
-			<div id='workspace'>
-				<NavBar background={'globe_background'}/>
-				<Toolbar
-					tripName={'Trip Not Found'}
-					published={false}
-					tripId={tripId}
-					readOnly={false}
-				/>
-      </div>
+		<div id='workspace'>
+			<div className='background'>
+          		<NavBar background={'no_background'} page={'ONBOARDING'}/>
+          		<div className='text'>Trip not found</div>
+        	</div>
+      	</div>
       )
     }
 		return (
