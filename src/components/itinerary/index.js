@@ -83,14 +83,14 @@ class Itinerary extends Component {
 
 	onModalClose() {
 		this.setState({ 
-			modal_open: false,
+			modal_open: false, 
 			city_name: '',
 			city_address: '',
 			lat: '',
 			lng: '',
 			place_id: '',
-			error: ''
-		 })
+			error: '' 
+		})
 	}
 
 	onOtherNameChange(index, type, name) {
@@ -109,12 +109,12 @@ class Itinerary extends Component {
 
 	onSave() {
 		if (!this.state.place_id) {
-			this.setState({ error: 'Please choose a city from the dropdown' })
+			this.setState({ error: 'Please choose a city from the dropdown', place_id: '' })
 		}
 		else if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
-			if (this.props.cards[0].type === 'city' && this.props.cards[0].place_id === this.state.place_id)
-				this.setState({ error: `Already in ${this.props.cards[0].name.split(',')[0]}`})
-			else {
+			if (this.props.cards[0].type === 'city' && this.props.cards[0].name === this.state.city_name) {
+				this.setState({ error: `Already in ${this.props.cards[0].name.split(',')[0]}`, place_id: ''})
+			} else {
 				_.map(this.props.cards, (card, index) => {
 					if (card.type === 'city') {
 						let city_card = _.assign(card, {
@@ -129,6 +129,7 @@ class Itinerary extends Component {
 						this.props.deleteCard(card.id, this.props.tripId, this.props.day)
 					}
 				})
+				this.props.onCityUpdate(this.state.lat, this.state.lng)
 				this.onModalClose()
 			}
 		}
