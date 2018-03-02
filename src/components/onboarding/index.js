@@ -18,7 +18,7 @@ class Onboarding extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			landing_page: true,
+			start_city: true,
 			trip_name: '',
 			cities: [],
 			modal_open: false,
@@ -165,7 +165,7 @@ class Onboarding extends Component {
 		if (!cookie.load('auth')) {
 			this.onModalOpen('Please log in')
 		} else {
-			this.setState( { landing_page: false } )
+			this.setState( { start_city: false } )
 		}
 	}
 
@@ -437,12 +437,11 @@ class Onboarding extends Component {
 	}
 
 	renderStartCity() {
-		let placeholder = cookie.load('auth')?  'Where does your adventure begin' : 'Please sign up or log in'
 		const inputProps = {
 		    value: _.isUndefined(this.state.cities[0]) ? '' : this.state.cities[0].name,
 		    onChange: (name) => { this.onCityChange(name) },
 		    type: 'text',
-		    placeholder,
+		    placeholder: 'Where does your adventure begin',
 		    autoFocus: true,
 		}
 		const handleSelect = (address, placeId) => {
@@ -472,6 +471,21 @@ class Onboarding extends Component {
 		)
 	}
 
+	renderLandingPage() {
+		return(
+			<div className='globe_background'>
+				<NavBar background={'no_background'} page={'ONBOARDING'} onAuthenticate={this.onAuthenticate} landingPage={true}/>
+				<div className='titles'>
+					<div className='big_title'>Adventures made easy.</div>
+					<div className='subtitle'>Optimize travel routes.</div>
+					<div className='subtitle'>Share and collaborate with friends.</div>
+					<div className='subtitle'>Explore popular, curated trips.</div>
+					<div className='small_title'>Sign up today.</div>
+				</div>
+			</div>
+		)
+	}
+
 	render() {
 		const onboarding_settings = {
 			dots: true,
@@ -482,16 +496,17 @@ class Onboarding extends Component {
 			afterChange: (currentSlide) => {
 				let next_disabled = currentSlide === 2? true : false
 				let prev_disabled = currentSlide === 0? true : false
-				this.setState({ next_disabled, prev_disabled })
+				this.setState({ next_disabled, prev_disabled })``
 			},
 			nextArrow: <NextArrow disabled={this.state.next_disabled}/>,
 			prevArrow: <PrevArrow disabled={this.state.prev_disabled}/>
     	};
 
-    	if (this.state.landing_page) {
+    	if (!cookie.load('auth')) return this.renderLandingPage()
+    	else if (this.state.start_city) {
     		return (
 				<div>
-					<div className='landing_page'>
+					<div className='globe_background'>
 						<NavBar background={'no_background'} page={'ONBOARDING'} onAuthenticate={this.onAuthenticate} landingPage={true}/>
 						<Modal
 						    isOpen={this.state.modal_open}
@@ -507,7 +522,8 @@ class Onboarding extends Component {
 						</div>
 					</div>
 				</div>
-			)} else {
+			)
+    	} else {
 			return (
 				<div>
 				<div className='onboarding'>
