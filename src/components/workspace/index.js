@@ -70,6 +70,7 @@ class Workspace extends Component {
 		this.sendDelete = this.sendDelete.bind(this)
 		this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
 		this.updateTravelTime = this.updateTravelTime.bind(this)
+		this.getTravelTime = this.getTravelTime.bind(this)
 
 		// custom card functions
 		this.onModalOpen = this.onModalOpen.bind(this)
@@ -135,7 +136,7 @@ class Workspace extends Component {
 
 	//send card updates through the websocket
 	sendLiveUpdate(cards) {
-		console.log("sendLiveUpdate", cards)
+
 		const send_package = {cards, tripId: this.state.tripId}
 		mainChannel.sendCards(send_package)
 	}
@@ -148,9 +149,9 @@ class Workspace extends Component {
 
 	// update cards with new itinerary
 	sendUpdates(itinerary, tripId) {
-		console.log("sendUpdates")
-		this.setState({cards: itinerary})
-		this.sendLiveUpdate(itinerary)
+
+		this.setState({cards: _.cloneDeep(itinerary)})
+		this.sendLiveUpdate(_.cloneDeep(itinerary))
 	}
 
 	/****** custom card functions *******/
@@ -196,7 +197,6 @@ class Workspace extends Component {
 	}
 
 	onDescriptionChange(event) {
-		console.log(event.target.value)
 		this.setState({ custom_card_description: event.target.value })
 	}
 
@@ -448,16 +448,14 @@ class Workspace extends Component {
 
 				}
 
-				// Update travel times for affected cards, then add them back to the itinerary
-				const index = Math.max(0, result.destination.index-1)
-				let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
-				let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
-				console.log("updated", updated_itinerary)
-
 				// add the city card back in
-				new_itinerary.splice(0, 0, city)
+				itinerary.splice(0, 0, city)
 
-				this.sendUpdates(new_itinerary, tripId)
+				// Update travel times for affected cards and send updates
+				const index = Math.max(0, result.destination.index-1)
+				const newItinerary = _.cloneDeep(itinerary)
+				this.updateTravelTime(newItinerary, index + 1)
+
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -531,18 +529,16 @@ class Workspace extends Component {
 				})
 			}
 
-			// Update travel times for affected cards, then add them back to the itinerary
-			const index = Math.max(0, result.destination.index-1)
-			let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
-			let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
-
 			// add the city card back in
-			new_itinerary.splice(0, 0, city)
+			itinerary.splice(0, 0, city)
 
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 
-			this.sendUpdates(new_itinerary, tripId)
+			// Update travel times for affected cards and send updates
+			const index = Math.max(0, result.destination.index-1)
+			const newItinerary = _.cloneDeep(itinerary)
+			this.updateTravelTime(newItinerary, index + 1)
 
 		}
 	}
@@ -650,17 +646,16 @@ class Workspace extends Component {
 			}
 		}
 
-		// Update travel times for affected cards, then add them back to the itinerary
-		let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
-		let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
-
 		// add the city card back in
-		new_itinerary.splice(0, 0, city)
+		itinerary.splice(0, 0, city)
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
-		this.sendUpdates(new_itinerary, tripId)
+		// Update travel times for affected cards and send updates
+		const newItinerary = _.cloneDeep(itinerary)
+		this.updateTravelTime(newItinerary, index + 1)
+
 	}
 
 	updateDuration(cardId, duration) {
@@ -719,52 +714,87 @@ class Workspace extends Component {
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
-		// Update travel times for affected cards, then add them back to the itinerary
-		let updated_itinerary = this.updateTravelTime(itinerary.slice(index))
-		let new_itinerary = itinerary.slice(0, index).concat(updated_itinerary)
-
 		// add the city card back in
-		new_itinerary.splice(0, 0, city)
+		itinerary.splice(0, 0, city)
 
-		this.sendUpdates(new_itinerary, tripId)
+		// Update travel times for affected cards and send updates
+		const newItinerary = _.cloneDeep(itinerary)
+		this.updateTravelTime(newItinerary, index + 1)
 	}
 
-	updateTravelTime(itinerary) {
+	async updateTravelTime(itinerary, index) {
 
-		// Need to iterate though the list instead of doing bulk request 
-		// because the departure time is different for each card
-		for (let i = 0; i < itinerary.length-1; i++) {
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+		
+		let origins = []
+		let destinations = []
 
-			let travel_duration
+		// Get origin-destination pairs for new travels
+		// Only cards that have changed times or that have been reordered 
+		// need to have their travel times recalculated
+		for (let i = index; i < itinerary.length-1; i++) {
+			origins.push(`${itinerary[i].lat},${itinerary[i].long}`)
+			destinations.push(`${itinerary[i+1].lat},${itinerary[i+1].long}`)		
+		}
+
+		// If there are new travels, fetch travel times
+		if(origins.length > 0) {
+			const travel_durations = await this.getTravelTime(origins, destinations)
+			console.log("got travel", travel_durations)
+
+			for(let i = index; i < itinerary.length-1; i++){
+				console.log(i - index, travel_durations[i - index])
+
+				const card = itinerary[i]
+				_.assign(card, {
+					'travel_type': 'driving',
+					'travel_duration': '6 mins'
+				})
+			}
+		}
+
+		// Update the itinerary
+		console.log("sending itinerary", JSON.parse(JSON.stringify(itinerary)))
+		this.sendUpdates(itinerary, tripId)
+	}
+
+	getTravelTime(origins, destinations){
+
+		console.log("in here!")
+
+		return new Promise(resolve => {
+
+			console.log("still in here!")
+ 
+			let travel_durations = []
 
 			// Use this once API is good to go
-			const end_time = new Date(itinerary[i].end_time).getTime()
+			// const end_time = new Date(itinerary[i].end_time).getTime()
 
 			let service = new window.google.maps.DistanceMatrixService()
 			service.getDistanceMatrix(
 			  	{
-			    origins: [`${itinerary[i].lat},${itinerary[i].long}`],
-			    destinations: [`${itinerary[i+1].lat},${itinerary[i+1].long}`],
+			    origins: origins,
+			    destinations: destinations,
 			    travelMode: 'DRIVING'
 			  	}, function(response, status) {
 
-				  	if (status === 'OK') {
-				    	let results = response.rows[0].elements
-				    	travel_duration = results[0].duration.value
-			  		} else {
-			  			travel_duration = "No travel information available"
+			  		for (let i = 0; i < origins.length; i++) {
+				  		if (status === 'OK') {
+				  			let results = response.rows[i].elements
+				    		travel_durations.push(results[0].duration.text)
+
+				  		} else {
+				  			travel_durations.push("No travel information available")
+				  		}
 			  		}
 
-			  		_.assign(itinerary[i], {
-						'travel_type': 'driving',
-						'travel_duration': travel_duration,
-						'name': "HELLO"
-					})
-				})
-			
-		}
+			 })
 
-		return(itinerary)
+			console.log("in promise", travel_durations)
+			resolve(travel_durations)
+		})
 	}
 
 	render() {
@@ -886,7 +916,7 @@ const mapStateToProps = (state) => {
 		creatingCard: state.cards.creatingCard,
 		fetchingSuggestions: state.cards.fetchingSuggestions,
 		suggestions: state.cards.suggestions,
-    permission: state.permission.permission
+    	permission: state.permission.permission
 	}
 }
 
