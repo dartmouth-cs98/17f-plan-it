@@ -6,27 +6,28 @@ import NavBar from '../nav_bar/index.js'
 import Slider from'react-slick'
 import OnboardingInput from '../onboarding_input'
 import Modal from 'react-modal'
-import { createTrip, createCard, fetchCards } from '../../actions/index.js'
+import { createTrip, createCard, fetchCards, createUser } from '../../actions/index.js'
 import cookie from 'react-cookies'
 import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete'
 import moment from 'moment'
 import PrevArrow from '../arrows/prev_arrow.js'
 import NextArrow from '../arrows/next_arrow.js'
+import { GoogleLogin } from 'react-google-login'
+import axios from 'axios'
 import './index.scss'
 
 class Onboarding extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			landing_page: true,
+			start_city: true,
 			trip_name: '',
 			cities: [],
 			modal_open: false,
 			err_msg: '',
 			image_url: '',
 			next_disabled: false,
-			prev_disabled: true,
-			authenticated: cookie.load('auth')
+			prev_disabled: true
 		}
 
 		this.onAddCity = this.onAddCity.bind(this)
@@ -43,7 +44,8 @@ class Onboarding extends Component {
 		this.onHandleSelect = this.onHandleSelect.bind(this)
 		this.onHandleCitySelect = this.onHandleCitySelect.bind(this)
 		this.onDeleteCity = this.onDeleteCity.bind(this)
-		this.onAuthenticate = this.onAuthenticate.bind(this)
+		this.nextSlide = this.nextSlide.bind(this)
+		this.processSuccess = this.processSuccess.bind(this)
 
 		this.defaults = ['http://crosstalk.cell.com/hubfs/Images/Trending/How%20to%20write%20a%20review%20article%20that%20people%20will%20read/thumbnail.jpg?t=1514480830697',
 		'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg',
@@ -55,6 +57,9 @@ class Onboarding extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		if (nextProps.user_id) {
+			cookie.save('auth', this.props.user_id, { path: '/' })
+		}
 		if (nextProps.trip_id) {
 			let cityCards = []
 			let dayNumber = 1
@@ -105,8 +110,10 @@ class Onboarding extends Component {
 		}
 	}
 
-	onAuthenticate(authenticated) {
-		this.setState({ authenticated })
+	componentDidUpdate() {
+		if (!_.isNil(this.nameInput) && this.state.prev_disabled) {
+			this.nameInput.focus()
+		}
 	}
 
 	checkImageExists(url) {
@@ -165,7 +172,7 @@ class Onboarding extends Component {
 		if (!cookie.load('auth')) {
 			this.onModalOpen('Please log in')
 		} else {
-			this.setState( { landing_page: false } )
+			this.setState( { start_city: false } )
 		}
 	}
 
@@ -420,6 +427,8 @@ class Onboarding extends Component {
 				<OnboardingInput placeholder={'Name your trip'}
 					onNameChange={this.onNameChange}
 					name={this.state.trip_name}
+					next={this.nextSlide}
+					nameRef={el => this.nameInput = el}
 				/>
 			</div>
 		)
@@ -431,18 +440,25 @@ class Onboarding extends Component {
 				<OnboardingInput placeholder={'Enter image URL'}
 					onImageChange={this.onImageChange}
 					image_url={this.state.image_url}
+					next={this.nextSlide}
+					imageRef={el => this.imageInput = el}
 				/>
 			</div>
 		)
 	}
 
+	nextSlide() {
+		if (!_.isNil(this.slider)) {
+			this.slider.slickNext()
+		}
+	}
+
 	renderStartCity() {
-		let placeholder = cookie.load('auth')?  'Where does your adventure begin' : 'Please sign up or log in'
 		const inputProps = {
 		    value: _.isUndefined(this.state.cities[0]) ? '' : this.state.cities[0].name,
 		    onChange: (name) => { this.onCityChange(name) },
 		    type: 'text',
-		    placeholder,
+		    placeholder: 'Where does your adventure begin',
 		    autoFocus: true,
 		}
 		const handleSelect = (address, placeId) => {
@@ -468,7 +484,49 @@ class Onboarding extends Component {
 				options = { options }
 				googleLogo = { false }
 				classNames = {{ root: 'start_input' }}
+				onEnterKeyDown = {() => {
+					this.onLetsGo()
+				}}
 			/>
+		)
+	}
+
+	processSuccess(response) {
+	    axios.get('https://www.googleapis.com/oauth2/v3/tokeninfo', { params: { id_token: response.tokenId, }}).then( (response) => {
+			var seconds = new Date() / 1000;
+			if ((response.data.aud === "555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com") &&
+				((response.data.iss === "accounts.google.com") || (response.data.iss === "https://accounts.google.com")) &&
+				(response.data.exp > seconds)){
+				this.props.createUser({
+				    email: response.data.email,
+				    fname: response.data.given_name,
+				    lname: response.data.family_name
+			  	})
+			}
+		}).catch( (error) => {
+			console.log(error);
+		});
+  	}
+
+	renderLandingPage() {
+		return(
+			<div className='start_background'>
+				<NavBar background={'no_background'} page={'ONBOARDING'}/>
+				<div className='titles'>
+					<div className='big_title'>Adventures made easy.</div>
+					<div className='subtitle'>Optimize travel routes.</div>
+					<div className='subtitle'>Share and collaborate with friends.</div>
+					<div className='subtitle'>Explore popular, curated trips.</div>
+					<GoogleLogin
+				        clientId="555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com"
+				        buttonText="Sign up today."
+				        onSuccess={this.processSuccess}
+				        onFailure={() => {}}
+				        style={{}}
+				        className='small_title'
+					></GoogleLogin>
+				</div>
+			</div>
 		)
 	}
 
@@ -483,15 +541,21 @@ class Onboarding extends Component {
 				let next_disabled = currentSlide === 2? true : false
 				let prev_disabled = currentSlide === 0? true : false
 				this.setState({ next_disabled, prev_disabled })
+				if (currentSlide === 0) {
+					this.nameInput.focus()
+				} else if (currentSlide === 1) {
+					this.imageInput.focus()
+				}
 			},
 			nextArrow: <NextArrow disabled={this.state.next_disabled}/>,
 			prevArrow: <PrevArrow disabled={this.state.prev_disabled}/>
     	};
 
-    	if (this.state.landing_page) {
+    	if (!cookie.load('auth')) return this.renderLandingPage()
+    	else if (this.state.start_city) {
     		return (
 				<div>
-					<div className='landing_page'>
+					<div className='start_background'>
 						<NavBar background={'no_background'} page={'ONBOARDING'} onAuthenticate={this.onAuthenticate} landingPage={true}/>
 						<Modal
 						    isOpen={this.state.modal_open}
@@ -507,7 +571,8 @@ class Onboarding extends Component {
 						</div>
 					</div>
 				</div>
-			)} else {
+			)
+    	} else {
 			return (
 				<div>
 				<div className='onboarding'>
@@ -520,11 +585,11 @@ class Onboarding extends Component {
 		        			<p>{this.state.err_msg}</p>
 		        		</div>
 					</Modal>
-					<Slider {...onboarding_settings} className='onboarding_slider'>
+					<Slider {...onboarding_settings} className='onboarding_slider' ref={c => this.slider = c }>
 						<div>{this.names_slide()}</div>
 						<div>{this.image_slide()}</div>
 						<div>{this.cities_slide()}</div>
-	      			</Slider>
+    			</Slider>
 				</div>
 				</div>
 			)
@@ -535,6 +600,7 @@ class Onboarding extends Component {
 const mapStateToProps = (state) => {
 	return {
 		trip_id: state.trips.trip_id,
+		user_id: state.users.user_id
 	};
 };
 
@@ -548,6 +614,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		fetchCards: (id, day) => {
 			dispatch(fetchCards(id, day))
+		},
+		createUser: (user) => {
+			dispatch(createUser(user))
 		}
 	}
 }
