@@ -4,8 +4,9 @@ import { updateUsersLive, updateCardsLive } from '../actions'
 
 const user = 'AnonymousCoward'
 const timeout = 10000
-const URL = 'ws://localhost:4000/socket'
+const URL = 'ws://ec2-34-215-112-24.us-west-2.compute.amazonaws.com/socket'
 //const URL = 'ws://plan-it-server.herokuapp.com/socket'
+//const URL = 'ws://localhost:4000/socket'
 const socket = new Socket(URL, {})
 
 //const heartbeatTimer = 10000; //10 second heartbeat timer

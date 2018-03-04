@@ -6,8 +6,9 @@ import cookie from 'react-cookies'
 import * as qs from 'qs'
 import { checkEditPermission, giveEditPermission } from '../../actions'
 
-import NavBar from '../nav_bar'
-import Toolbar from '../tool_bar'
+import NavBar from '../nav_bar/index.js'
+import Toolbar from '../tool_bar/index.js'
+import './index.scss'
 
 class ShareCode extends React.Component {
   constructor(props) {
@@ -16,6 +17,11 @@ class ShareCode extends React.Component {
     this.state = {
       notFound: false,
     }
+
+    this.renderFilling = this.renderFilling.bind(this)
+    this.renderNotFound = this.renderNotFound.bind(this)
+    this.renderPromptLogin = this.renderPromptLogin.bind(this)
+    this.renderRedirect = this.renderRedirect.bind(this)
   }
 
   componentDidMount() {
@@ -55,16 +61,22 @@ class ShareCode extends React.Component {
   renderNotFound() {
     return (
       <div>
-        Page not found
-      </div>
+        <div className='background'>
+          <NavBar background={'no_background'} page={'ONBOARDING'}/>
+          <div className="text">Page not found</div>
+        </div>
+        </div>
     )
   }
 
   renderPromptLogin() {
     return (
-      <div>
-        Please log in
-      </div>
+        <div>
+        <div className='background'>
+          <NavBar background={'no_background'} page={'ONBOARDING'}/>
+          <div className="text">Please sign up or log in</div>
+        </div>
+        </div>
     )
   }
 
@@ -73,7 +85,13 @@ class ShareCode extends React.Component {
     const tripId = search.trip_id
     const url = `/workspace/:${tripId}`
     return (
-      <Redirect to={url} />
+      <div>
+        <div className='background'>
+          <NavBar background={'no_background'} page={'ONBOARDING'}/>
+          <div className="text">Loading...</div>
+        </div>
+        <Redirect to={url}/>
+      </div>
     )
   }
 
@@ -94,17 +112,8 @@ class ShareCode extends React.Component {
   render() {
     return (
       <div>
-        <NavBar background={'globe_backround'}/>
-        <Toolbar
-          tripName={"My Trip"}
-          published={false}
-          tripId={null}
-          readOnly={true}
-        />
-        {this.renderFilling()}
+      {this.renderFilling()}
       </div>
-
-
     )
   }
 }

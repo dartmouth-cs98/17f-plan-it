@@ -32,6 +32,27 @@
   background: none !important;
 }
 
+.sign-up-button {
+  display: inherit;
+  background-color: inherit;
+  color: white;
+  width: inherit;
+  border: #f56764e8 !important;
+  background: #f56764e8 !important;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.sign-up-button:focus {
+  outline: inherit;
+  box-shadow: 0 0 10px grey;
+  background: #f56764e8 !important;
+}
+
+.sign-up-button:hover {
+  box-shadow: 0 0 10px grey;
+}
+
 .nav-button:focus {
   outline: inherit;
   text-shadow: 0 0 10px grey;
