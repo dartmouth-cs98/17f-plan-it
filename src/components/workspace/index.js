@@ -741,31 +741,24 @@ class Workspace extends Component {
 		// If there are new travels, fetch travel times
 		if(origins.length > 0) {
 			const travel_durations = await this.getTravelTime(origins, destinations)
-			console.log("got travel", travel_durations)
 
 			for(let i = index; i < itinerary.length-1; i++){
-				console.log(i - index, travel_durations[i - index])
 
 				const card = itinerary[i]
 				_.assign(card, {
 					'travel_type': 'driving',
-					'travel_duration': '6 mins'
+					'travel_duration': travel_durations[i - index]
 				})
 			}
 		}
 
 		// Update the itinerary
-		console.log("sending itinerary", JSON.parse(JSON.stringify(itinerary)))
 		this.sendUpdates(itinerary, tripId)
 	}
 
 	getTravelTime(origins, destinations){
 
-		console.log("in here!")
-
 		return new Promise(resolve => {
-
-			console.log("still in here!")
  
 			let travel_durations = []
 
@@ -789,11 +782,11 @@ class Workspace extends Component {
 				  			travel_durations.push("No travel information available")
 				  		}
 			  		}
+			  		
+				resolve(travel_durations)
 
 			 })
 
-			console.log("in promise", travel_durations)
-			resolve(travel_durations)
 		})
 	}
 
