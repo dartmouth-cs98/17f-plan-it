@@ -806,7 +806,7 @@ class Workspace extends Component {
 			<div id='workspace'>
 				<div className='background'>
 	          		<NavBar background={'no_background'} page={'ONBOARDING'}/>
-	          		<div className='text'>Trip not found</div>
+	          		<div className='text'>Page not found</div>
 	        	</div>
 	      	</div>
 	      )
