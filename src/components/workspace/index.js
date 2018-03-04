@@ -65,6 +65,7 @@ class Workspace extends Component {
 		this.onDragEnd = this.onDragEnd.bind(this)
 		this.updateStartTime = this.updateStartTime.bind(this)
 		this.updateDuration = this.updateDuration.bind(this)
+		this.onDelete = this.onDelete.bind(this)
 		this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
 		this.sendUpdates = this.sendUpdates.bind(this)
 		this.sendDelete = this.sendDelete.bind(this)
@@ -722,6 +723,32 @@ class Workspace extends Component {
 		this.updateTravelTime(newItinerary, index + 1)
 	}
 
+	onDelete(cardId) {
+
+		const itinerary = _.map(Array.from(this.props.cards), _.clone)
+		const [city] = _.remove(itinerary, (card) => {
+			return card.type === 'city'
+		})
+		const index = _.findIndex(itinerary, (card) => {
+			return card.id === cardId
+		})
+		const [deleted] = _.remove(itinerary, (card) => {
+			return card.id === cardId
+		})
+
+		// add the city card back in
+		itinerary.splice(0, 0, city)
+
+		// Update the travel times
+		const newItinerary = _.cloneDeep(itinerary)
+		this.updateTravelTime(newItinerary, index)
+
+		// Delete the card
+		this.sendDelete(cardId)
+
+	}
+
+
 	async updateTravelTime(itinerary, index) {
 
 		const path = window.location.pathname.split(':')
@@ -782,7 +809,7 @@ class Workspace extends Component {
 				  			travel_durations.push("No travel information available")
 				  		}
 			  		}
-			  		
+
 				resolve(travel_durations)
 
 			 })
@@ -876,7 +903,7 @@ class Workspace extends Component {
 							day={this.state.day}
 							searchSuggestions={this.searchSuggestions}
 							updateCard={this.props.updateCard}
-							removeCard={this.sendDelete}
+							removeCard={this.onDelete}
 							dayForward={this.dayForward}
 							dayBackward={this.dayBackward}
 							updateTime={this.updateStartTime}
@@ -891,7 +918,7 @@ class Workspace extends Component {
 							itin_marker_array={this.props.cards.filter(function(item, idx) { return item.type !== 'city' })}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
 							addCard={this.props.createQueueCard}
-							removeCard={this.sendDelete}
+							removeCard={this.onDelete}
 							searchSuggestions={this.searchSuggestions}
 						/>
 					</div>
