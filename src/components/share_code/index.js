@@ -63,7 +63,7 @@ class ShareCode extends React.Component {
       <div>
         <div className='background'>
           <NavBar background={'no_background'} page={'ONBOARDING'}/>
-          <div className="text">Page not found in</div>
+          <div className="text">Page not found</div>
         </div>
         </div>
     )

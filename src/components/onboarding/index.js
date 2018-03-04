@@ -519,7 +519,7 @@ class Onboarding extends Component {
 					<div className='subtitle'>Explore popular, curated trips.</div>
 					<GoogleLogin
 				        clientId="555169723241-887i7f31sng0979bpip7snih68v7bu1s.apps.googleusercontent.com"
-				        buttonText="Sign up today."
+				        buttonText="Sign up today"
 				        onSuccess={this.processSuccess}
 				        onFailure={() => {}}
 				        style={{}}
