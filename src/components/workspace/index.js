@@ -32,6 +32,7 @@ const CATEGORIES = [
 	'fitness & instruction',
 	'parks',
 	'nightlife',
+	'museums',
 	'queue'
 ]
 
@@ -131,7 +132,7 @@ class Workspace extends Component {
 
 
 	componentWillReceiveProps(nextProps) {
-		this.setState({ cards: nextProps.cards}) 
+		this.setState({ cards: nextProps.cards})
 	}
 
 	//cleverly named function. Not a react function
@@ -779,16 +780,16 @@ class Workspace extends Component {
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
-		
+
 		let origins = []
 		let destinations = []
 
 		// Get origin-destination pairs for new travels
-		// Only cards that have changed times or that have been reordered 
+		// Only cards that have changed times or that have been reordered
 		// need to have their travel times recalculated
 		for (let i = index; i < itinerary.length-1; i++) {
 			origins.push(`${itinerary[i].lat},${itinerary[i].long}`)
-			destinations.push(`${itinerary[i+1].lat},${itinerary[i+1].long}`)		
+			destinations.push(`${itinerary[i+1].lat},${itinerary[i+1].long}`)
 		}
 
 		// If there are new travels, fetch travel times
@@ -812,7 +813,7 @@ class Workspace extends Component {
 	getTravelTime(origins, destinations){
 
 		return new Promise(resolve => {
- 
+
 			let travel_durations = []
 
 			// Use this once API is good to go

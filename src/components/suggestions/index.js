@@ -35,6 +35,7 @@ const menuItems = [
 	'Fitness & Instruction',
 	'Parks',
 	'Nightlife',
+	'Museum',
 	'Your Added Cards'
 ]
 
@@ -69,7 +70,8 @@ export default class Suggestions extends Component {
 					<MenuItem value="4" primaryText="Fitness & Instruction" />
 					<MenuItem value="5" primaryText="Parks" />
 					<MenuItem value="6" primaryText="Nightlife" />
-					<MenuItem value="7" primaryText="Your Added Cards" />
+					<MenuItem value="7" primaryText="Museums" />
+					<MenuItem value="8" primaryText="Your Added Cards" />
 				</IconMenu>
 				<i
 					className='fa fa-plus add-icon'
