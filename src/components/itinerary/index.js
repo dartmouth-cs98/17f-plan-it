@@ -342,13 +342,9 @@ class Itinerary extends Component {
 						rating={card.rating}
 						price={card.price}
 						source={card.source}
-						travel_duration={card.travel_duration}
-						travel_type={card.travel_type}
 					/>
 				)
 			} else {
-
-				let is_last_card = (index === this.props.cards.length-2)
 
 				let start = new Date(card.start_time)
 				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
@@ -391,9 +387,6 @@ class Itinerary extends Component {
 											this.props.removeCard(card.id, this.props.tripId, this.props.day)
 										}}
 										buttons={true}
-										travel_duration={card.travel_duration}
-										travel_type={card.travel_type}
-										is_last_card={is_last_card}
 									/>
 								</div>
 								{provided.placeholder}
