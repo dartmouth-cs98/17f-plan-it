@@ -22,7 +22,7 @@ require('./index.scss')
 
 const DEFAULT_DURATION = 3600000
 const DAY_NUMBER = 1
-const TRAVEL_TIME = 900000
+const TRAVEL_TIME = "900000"
 const CATEGORIES = [
 	null,
 	'food',
@@ -420,7 +420,6 @@ class Workspace extends Component {
 				const inserted = {
 					...item,
 					id: 0,
-					travel_duration: TRAVEL_TIME,
 					start_time: start,
 					end_time: new Date(end.getTime() - end.getTimezoneOffset()*60*1000),
 					trip_id: tripId,
