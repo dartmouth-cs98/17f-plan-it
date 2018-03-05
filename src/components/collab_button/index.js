@@ -23,17 +23,20 @@ class CollabButton extends React.Component {
   }
 
   onClickHandler() {
-    if (this.state.showButton) {
-      this.generateURL()
-    }
-    this.setState({showButton: !this.state.showButton })
+    this.props.onCollabOpen()
+    // if (this.state.showButton) {
+    //   //this.generateURL()
+    //   this.props.onCollabOpen()
+    // }
+    // this.setState({showButton: !this.state.showButton })
   }
 
   renderButtonText()  {
     if (this.state.showButton) {
       return "Invite Friends to Edit"
     } else {
-      return this.state.url
+      return "Sharing with friends"
+      //this.state.url
     }
   }
 
