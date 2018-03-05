@@ -10,6 +10,7 @@ import { scaleLinear } from 'd3-scale'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import Item from '../item/index.js'
 import Modal from 'react-modal'
+import ReactTooltip from 'react-tooltip'
 import { getLatLng } from 'react-places-autocomplete'
 import OnboardingInput from '../onboarding_input'
 import { deleteCard, updateCard } from '../../actions/index.js'
@@ -82,14 +83,14 @@ class Itinerary extends Component {
 	}
 
 	onModalClose() {
-		this.setState({ 
-			modal_open: false, 
+		this.setState({
+			modal_open: false,
 			city_name: '',
 			city_address: '',
 			lat: '',
 			lng: '',
 			place_id: '',
-			error: '' 
+			error: ''
 		})
 	}
 
@@ -237,7 +238,7 @@ class Itinerary extends Component {
 		let dayLabel = `Day ${this.props.day}`
 
 		if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
-			
+
 			let date = new Date(this.props.cards[0].start_time)
 			date = new Date(date.getTime() + date.getTimezoneOffset()*60*1000)
 			dayLabel += `: ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
@@ -273,7 +274,12 @@ class Itinerary extends Component {
 						className='fa fa-pencil'
 						style={{color: '#FFFFFF', margin: '10px', cursor: 'pointer'}}
 						onClick={this.onModalOpen}
+						data-tip
+						data-for='cityTip'
 					/>
+					<ReactTooltip id='cityTip' effect='solid' offset={{ bottom: 5 }}>
+						<span>Change the city for this day</span>
+					</ReactTooltip>
 				</label>
 			</div>
 		)
@@ -342,7 +348,7 @@ class Itinerary extends Component {
 
 				let start = new Date(card.start_time)
 				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
-				
+
 				let end = new Date(card.end_time)
 				end = new Date(end.getTime() + end.getTimezoneOffset()*60*1000)
 
@@ -428,7 +434,7 @@ class Itinerary extends Component {
 									)}
 								</Droppable>
 							</div>
-						</div>	
+						</div>
 					</div>
 					{this.renderFooter()}
 				</div>
