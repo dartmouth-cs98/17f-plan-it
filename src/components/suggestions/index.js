@@ -56,9 +56,6 @@ export default class Suggestions extends Component {
 				<ReactTooltip id='customInfo' effect='solid' offset={{ bottom: 13 }}>
 					<span>Create a custom card</span>
 				</ReactTooltip>
-				<ReactTooltip id='filterInfo' effect='solid' >
-					<span>Filter suggestions</span>
-				</ReactTooltip>
 			</div>
 		)
 	}
@@ -145,6 +142,9 @@ export default class Suggestions extends Component {
 					<MenuItem value="7" primaryText="Museums" />
 					<MenuItem value="8" primaryText="Your Added Cards" />
 				</IconMenu>
+				<ReactTooltip id='filterInfo' effect='solid' offset={{ bottom: 13 }}>
+					<span>Filter suggestions</span>
+				</ReactTooltip>
 			</div>
 		)
 	}
