@@ -114,7 +114,6 @@ class Workspace extends Component {
 	    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
 	}
 
-
 	connectToChannel(tripId) {
 		if (this.props.user.email) {
 			mainChannel.connect(tripId, this.props.user.email)
@@ -128,8 +127,6 @@ class Workspace extends Component {
 			}
 		}
 	}
-
-
 
 	componentWillReceiveProps(nextProps) {
 		this.setState({ cards: nextProps.cards})

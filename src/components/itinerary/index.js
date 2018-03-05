@@ -42,7 +42,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 	...draggableStyle,
 })
 const getListStyle = isDraggingOver => ({
-	background: isDraggingOver ? 'lightblue' : '#F2F2F2',
+	background: isDraggingOver ? 'lightblue' : '#e0e0e0',
 	padding: grid,
 	minHeight: '100%'
 })
@@ -267,20 +267,20 @@ class Itinerary extends Component {
 		}
 
 		return (
-			<div className='itinerary-header'>
-				<label className='itinerary-title'>
+			<div className='itinerary-footer'>
+				<label className='city-title'>
 					{cityLabel}
-					<i
-						className='fa fa-pencil'
-						style={{color: '#FFFFFF', margin: '10px', cursor: 'pointer'}}
-						onClick={this.onModalOpen}
-						data-tip
-						data-for='cityTip'
-					/>
-					<ReactTooltip id='cityTip' effect='solid' offset={{ bottom: 5 }}>
-						<span>Change the city for this day</span>
-					</ReactTooltip>
 				</label>
+				<i
+					className='fa fa-pencil'
+					style={{color: '#FFFFFF', margin: '10px', cursor: 'pointer', float: 'right'}}
+					onClick={this.onModalOpen}
+					data-tip
+					data-for='cityTip'
+				/>
+				<ReactTooltip id='cityTip' effect='solid' offset={{ bottom: 5 }}>
+					<span>Change the city for this day</span>
+				</ReactTooltip>
 			</div>
 		)
 	}

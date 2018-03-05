@@ -23,7 +23,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 		...draggableStyle,
 })
 const getListStyle = isDraggingOver => ({
-		background: isDraggingOver ? 'lightblue' : '#F2F2F2',
+		background: isDraggingOver ? 'lightblue' : '#e0e0e0',
 		padding: grid,
 })
 
@@ -44,35 +44,8 @@ export default class Suggestions extends Component {
 		return (
 			<div className='suggestions-header'>
 				<label className='suggestions-title'>
-					{menuItems[this.props.category]}
+					Suggestions
 				</label>
-				<IconMenu
-					className='filter-icon'
-					iconButtonElement={
-						<IconButton
-							data-tip
-							data-for='filterInfo'
-						>
-							<FontIcon
-								className='fa fa-filter'
-								color={'#FFFFFF'}
-							/>
-						</IconButton>
-					}
-					onChange={this.props.selectCategory}
-					value={this.props.category}
-					multiple={false}
-				>
-					<MenuItem value="0" primaryText="All" />
-					<MenuItem value="1" primaryText="Food" />
-					<MenuItem value="2" primaryText="Hotels" />
-					<MenuItem value="3" primaryText="Rentals" />
-					<MenuItem value="4" primaryText="Fitness & Instruction" />
-					<MenuItem value="5" primaryText="Parks" />
-					<MenuItem value="6" primaryText="Nightlife" />
-					<MenuItem value="7" primaryText="Museums" />
-					<MenuItem value="8" primaryText="Your Added Cards" />
-				</IconMenu>
 				<i
 					className='fa fa-plus add-icon'
 					style={{color: '#FFFFFF'}}
@@ -83,7 +56,7 @@ export default class Suggestions extends Component {
 				<ReactTooltip id='customInfo' effect='solid' offset={{ bottom: 13 }}>
 					<span>Create a custom card</span>
 				</ReactTooltip>
-				<ReactTooltip id='filterInfo' effect='solid' offset={{ bottom: 13 }}>
+				<ReactTooltip id='filterInfo' effect='solid' >
 					<span>Filter suggestions</span>
 				</ReactTooltip>
 			</div>
@@ -139,6 +112,43 @@ export default class Suggestions extends Component {
 		return suggestions
 	}
 
+	renderFooter() {
+		return (
+			<div className='suggestions-footer'>
+				<label className='category-title'>
+					{menuItems[this.props.category]}
+				</label>
+				<IconMenu
+					className='filter-icon'
+					iconButtonElement={
+						<IconButton
+							data-tip
+							data-for='filterInfo'
+						>
+							<FontIcon
+								className='fa fa-filter'
+								color={'#FFFFFF'}
+							/>
+						</IconButton>
+					}
+					onChange={this.props.selectCategory}
+					value={this.props.category}
+					multiple={false}
+				>
+					<MenuItem value="0" primaryText="All" />
+					<MenuItem value="1" primaryText="Food" />
+					<MenuItem value="2" primaryText="Hotels" />
+					<MenuItem value="3" primaryText="Rentals" />
+					<MenuItem value="4" primaryText="Fitness & Instruction" />
+					<MenuItem value="5" primaryText="Parks" />
+					<MenuItem value="6" primaryText="Nightlife" />
+					<MenuItem value="7" primaryText="Museums" />
+					<MenuItem value="8" primaryText="Your Added Cards" />
+				</IconMenu>
+			</div>
+		)
+	}
+
 	render() {
 		return (
 			<div id='suggestions-box'>
@@ -160,6 +170,7 @@ export default class Suggestions extends Component {
 						</div>
 					</div>
 				</div>
+				{this.renderFooter()}
 			</div>
 		)
 	}
