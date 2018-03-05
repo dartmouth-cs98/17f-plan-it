@@ -17,6 +17,7 @@ import DownloadTrip from '../download_trip/index.js'
 import OnboardingInput from '../onboarding_input'
 import { getLatLng } from 'react-places-autocomplete'
 import { generateUUID } from '../../util/random'
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 
 require('./index.scss')
 
@@ -67,10 +68,13 @@ class Workspace extends Component {
 		this.onDragEnd = this.onDragEnd.bind(this)
 		this.updateStartTime = this.updateStartTime.bind(this)
 		this.updateDuration = this.updateDuration.bind(this)
+		this.onDelete = this.onDelete.bind(this)
 		this.sendLiveUpdate = this.sendLiveUpdate.bind(this)
 		this.sendUpdates = this.sendUpdates.bind(this)
 		this.sendDelete = this.sendDelete.bind(this)
 		this.componentWillReceiveChannelUpdates = this.componentWillReceiveChannelUpdates.bind(this)
+		this.updateTravelTime = this.updateTravelTime.bind(this)
+		this.getTravelTime = this.getTravelTime.bind(this)
 
 		// custom card functions
 		this.onModalOpen = this.onModalOpen.bind(this)
@@ -101,19 +105,20 @@ class Workspace extends Component {
 			this.props.fetchDay(tripId, DAY_NUMBER)
 		}
 
-    //check edit permissions
-    this.props.checkEditPermission(this.props.user.user_id, tripId)
+	    //check edit permissions
+	    this.props.checkEditPermission(this.props.user.user_id, tripId)
 
-    //live editing
-    this.connectToChannel(tripId);
-    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
+	    //live editing
+	    this.connectToChannel(tripId);
+	    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
 	}
+
 
 	connectToChannel(tripId) {
 		if (this.props.user.email) {
 			mainChannel.connect(tripId, this.props.user.email)
 		} else {
-			//connect annon
+			//connect anon
 			const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
 			if (_.isEmpty(uuid)) {
 				mainChannel.connect(tripId, generateUUID())
@@ -124,8 +129,9 @@ class Workspace extends Component {
 	}
 
 
+
 	componentWillReceiveProps(nextProps) {
-		this.setState({ cards: nextProps.cards})
+		this.setState({ cards: nextProps.cards}) 
 	}
 
 	//cleverly named function. Not a react function
@@ -140,6 +146,7 @@ class Workspace extends Component {
 
 	//send card updates through the websocket
 	sendLiveUpdate(cards) {
+
 		const send_package = {cards, tripId: this.state.tripId}
 		mainChannel.sendCards(send_package)
 	}
@@ -150,11 +157,11 @@ class Workspace extends Component {
 		this.props.deleteCardLive(card_id)
 	}
 
-		// update cards with new itinerary
+	// update cards with new itinerary
 	sendUpdates(itinerary, tripId) {
-		this.setState({cards: itinerary})
-		this.sendLiveUpdate(itinerary)
-		this.props.updateCardsLive(itinerary)
+
+		this.setState({cards: _.cloneDeep(itinerary)})
+		this.sendLiveUpdate(_.cloneDeep(itinerary))
 	}
 
 	/****** custom card functions *******/
@@ -187,8 +194,7 @@ class Workspace extends Component {
 				long: lng,
 				day_number: this.state.day,
 				place_id: results.place_id,
-				trip_id,
-				travel_duration: 900
+				trip_id
 			}
 			this.setState({ custom_card, custom_card_address: name })
 		})
@@ -203,7 +209,6 @@ class Workspace extends Component {
 	}
 
 	onDescriptionChange(event) {
-		console.log(event.target.value)
 		this.setState({ custom_card_description: event.target.value })
 	}
 
@@ -423,7 +428,6 @@ class Workspace extends Component {
 				const inserted = {
 					...item,
 					id: 0,
-					travel_duration: TRAVEL_TIME,
 					start_time: start,
 					end_time: new Date(end.getTime() - end.getTimezoneOffset()*60*1000),
 					trip_id: tripId,
@@ -471,10 +475,14 @@ class Workspace extends Component {
 
 				}
 
-				// add the city card back
+				// add the city card back in
 				itinerary.splice(0, 0, city)
 
-				this.sendUpdates(itinerary, tripId)
+				// Update travel times for affected cards and send updates
+				const index = Math.max(0, result.destination.index-1)
+				const newItinerary = _.cloneDeep(itinerary)
+				this.updateTravelTime(newItinerary, index + 1)
+
 			}
 		} else if (result.destination.droppableId === 'suggestions-droppable') {
 			// reorder suggestions
@@ -554,7 +562,10 @@ class Workspace extends Component {
 			const path = window.location.pathname.split(':')
 			const tripId = _.last(path)
 
-			this.sendUpdates(itinerary, tripId)
+			// Update travel times for affected cards and send updates
+			const index = Math.max(0, result.destination.index-1)
+			const newItinerary = _.cloneDeep(itinerary)
+			this.updateTravelTime(newItinerary, index + 1)
 
 		}
 	}
@@ -654,7 +665,6 @@ class Workspace extends Component {
 
 				if (new Date(startTime.getTime() + startTime.getTimezoneOffset()*60*1000) >= dayStart.getTime()) {
 
-					startTime =
 					_.assign(itinerary[index], {
 						'start_time': startTime,
 						'end_time': endTime
@@ -663,13 +673,16 @@ class Workspace extends Component {
 			}
 		}
 
-		// add the city card back
+		// add the city card back in
 		itinerary.splice(0, 0, city)
 
 		const path = window.location.pathname.split(':')
 		const tripId = _.last(path)
 
-		this.sendUpdates(itinerary, tripId)
+		// Update travel times for affected cards and send updates
+		const newItinerary = _.cloneDeep(itinerary)
+		this.updateTravelTime(newItinerary, index + 1)
+
 	}
 
 	updateDuration(cardId, duration) {
@@ -731,9 +744,104 @@ class Workspace extends Component {
 		// add the city card back in
 		itinerary.splice(0, 0, city)
 
+		// Update travel times for affected cards and send updates
+		const newItinerary = _.cloneDeep(itinerary)
+		this.updateTravelTime(newItinerary, index + 1)
+	}
+
+	onDelete(cardId) {
+
+		const itinerary = _.map(Array.from(this.props.cards), _.clone)
+		const [city] = _.remove(itinerary, (card) => {
+			return card.type === 'city'
+		})
+		const index = _.findIndex(itinerary, (card) => {
+			return card.id === cardId
+		})
+		const [deleted] = _.remove(itinerary, (card) => {
+			return card.id === cardId
+		})
+
+		// add the city card back in
+		itinerary.splice(0, 0, city)
+
+		// Update the travel times
+		const newItinerary = _.cloneDeep(itinerary)
+		this.updateTravelTime(newItinerary, index)
+
+		// Delete the card
+		this.sendDelete(cardId)
+
+	}
+
+
+	async updateTravelTime(itinerary, index) {
+
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+		
+		let origins = []
+		let destinations = []
+
+		// Get origin-destination pairs for new travels
+		// Only cards that have changed times or that have been reordered 
+		// need to have their travel times recalculated
+		for (let i = index; i < itinerary.length-1; i++) {
+			origins.push(`${itinerary[i].lat},${itinerary[i].long}`)
+			destinations.push(`${itinerary[i+1].lat},${itinerary[i+1].long}`)		
+		}
+
+		// If there are new travels, fetch travel times
+		if(origins.length > 0) {
+			const travel_durations = await this.getTravelTime(origins, destinations)
+
+			for(let i = index; i < itinerary.length-1; i++){
+
+				const card = itinerary[i]
+				_.assign(card, {
+					'travel_type': 'driving',
+					'travel_duration': travel_durations[i - index]
+				})
+			}
+		}
+
+		// Update the itinerary
 		this.sendUpdates(itinerary, tripId)
 	}
 
+	getTravelTime(origins, destinations){
+
+		return new Promise(resolve => {
+ 
+			let travel_durations = []
+
+			// Use this once API is good to go
+			// const end_time = new Date(itinerary[i].end_time).getTime()
+
+			let service = new window.google.maps.DistanceMatrixService()
+			service.getDistanceMatrix(
+			  	{
+			    origins: origins,
+			    destinations: destinations,
+			    travelMode: 'DRIVING'
+			  	}, function(response, status) {
+
+			  		for (let i = 0; i < origins.length; i++) {
+				  		if (status === 'OK') {
+				  			let results = response.rows[i].elements
+				    		travel_durations.push(results[0].duration.text)
+
+				  		} else {
+				  			travel_durations.push("No travel information available")
+				  		}
+			  		}
+
+				resolve(travel_durations)
+
+			 })
+
+		})
+	}
 
 	renderModal() {
 		if (this.state.custom_alert) {
@@ -840,7 +948,7 @@ class Workspace extends Component {
 							day={this.state.day}
 							searchSuggestions={this.searchSuggestions}
 							updateCard={this.props.updateCard}
-							removeCard={this.sendDelete}
+							removeCard={this.onDelete}
 							dayForward={this.dayForward}
 							dayBackward={this.dayBackward}
 							updateTime={this.updateStartTime}
@@ -856,7 +964,7 @@ class Workspace extends Component {
 							itin_marker_array={this.props.cards.filter(function(item, idx) { return item.type !== 'city' })}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
 							addMapCard={(map_card) => this.onAddMapCard(map_card)}
-							removeCard={this.sendDelete}
+							removeCard={this.onDelete}
 							searchSuggestions={this.searchSuggestions}
 						/>
 					</div>
