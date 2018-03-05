@@ -46,7 +46,6 @@ class Workspace extends Component {
 			cityLat: null,
 			cityLong: null,
 			modal_open: false,
-			collab_open: false,
 			custom_card_name: '',
 			custom_card_address: '',
 			custom_card_img_url: '',
@@ -84,8 +83,8 @@ class Workspace extends Component {
 		this.onResetCustomValues = this.onResetCustomValues.bind(this)
 		this.onCreatedAlert = this.onCreatedAlert.bind(this)
 		this.onAddMapCard = this.onAddMapCard.bind(this)
-		this.onCityUpdate = this.onCityUpdate.bind(this)
 
+		this.onCityUpdate = this.onCityUpdate.bind(this)
 	}
 
 	componentDidMount() {
@@ -166,8 +165,6 @@ class Workspace extends Component {
 		this.setState({ modal_open: false, custom_alert: false, added_text: '' })
 		this.onResetCustomValues()
 	}
-
-
 
 	onNameChange(event) {
 		this.setState({ custom_card_name: event.target.value })
@@ -734,7 +731,6 @@ class Workspace extends Component {
 		this.sendUpdates(itinerary, tripId)
 	}
 
-
 	renderModal() {
 		if (this.state.custom_alert) {
 			return (
@@ -791,7 +787,6 @@ class Workspace extends Component {
 		}
 
 	}
-
 
 	render() {
 		const cards = this.formatCards(this.state.cards)
