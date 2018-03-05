@@ -73,7 +73,7 @@ const CardsReducer = (state = initialState, action) => {
 			return Object.assign({}, state, {
 				all: action.payload,
 			});
-    case ActionTypes.DELETE_CARD_LIVE:
+    	case ActionTypes.DELETE_CARD_LIVE:
 			return Object.assign({}, state, {
 				all: _.filter(state.all, (card) => {
 					return card.id !== action.payload
