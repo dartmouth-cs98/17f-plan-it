@@ -3,7 +3,7 @@
   min-width: 350px;
   margin-right: 5px;
   display: inline-block;
-  background-color: #F2F2F2;
+  background-color: #e0e0e0;
   overflow-y: hidden;
 
   .suggestions-header {
@@ -14,20 +14,10 @@
 
     .suggestions-title {
       color: #FFFFFF;
-      margin-left: 50px;
+      margin-left: 40px;
       font-size: 14px;
       font-family: Roboto, sans-serif;
       font-weight: 500;
-    }
-
-    .suggestions-menu {
-      float: right;
-      min-width: 40px !important;
-    }
-
-    .suggestions-filter {
-      float: right;
-      min-width: 40px !important;
     }
 
     .add-icon {
@@ -38,6 +28,21 @@
 
     .add-icon:hover {
       text-shadow: 0 0 30px grey;
+    }
+  }
+
+  .suggestions-footer {
+    height: 35px;
+    background-color: #8ACDF1;
+    line-height: 35px;
+    text-align: center;
+
+    .category-title {
+      color: #FFFFFF;
+      margin-left: 40px;
+      font-size: 14px;
+      font-family: Roboto, sans-serif;
+      font-weight: 500;
     }
   }
 }
@@ -70,7 +75,7 @@
 }
 
 .suggestions-container {
-  height: calc(100% - 35px);
+  height: calc(100% - 70px);
 
   .suggestions-body {
     display: flex;
