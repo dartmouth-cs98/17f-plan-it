@@ -1,7 +1,8 @@
 import axios from 'axios'
 import _ from 'lodash'
 
-export const ROOT_URL = 'http://localhost:4000/api/v2'
+export const ROOT_URL = 'http://ec2-34-215-112-24.us-west-2.compute.amazonaws.com/api/v2'
+//export const ROOT_URL = 'http://localhost:4000/api/v2'
 //export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v2'
 
 // keys for actiontypes
@@ -45,7 +46,7 @@ export const ActionTypes = {
 	UPDATE_USERS_LIVE: 'UPDATE_USERS_LIVE',
 	DELETE_CARD_LIVE: 'DELETE_CARD_LIVE',
 
-  DELETE_USER_LIVE: 'DELETE_USER_LIVE',
+  	DELETE_USER_LIVE: 'DELETE_USER_LIVE',
 	AUTH_USER: 'AUTH_USER',
 	DEAUTH_USER: 'DEAUTH_USER',
 	AUTH_ERROR: 'AUTH_ERROR',
@@ -57,7 +58,7 @@ export const ActionTypes = {
 	FETCH_SUGGESTIONS_ERROR: 'FETCH_SUGGESTIONS_ERROR',
 	CLEAR_SUGGESTIONS: 'CLEAR_SUGGESTIONS',
 
-  CHECK_EDIT_PERMISSION: 'CHECK_EDIT_PERMISSION'
+  	CHECK_EDIT_PERMISSION: 'CHECK_EDIT_PERMISSION'
 }
 
 export function resetTripId(id) {
@@ -316,10 +317,10 @@ export function authUser(is_auth) {
 export function createUser(user) {
 	return (dispatch) => {
 		axios.post(`${ROOT_URL}/users`, user).then((response) => {
-				dispatch({ type: ActionTypes.CREATE_USER, payload: {user_id: response.data, fname: user.fname, lname: user.lname, email: user.email} });
-			}).catch((error) => {
-				dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
-			});
+			dispatch({ type: ActionTypes.CREATE_USER, payload: {user_id: response.data, fname: user.fname, lname: user.lname, email: user.email} });
+		}).catch((error) => {
+			dispatch({ type: ActionTypes.CREATE_USER_ERROR, payload: error });
+		});
 	};
 }
 

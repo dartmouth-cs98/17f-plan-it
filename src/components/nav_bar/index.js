@@ -61,7 +61,7 @@ class NavBar extends Component {
         onSuccess={this.processSuccess}
         onFailure={this.processFailure}
         style={{}}
-        className='nav-button'
+        className='sign-up-button'
         >
         </GoogleLogin>
     }
@@ -83,7 +83,6 @@ class NavBar extends Component {
   componentDidUpdate() {
     if (this.state.authenticated) {
       cookie.save('auth', this.props.user_id, { path: '/' })
-      if (this.props.landingPage) this.props.onAuthenticate(true)
     } else {
       cookie.remove('auth', { path: '/' })
       this.reloadPage()

@@ -47,13 +47,16 @@ class Workspace extends Component {
 			cityLat: null,
 			cityLong: null,
 			modal_open: false,
+			collab_open: false,
 			custom_card_name: '',
 			custom_card_address: '',
 			custom_card_img_url: '',
 			custom_card_description: '',
 			custom_card: {},
 			name_error: '',
-			address_error: ''
+			address_error: '',
+			custom_alert: false,
+			added_text: ''
 		}
 
 		this.dayForward = this.dayForward.bind(this)
@@ -83,6 +86,10 @@ class Workspace extends Component {
 		this.onCustomCreate = this.onCustomCreate.bind(this)
 		this.onDescriptionChange = this.onDescriptionChange.bind(this)
 		this.onResetCustomValues = this.onResetCustomValues.bind(this)
+		this.onCreatedAlert = this.onCreatedAlert.bind(this)
+		this.onAddMapCard = this.onAddMapCard.bind(this)
+		this.onCityUpdate = this.onCityUpdate.bind(this)
+
 	}
 
 	componentDidMount() {
@@ -106,19 +113,21 @@ class Workspace extends Component {
 	    mainChannel.setCardFunctions(this.componentWillReceiveChannelUpdates())
 	}
 
-  	connectToChannel(tripId) {
-    	if (this.props.user.email) {
-      		mainChannel.connect(tripId, this.props.user.email)
-    	} else {
-      		//connect anon
-      		const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
-      		if (_.isEmpty(uuid)) {
-        		mainChannel.connect(tripId, generateUUID())
-      		} else {
-        		mainChannel.connect(tripId, uuid.uuid)
-      		}
-    	}
-  	}
+
+	connectToChannel(tripId) {
+		if (this.props.user.email) {
+			mainChannel.connect(tripId, this.props.user.email)
+		} else {
+			//connect anon
+			const uuid = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
+			if (_.isEmpty(uuid)) {
+				mainChannel.connect(tripId, generateUUID())
+			} else {
+		    	mainChannel.connect(tripId, uuid.uuid)
+			}
+		}
+	}
+
 
 
 	componentWillReceiveProps(nextProps) {
@@ -161,9 +170,11 @@ class Workspace extends Component {
 	}
 
 	onModalClose() {
-		this.setState({ modal_open: false })
+		this.setState({ modal_open: false, custom_alert: false, added_text: '' })
 		this.onResetCustomValues()
 	}
+
+
 
 	onNameChange(event) {
 		this.setState({ custom_card_name: event.target.value })
@@ -227,6 +238,7 @@ class Workspace extends Component {
 			}
 
 			this.onResetCustomValues()
+			this.onCreatedAlert()
 		}
 	}
 
@@ -236,11 +248,25 @@ class Workspace extends Component {
 			custom_card_name: '',
 			custom_card_img_url: '',
 			custom_card: {},
-			custom_card_description: '',
-			modal_open: false
+			custom_card_description: ''
 		})
 	}
+
+	onCreatedAlert() {
+		this.setState({ custom_alert: true, added_text: 'Custom card added to \'Your Added Cards\' in the suggestions\' filter menu' })
+	}
 	/****** end custom card functions *******/
+
+	onCityUpdate(lat, long) {
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+		this.props.fetchSuggestions(lat, long, tripId, CATEGORIES[this.state.category])
+	}
+
+	onAddMapCard(map_card) {
+		this.setState({ modal_open: true, custom_alert: true, added_text: 'Map card added to \'Your Added Cards\' in the suggestions\' filter menu'})
+		this.props.createQueueCard(map_card)
+	}
 
 	dayForward() {
 		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
@@ -817,40 +843,20 @@ class Workspace extends Component {
 		})
 	}
 
-	render() {
-		const cards = this.formatCards(this.state.cards) 
-		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
-
-		const suggestions = this.props.suggestions
-		const path = window.location.pathname.split(':')
-		const tripId = _.last(path)
-
-		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
-		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
-		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
-
-	    if (!this.props.permission) {
-	      return (
-				<div id='workspace'>
-					<NavBar background={'globe_background'}/>
-					<Toolbar
-						tripName={'Trip Not Found'}
-						published={false}
-						tripId={tripId}
-						readOnly={false}
-					/>
-	      </div>
-	      )
-	    }
-		return (
-			<div id='workspace'>
-				<NavBar background={'globe_background'}/>
-				<Toolbar
-					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
-					published={this.props.trips[0] ? this.props.trips[0].publish : false}
-					tripId={tripId}
-					readOnly={false}
-				/>
+	renderModal() {
+		if (this.state.custom_alert) {
+			return (
+				<Modal
+				    isOpen={this.state.modal_open}
+				    onRequestClose={this.onModalClose}
+				    className='card horizontal center no_outline'>
+					<div className="card-content">
+	        			<p>{ this.state.added_text }</p>
+	        		</div>
+				</Modal>
+			)
+		} else {
+			return (
 				<Modal
 					isOpen={this.state.modal_open}
 					onRequestClose={this.onModalClose}
@@ -889,6 +895,45 @@ class Workspace extends Component {
 						</div>
 					</div>
 				</Modal>
+			)
+		}
+
+	}
+
+
+	render() {
+		const cards = this.formatCards(this.state.cards)
+		const [city] = _.filter(cards, (card) => { return card.type === 'city'})
+
+		const suggestions = this.props.suggestions
+		const path = window.location.pathname.split(':')
+		const tripId = _.last(path)
+
+		const tripStart = this.props.trips[0] ? this.props.trips[0].start_time : null
+		const tripEnd = this.props.trips[0] ? this.props.trips[0].end_time : null
+		const tripDuration = (tripStart && tripEnd) ? Math.round(((new Date(tripEnd)).getTime() - (new Date(tripStart)).getTime()) / (1000*60*60*24)) : null
+
+
+	    if (!this.props.permission) {
+	      return (
+			<div id='workspace'>
+				<div className='background'>
+	          		<NavBar background={'no_background'} page={'ONBOARDING'}/>
+	          		<div className='text'>Page not found</div>
+	        	</div>
+	      	</div>
+	      )
+	    }
+		return (
+			<div id='workspace'>
+				<NavBar background={'globe_background'}/>
+				<Toolbar
+					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
+					published={this.props.trips[0] ? this.props.trips[0].publish : false}
+					tripId={tripId}
+					readOnly={false}
+				/>
+				{ this.renderModal() }
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<div className='planner'>
 						<Suggestions
@@ -910,6 +955,7 @@ class Workspace extends Component {
 							updateDuration={this.updateDuration}
 							numDays={tripDuration}
 							readOnly={false}
+							onCityUpdate={this.onCityUpdate}
 						/>
 						<Map
 							isInfoOpen={false}
@@ -917,7 +963,7 @@ class Workspace extends Component {
 							MarkerClusterArray={this.props.suggestions}
 							itin_marker_array={this.props.cards.filter(function(item, idx) { return item.type !== 'city' })}
 							center={{ lat: this.state.pinLat, lng: this.state.pinLong }}
-							addCard={this.props.createQueueCard}
+							addMapCard={(map_card) => this.onAddMapCard(map_card)}
 							removeCard={this.onDelete}
 							searchSuggestions={this.searchSuggestions}
 						/>
@@ -978,9 +1024,9 @@ const mapDispatchToProps = (dispatch) => {
 		createQueueCard: (card) => {
 			dispatch(createQueueCard(card))
 		},
-    checkEditPermission: (userId, tripId) => {
-      dispatch(checkEditPermission(userId, tripId))
-    }
+    	checkEditPermission: (userId, tripId) => {
+    		dispatch(checkEditPermission(userId, tripId))
+    	}
 	}
 }
 

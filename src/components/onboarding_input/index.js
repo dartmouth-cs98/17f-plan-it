@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 import 'react-dates/initialize'
 import { SingleDatePicker } from 'react-dates'
 import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete'
@@ -17,7 +18,14 @@ class OnboardingInput extends Component {
         end_focused: false,
       }
 
+      this.handleEnterKey = this.handleEnterKey.bind(this)
       this.renderAutocomplete = this.renderAutocomplete.bind(this)
+    }
+
+    handleEnterKey(e) {
+      if (e.key == 'Enter') {
+        this.props.next()
+      }
     }
 
     renderAutocomplete() {
@@ -75,6 +83,8 @@ class OnboardingInput extends Component {
             <input type='text' className='name_input' placeholder={this.props.placeholder}
               value={this.props.name}
               onChange={this.props.onNameChange}
+              onKeyPress={this.handleEnterKey}
+              ref={this.props.nameRef}
             />
           )
         } else if (this.state.placeholder === 'Enter image URL') {
@@ -82,6 +92,8 @@ class OnboardingInput extends Component {
             <input type='text' className='name_input' placeholder={this.props.placeholder}
               value={this.props.image_url}
               onChange={this.props.onImageChange}
+              onKeyPress={this.handleEnterKey}
+              ref={this.props.imageRef}
             />
           )
         } else if (this.state.placeholder === 'Enter a description') {
@@ -92,7 +104,7 @@ class OnboardingInput extends Component {
             />
           )
         }
-        else if (this.state.placeholder === 'Enter address or attraction name') {
+        else if (this.state.placeholder === 'Enter address or attraction name' || this.state.placeholder === 'Enter city') {
             return this.renderAutocomplete()
         } else if (this.state.placeholder === 'Please sign up or log in' ) {
           return (

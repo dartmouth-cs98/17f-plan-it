@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import $ from 'jquery'
 import _ from 'lodash'
 import Dialog from 'material-ui/Dialog'
@@ -7,6 +9,11 @@ import FlatButton from 'material-ui/FlatButton'
 import { scaleLinear } from 'd3-scale'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import Item from '../item/index.js'
+import Modal from 'react-modal'
+import ReactTooltip from 'react-tooltip'
+import { getLatLng } from 'react-places-autocomplete'
+import OnboardingInput from '../onboarding_input'
+import { deleteCard, updateCard } from '../../actions/index.js'
 import './index.scss'
 
 const TIME_SCALE = 2500
@@ -40,7 +47,7 @@ const getListStyle = isDraggingOver => ({
 	minHeight: '100%'
 })
 
-export default class Itinerary extends Component {
+class Itinerary extends Component {
 	constructor(props) {
 		super(props)
 
@@ -49,7 +56,14 @@ export default class Itinerary extends Component {
 			editCard: null,
 			shift: false,
 			newTime: null,
-			readOnly: this.props.readOnly
+			readOnly: this.props.readOnly,
+			modal_open: false,
+			city_name: '',
+			city_address: '',
+			lat: '',
+			lng: '',
+			place_id: '',
+			error: ''
 		}
 
 		this.openStartTimeDialog = this.openStartTimeDialog.bind(this)
@@ -57,6 +71,69 @@ export default class Itinerary extends Component {
 		this.toggleShift = this.toggleShift.bind(this)
 		this.selectTime = this.selectTime.bind(this)
 		this.updateStartTime = this.updateStartTime.bind(this)
+		this.onModalOpen = this.onModalOpen.bind(this)
+		this.onModalClose = this.onModalClose.bind(this)
+		this.onHandleSelect = this.onHandleSelect.bind(this)
+		this.onOtherNameChange = this.onOtherNameChange.bind(this)
+		this.onSave = this.onSave.bind(this)
+	}
+
+	onModalOpen() {
+		this.setState({ modal_open: true })
+	}
+
+	onModalClose() {
+		this.setState({
+			modal_open: false,
+			city_name: '',
+			city_address: '',
+			lat: '',
+			lng: '',
+			place_id: '',
+			error: ''
+		})
+	}
+
+	onOtherNameChange(index, type, name) {
+		this.setState({ city_name: name})
+	}
+
+	onHandleSelect(index, type, results, name) {
+		getLatLng(results).then(({ lat, lng }) => {
+
+			let city_address = results.formatted_address
+			let place_id = results.place_id
+
+			this.setState({ city_address, place_id, lat, lng, city_name: name })
+		})
+	}
+
+	onSave() {
+		if (!this.state.place_id) {
+			this.setState({ error: 'Please choose a city from the dropdown', place_id: '' })
+		}
+		else if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
+			if (this.props.cards[0].type === 'city' && this.props.cards[0].name === this.state.city_name) {
+				this.setState({ error: `Already in ${this.props.cards[0].name.split(',')[0]}`, place_id: ''})
+			} else {
+				_.map(this.props.cards, (card, index) => {
+					if (card.type === 'city') {
+						let city_card = _.assign(card, {
+							name: this.state.city_name,
+							address: this.state.city_name,
+							place_id: this.state.place_id,
+							lat: this.state.lat,
+							long: this.state.lng
+						})
+						this.props.updateCard(card.id, city_card, this.props.tripId, this.props.day)
+					} else {
+						this.props.deleteCard(card.id, this.props.tripId, this.props.day)
+					}
+				})
+				this.props.onCityUpdate(this.state.lat, this.state.lng)
+				this.onModalClose()
+			}
+		}
 	}
 
 	openStartTimeDialog(card) {
@@ -161,7 +238,7 @@ export default class Itinerary extends Component {
 		let dayLabel = `Day ${this.props.day}`
 
 		if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
-			
+
 			let date = new Date(this.props.cards[0].start_time)
 			date = new Date(date.getTime() + date.getTimezoneOffset()*60*1000)
 			dayLabel += `: ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
@@ -179,6 +256,57 @@ export default class Itinerary extends Component {
 					{this.renderForwardButton()}
 				</div>
 			</div>
+		)
+	}
+
+	renderFooter() {
+		let cityLabel = ''
+
+		if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
+			if (this.props.cards[0].type === 'city') cityLabel = this.props.cards[0].name.split(',')[0]
+		}
+
+		return (
+			<div className='itinerary-header'>
+				<label className='itinerary-title'>
+					{cityLabel}
+					<i
+						className='fa fa-pencil'
+						style={{color: '#FFFFFF', margin: '10px', cursor: 'pointer'}}
+						onClick={this.onModalOpen}
+						data-tip
+						data-for='cityTip'
+					/>
+					<ReactTooltip id='cityTip' effect='solid' offset={{ bottom: 5 }}>
+						<span>Change the city for this day</span>
+					</ReactTooltip>
+				</label>
+			</div>
+		)
+	}
+
+	renderModal() {
+		return (
+			<Modal
+				isOpen={this.state.modal_open}
+				onRequestClose={this.onModalClose}
+				className='card horizontal center no_outline'>
+				<div className="card-content date_modal">
+					<p>{`Change city for day ${this.props.day}`}</p>
+					<OnboardingInput placeholder={'Enter city'}
+						index={0}
+						name={this.state.city_name}
+						input_type='city'
+						onOtherNameChange={this.onOtherNameChange}
+						onHandleSelect={this.onHandleSelect}
+					/>
+					<div className='custom_error'>{this.state.error}</div>
+					<div className='button_container start-onboarding-button'
+						onClick={this.onSave}>
+						Save Change
+					</div>
+				</div>
+			</Modal>
 		)
 	}
 
@@ -224,7 +352,7 @@ export default class Itinerary extends Component {
 
 				let start = new Date(card.start_time)
 				start = new Date(start.getTime() + start.getTimezoneOffset()*60*1000)
-				
+
 				let end = new Date(card.end_time)
 				end = new Date(end.getTime() + end.getTimezoneOffset()*60*1000)
 
@@ -296,6 +424,7 @@ export default class Itinerary extends Component {
 		} else {
 			return (
 				<div id='itinerary-box'>
+					{this.renderModal()}
 					{this.renderHeader()}
 					<div className='body-container'>
 						<div className='itinerary-body'>
@@ -314,8 +443,11 @@ export default class Itinerary extends Component {
 							</div>
 						</div>
 					</div>
+					{this.renderFooter()}
 				</div>
 			)
 		}
 	}
 }
+
+export default withRouter(connect(null, { deleteCard, updateCard })(Itinerary))

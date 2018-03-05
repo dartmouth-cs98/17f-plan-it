@@ -91,7 +91,7 @@ const POIMap = compose(
 										})
 
 										props.onToggleOpen(-1, { lat: marker.lat, lng: marker.long })
-										props.addCard(marker)
+										props.addMapCard(marker)
 										console.log(marker)
 									}}
 								/>
@@ -227,7 +227,7 @@ export default class Map extends Component {
 					showSug={this.state.ShowSug}
 					showIt={this.state.ShowIt}
 					readOnly={this.props.readOnly}
-					addCard={this.props.addCard}
+					addMapCard={this.props.addMapCard}
 					removeCard={this.props.removeCard}
 					setMapCenter={this.setMapCenter}
 				/>
