@@ -46,6 +46,7 @@ class ReadOnly extends Component {
 		this.onImportTrip = this.onImportTrip.bind(this)
 		this.onNameChange = this.onNameChange.bind(this)
 		this.onImageChange = this.onImageChange.bind(this)
+		this.checkImageExists = this.checkImageExists.bind(this)
 
 		this.defaults = ['http://crosstalk.cell.com/hubfs/Images/Trending/How%20to%20write%20a%20review%20article%20that%20people%20will%20read/thumbnail.jpg?t=1514480830697',
 		'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg',
@@ -136,18 +137,28 @@ class ReadOnly extends Component {
 	}
 
 	checkImageExists(url) {
-		let imageExists = require('image-exists')
-		imageExists(url, function(exists) {
-			if (exists) {
-				return true
-			}
-			else {
-				return false
-			}
-		});
+
+		return new Promise(resolve => {
+
+			let imageExists = require('image-exists')
+			let exists
+
+			imageExists(url, function(exists) {
+				if (exists) {
+					console.log("TRUE")
+					exists = true
+				}
+				else {
+					console.log("FALSE")
+					exists = false
+				}
+
+				resolve(exists)
+			});
+		})
 	}
 
-	onImportTrip() {
+	async onImportTrip() {
 
 		let trip_name
 		if (_.isUndefined(this.state.trip_name) || this.state.trip_name === '') {
@@ -168,7 +179,8 @@ class ReadOnly extends Component {
 
 		let photo_url = this.state.image_url
 		// If undefined or invalid, make it the default
-		if (_.isUndefined(photo_url) || photo_url === '' || !this.checkImageExists(photo_url)) {
+		const image_exists = await this.checkImageExists(photo_url)
+		if (_.isUndefined(photo_url) || photo_url === '' || !image_exists) {
 			photo_url = this.defaults[Math.floor(Math.random() * 6)]
 		} 
 
