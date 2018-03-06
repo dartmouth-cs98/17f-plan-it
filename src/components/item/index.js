@@ -112,9 +112,9 @@ export default class Item extends Component {
 				)
 			} else {
 				const photo_url = (this.props.photo_url != null)? this.props.photo_url : "https://vignette.wikia.nocookie.net/bokunoheroacademia/images/d/d5/NoPicAvailable.png/revision/latest?cb=20160326222204"
-				const url = this.props.url
+				const url = this.props.source === "Yelp" ? this.props.url : `http://${this.props.url}`
 				return (
-					<a target="_blank" href= {`http://${url}`}>
+					<a target="_blank" href= {url}>
 						<img src= {`${photo_url}`} alt="Test" height="84" width="84">
 						</img>
 					</a>
