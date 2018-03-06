@@ -93,7 +93,7 @@ export default class Item extends Component {
 						/>
 					</div>
 					<div className={travel_text_class}>
-						Estimated travel time to next location is {this.props.travel_duration}
+						{this.props.travel_duration}
 					</div>
 				</div>
 			)

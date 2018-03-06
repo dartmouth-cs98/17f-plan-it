@@ -825,12 +825,11 @@ class Workspace extends Component {
 			  	}, function(response, status) {
 
 			  		for (let i = 0; i < origins.length; i++) {
-				  		if (status === 'OK') {
+				  		if (status === 'OK' && !_.isNil(response.rows[i].elements.duration)) {
 				  			let results = response.rows[i].elements
-				    		travel_durations.push(results[0].duration.text)
-
+				    		travel_durations.push(`Estimated travel time to next location is ${results[0].duration.text}`)
 				  		} else {
-				  			travel_durations.push("No travel information available")
+				  			travel_durations.push("no travel information available")
 				  		}
 			  		}
 

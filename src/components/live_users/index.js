@@ -33,7 +33,6 @@ class LiveUsers extends React.Component {
 
   renderUsers() {
     if (this.props.users instanceof Array) {
-      console.log(this.props.users)
       const renderedUsers = this.props.users.map(u => {
         const initials = u.fname.slice(0, 1) + u.lname.slice(0, 1);
         return this.renderUser(initials)
