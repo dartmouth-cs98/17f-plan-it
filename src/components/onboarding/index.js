@@ -46,6 +46,7 @@ class Onboarding extends Component {
 		this.onDeleteCity = this.onDeleteCity.bind(this)
 		this.nextSlide = this.nextSlide.bind(this)
 		this.processSuccess = this.processSuccess.bind(this)
+		this.checkImageExists = this.checkImageExists.bind(this)
 
 		this.defaults = ['http://crosstalk.cell.com/hubfs/Images/Trending/How%20to%20write%20a%20review%20article%20that%20people%20will%20read/thumbnail.jpg?t=1514480830697',
 		'https://s4.favim.com/orig/50/art-beautiful-cool-earth-globe-Favim.com-450335.jpg',
@@ -117,18 +118,28 @@ class Onboarding extends Component {
 	}
 
 	checkImageExists(url) {
-		let imageExists = require('image-exists')
-		imageExists(url, function(exists) {
-			if (exists) {
-				return true
-			}
-			else {
-				return false
-			}
-		});
+
+		return new Promise(resolve => {
+
+			let imageExists = require('image-exists')
+			let exists
+
+			imageExists(url, function(exists) {
+				if (exists) {
+					console.log("TRUE")
+					exists = true
+				}
+				else {
+					console.log("FALSE")
+					exists = false
+				}
+
+				resolve(exists)
+			});
+		})
 	}
 
-	onCreateTrip(startDate, endDate) {
+	async onCreateTrip(startDate, endDate) {
 		let trip_name = this.state.trip_name
 		if (_.isUndefined(trip_name) || trip_name === '') {
 			trip_name = `${this.state.cities[0].name.split(',')[0]} Trip`
@@ -136,7 +147,9 @@ class Onboarding extends Component {
 
 		let photo_url = this.state.image_url
 		// If undefined or invalid, make it the default
-		if (_.isUndefined(photo_url) || photo_url === '' || !this.checkImageExists(photo_url)) {
+		const image_exists = await this.checkImageExists(photo_url)
+		if (_.isUndefined(photo_url) || photo_url === '' || !image_exists) {
+			console.log("using default image")
 			photo_url = this.defaults[Math.floor(Math.random() * 6)]
 		}
 
