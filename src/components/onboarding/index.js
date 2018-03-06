@@ -564,7 +564,7 @@ class Onboarding extends Component {
 			prevArrow: <PrevArrow disabled={this.state.prev_disabled}/>
     	};
 
-    	if (!cookie.load('auth')) return this.renderLandingPage()
+    	if (!this.props.user_id) return this.renderLandingPage()
     	else if (this.state.start_city) {
     		return (
 				<div>
@@ -613,7 +613,8 @@ class Onboarding extends Component {
 const mapStateToProps = (state) => {
 	return {
 		trip_id: state.trips.trip_id,
-		user_id: state.users.user_id
+		user_id: state.users.user_id,
+		user: state.users
 	};
 };
 

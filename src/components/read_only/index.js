@@ -343,7 +343,7 @@ const mapStateToProps = (state) => {
 		all_cards: state.cards.all_cards,
 		trip_id: state.trips.trip_id,
 		favoritedTrips: state.trips.favoritedTrips,
-    user: state.users
+    	user: state.users
 
 	}
 }
