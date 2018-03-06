@@ -238,6 +238,7 @@ class Itinerary extends Component {
 		let dayLabel = `Day ${this.props.day}`
 
 		if (!_.isNil(this.props.cards) && this.props.cards.length > 0) {
+
 			let date = new Date(this.props.cards[0].start_time)
 			date = new Date(date.getTime() + date.getTimezoneOffset()*60*1000)
 			dayLabel += `: ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`

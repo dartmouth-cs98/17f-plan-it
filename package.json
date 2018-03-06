@@ -36,7 +36,7 @@
     "lodash": "^4.17.4",
     "material-ui": "^0.20.0",
     "materialize-css": "^0.100.2",
-    "moment": "^2.21.0",
+    "moment": "^2.20.1",
     "node-sass": "^4.5.3",
     "object-assign": "4.1.1",
     "pdfmake": "^0.1.35",

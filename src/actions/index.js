@@ -2,7 +2,7 @@ import axios from 'axios'
 import _ from 'lodash'
 
 export const ROOT_URL = 'http://ec2-34-215-112-24.us-west-2.compute.amazonaws.com/api/v2'
-// export const ROOT_URL = 'http://localhost:4000/api/v2'
+//export const ROOT_URL = 'http://localhost:4000/api/v2'
 //export const ROOT_URL = 'https://plan-it-server.herokuapp.com/api/v2'
 
 // keys for actiontypes
@@ -106,7 +106,6 @@ export function createTrip(trip) {
 }
 
 export function updateTrip(trip_id, trip) {
-	console.log('called update trip')
 	return (dispatch) => {
 		axios.put(`${ROOT_URL}/trips/${trip_id}`, trip).then((response) => {
 			dispatch({ type: ActionTypes.UPDATE_TRIP, payload: response.data })
@@ -236,7 +235,7 @@ export function updateCard(id, attributes, trip, day) {
 export function updateCards(cards, trip, day) {
 	return (dispatch) => {
 		axios.post(`${ROOT_URL}/cards/itinerary?trip_id=${trip}`, Array.from(cards)).then((response) => {
-			console.log("this is response data", response.data)
+			console.log("this is reposen data", response.data)
 			dispatch({ type: ActionTypes.UPDATE_CARDS, payload: response.data })
 		}).catch((error) => {
 			dispatch({ type: ActionTypes.UPDATE_CARDS_ERROR, payload: error })
@@ -315,7 +314,6 @@ export function authUser(is_auth) {
     dispatch({ type: ActionTypes.AUTH_USER, payload: is_auth})
   }
 }
-
 export function createUser(user) {
 	return (dispatch) => {
 		axios.post(`${ROOT_URL}/users`, user).then((response) => {

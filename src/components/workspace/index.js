@@ -928,13 +928,8 @@ class Workspace extends Component {
 				<Toolbar
 					tripName={this.props.trips[0] ? this.props.trips[0].name : 'My Trip'}
 					published={this.props.trips[0] ? this.props.trips[0].publish : false}
-					photo_url={this.props.trips[0] ? this.props.trips[0].photo_url : ''}
-					start_time={this.props.trips[0] ? this.props.trips[0].start_time : null}
-					end_time={this.props.trips[0] ? this.props.trips[0].end_time : null}
-					day={this.state.day}
 					tripId={tripId}
 					readOnly={false}
-					sendUpdates={this.sendUpdates}
 				/>
 				{ this.renderModal() }
 				<DragDropContext onDragEnd={this.onDragEnd}>
