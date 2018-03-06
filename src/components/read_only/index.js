@@ -90,7 +90,7 @@ class ReadOnly extends Component {
 					seen_custom_set.add(card.name)
 				}
 			})
-			
+
 			this.props.createCard(cards)
 			this.props.history.push(`/workspace/:${nextProps.trip_id}`)
 		}
@@ -163,18 +163,18 @@ class ReadOnly extends Component {
 		let trip_name
 		if (_.isUndefined(this.state.trip_name) || this.state.trip_name === '') {
 			if (this.props.cards[0].type === 'city'){ // if the first card is a city card get the name of the card, which is the city name
-				trip_name = `${this.props.cards[0].name.split(',')[0]} Trip` 
+				trip_name = `${this.props.cards[0].name.split(',')[0]} Trip`
 			}	else {
-				trip_name = `${this.props.cards[0].city.split(',')[0]} Trip` 
+				trip_name = `${this.props.cards[0].city.split(',')[0]} Trip`
 			}
-		} else{ 
+		} else{
 			trip_name = this.state.trip_name
 		}
 
 		let day_now = new Date()
 
 		let start_date = _.isUndefined(this.state.start_date)? new Date() : new Date(new Date(this.state.start_date).getTime() - 12*60*60*1000 - new Date(this.state.start_date).getTimezoneOffset()*60*1000)
-		let end_date = this.props.trips[0].end_time? this.addDays(new Date(this.props.trips[0].end_time), 
+		let end_date = this.props.trips[0].end_time? this.addDays(new Date(this.props.trips[0].end_time),
 			this.getDayOffset(start_date, new Date(this.props.trips[0].start_time))) : null
 
 		let photo_url = this.state.image_url
@@ -182,11 +182,11 @@ class ReadOnly extends Component {
 		const image_exists = await this.checkImageExists(photo_url)
 		if (_.isUndefined(photo_url) || photo_url === '' || !image_exists) {
 			photo_url = this.defaults[Math.floor(Math.random() * 6)]
-		} 
+		}
 
 		this.props.createTrip({
 			name: trip_name,
-			user_id: cookie.load('auth'),
+			user_id: this.props.user.user_id,
 			start_time: start_date,
 			end_time: end_date,
 			photo_url
@@ -342,7 +342,9 @@ const mapStateToProps = (state) => {
 		cards: state.cards.all,
 		all_cards: state.cards.all_cards,
 		trip_id: state.trips.trip_id,
-		favoritedTrips: state.trips.favoritedTrips
+		favoritedTrips: state.trips.favoritedTrips,
+    user: state.users
+
 	}
 }
 
