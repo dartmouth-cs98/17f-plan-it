@@ -9,11 +9,11 @@ Planit is a web application that allows users to create a fully fleshed-out itin
 ## Architecture
 
 Frontend:
-* React
+* ReactJS
 
 Backend:
 * Phoenix
-* PostgreSQL
+* MySQL
 
 ## Setup
 
@@ -23,7 +23,7 @@ For further details on the backend endpoints, see the README in https://github.c
 
 ## Deployment
 
-The frontend is deployed at https://plan-it-client.herokuapp.com. The backend is deployed at https://plan-it-server.herokuapp.com.
+The frontend is deployed at http://bestplanit.com/. The backend is deployed at on an AWS server.
 
 ## Authors
 
@@ -31,3 +31,5 @@ Jeffrey Gao, Helen He, Samuel Lee, Emily Lin, Robert Sayegh, Jiyun Sung
 CS 98 17F/18W
 
 ## Acknowledgments
+
+Thanks Tim!
