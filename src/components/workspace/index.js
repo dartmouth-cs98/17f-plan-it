@@ -158,8 +158,15 @@ class Workspace extends Component {
 	// update cards with new itinerary
 	sendUpdates(itinerary, tripId) {
 
-		this.setState({cards: _.cloneDeep(itinerary)})
-		this.sendLiveUpdate(_.cloneDeep(itinerary))
+		console.log("cards", itinerary)
+		if (itinerary.length > 1) {
+			console.log("zip", itinerary[1].zip_code)
+			console.log("state", itinerary[1].state)
+		}
+		
+
+		this.setState({cards: itinerary})
+		this.sendLiveUpdate(itinerary)
 	}
 
 	/****** custom card functions *******/

@@ -380,8 +380,6 @@ class Toolbar extends Component {
 		let importButton = cookie.load('auth')?
 			<div onClick={this.props.onModalOpen}>Import Trip</div> : <div/>
 
-		console.log(this.state.trip_name)
-
 		if (this.props.readOnly) {
 			return (
 				<div id='tool-bar'>

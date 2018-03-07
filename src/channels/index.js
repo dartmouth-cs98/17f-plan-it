@@ -74,6 +74,7 @@ class Channel {
   }
 
   sendCards(message) {
+    console.log("sendCards", message)
     if (this.chan == null) {
       console.log("Send: Channel is not initalized.")
     } else {
