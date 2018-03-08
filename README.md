@@ -6,6 +6,22 @@ Planit is a web application that allows users to create a fully fleshed-out itin
 
 ![Team Photo](https://github.com/dartmouth-cs98/17f-plan-it/raw/master/misc/landing_page.png)
 
+Create your dream trip
+
+![Create GIF](https://media.giphy.com/media/THWNbfSJHiWYXoRYQH/giphy.gif)
+
+Drag and drop interface
+
+![Edit GIF](https://media.giphy.com/media/l1X2gDCJNhtakPOOjp/giphy.gif)
+
+Download your itinerary
+
+![Download GIF](https://media.giphy.com/media/3JPcusY60Jg7plR0ni/giphy.gif)
+
+See other's trips and use them yourself
+
+![Explore GIF](https://media.giphy.com/media/cIMMLeKR4GbJOnSuxf/giphy.gif)
+
 ## Architecture
 
 Frontend:
@@ -20,6 +36,8 @@ Backend:
 The frontend code lives in this repo (https://github.com/dartmouth-cs98/17f-plan-it). The backend code is in another repo (https://github.com/dartmouth-cs98/17f-plan-it-server).
 
 For further details on the backend endpoints, see the README in https://github.com/dartmouth-cs98/17f-plan-it-server.
+
+To setup up the frontend, clone the repository and run `npm install` `yarn start`
 
 ## Deployment
 
