@@ -14,6 +14,10 @@ Drag and drop interface
 
 ![Edit GIF](https://media.giphy.com/media/l1X2gDCJNhtakPOOjp/giphy.gif)
 
+Collaboratively edit
+
+![Collab GIF](https://media.giphy.com/media/2kJIOdnZwseAebwYgp/giphy.gif)
+
 Download your itinerary
 
 ![Download GIF](https://media.giphy.com/media/3JPcusY60Jg7plR0ni/giphy.gif)
