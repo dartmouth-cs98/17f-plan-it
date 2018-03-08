@@ -25,11 +25,11 @@ See other's trips and use them yourself
 ## Architecture
 
 Frontend:
-* React
+* ReactJS
 
 Backend:
 * Phoenix
-* PostgreSQL
+* MySQL
 
 ## Setup
 
@@ -41,7 +41,7 @@ To setup up the frontend, clone the repository and run `npm install` `yarn start
 
 ## Deployment
 
-The frontend is deployed at https://plan-it-client.herokuapp.com. The backend is deployed at https://plan-it-server.herokuapp.com.
+The frontend is deployed at http://bestplanit.com/. The backend is deployed at on an AWS server.
 
 ## Authors
 
@@ -49,3 +49,5 @@ Jeffrey Gao, Helen He, Samuel Lee, Emily Lin, Robert Sayegh, Jiyun Sung
 CS 98 17F/18W
 
 ## Acknowledgments
+
+Thanks Tim!
