@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import _ from 'lodash'
 import { heartbeatTimer, mainChannel } from '../../channels'
 import { updateUsersLive, deleteUserLive } from '../../actions'
 
@@ -34,8 +35,16 @@ class LiveUsers extends React.Component {
   renderUsers() {
     if (this.props.users instanceof Array) {
       const renderedUsers = this.props.users.map(u => {
-        const initials = u.fname.slice(0, 1) + u.lname.slice(0, 1);
-        return this.renderUser(initials)
+        let fInit = "a"
+        if (!_.isNil(u.fname)) {
+          fInit = u.fname.slice(0, 1)
+        }
+        let lInit = "a"
+        if (!_.isNil(u.lname)){
+          lInit = u.lname.slice(0, 1)
+        }
+
+        return this.renderUser(fInit + lInit)
       })
       return renderedUsers
     }
