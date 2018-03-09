@@ -825,7 +825,7 @@ class Workspace extends Component {
 			  	}, function(response, status) {
 
 			  		for (let i = 0; i < origins.length; i++) {
-				  		if (status === 'OK' && !_.isNil(response.rows[i].elements[0])) {
+				  		if (status === 'OK' && !_.isNil(response.rows[i].elements[0]) && !_.isNil(response.rows[i].elements[0].duration)) {
 				  			let results = response.rows[i].elements
 				    		travel_durations.push(`Estimated travel time to next location is ${results[0].duration.text}`)
 				  		} else {
